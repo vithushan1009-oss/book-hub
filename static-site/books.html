@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BOOK HUB — Browse Books</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+    <div class="container nav-content">
+      <a class="nav-logo" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" fill="currentColor"/></svg>
+        <span>BOOK <span class="accent">HUB</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="books.html" class="active">Books</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <button class="btn btn-outline">Sign In</button>
+        <button class="btn btn-secondary">Get Started</button>
+      </div>
+
+      <button class="mobile-menu-btn hidden-desktop">☰</button>
+    </div>
+    <div class="mobile-menu hidden-desktop">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="about.html">About</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <h1>Our Book Collection</h1>
+      <p>Explore thousands of books available for rent or purchase</p>
+    </div>
+  </header>
+
+  <section class="filters">
+    <div class="container">
+      <div class="filter-controls">
+        <div class="search-input">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/></svg>
+          <input type="text" placeholder="Search books, authors, ISBN...">
+        </div>
+
+        <select id="category">
+          <option value="all">All Categories</option>
+          <option value="fiction">Fiction</option>
+          <option value="non-fiction">Non-Fiction</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="science">Science</option>
+          <option value="biography">Biography</option>
+        </select>
+
+        <select id="sort">
+          <option value="popular">Most Popular</option>
+          <option value="newest">Newest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+        </select>
+
+        <button class="btn btn-outline">Filters</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <p class="muted">Showing <strong>8</strong> books</p>
+      </div>
+
+      <div class="books-grid">
+        <!-- repeated book cards similar to index.html, referencing src assets -->
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-1.jpg" alt="Fiction Fomen"><span class="book-badge badge-buy">Buy Now</span></div>
+          <div class="book-card-content"><h3>Fiction Fomen</h3><p class="author">Shen Gerdings</p><div class="book-footer"><div class="book-price">$12.99</div><button class="btn btn-secondary btn-sm">Buy</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-2.jpg" alt="Nook"><span class="book-badge badge-rent">For Rent</span></div>
+          <div class="book-card-content"><h3>Nook</h3><p class="author">Bab Giuing</p><div class="book-footer"><div class="book-price">$3.99<span>/week</span></div><button class="btn btn-accent btn-sm">Rent</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-3.jpg" alt="Mystic Tales"><span class="book-badge badge-buy">Buy Now</span></div>
+          <div class="book-card-content"><h3>Mystic Tales</h3><p class="author">Fantasy Author</p><div class="book-footer"><div class="book-price">$15.99</div><button class="btn btn-secondary btn-sm">Buy</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-4.jpg" alt="Science Wonders"><span class="book-badge badge-rent">For Rent</span></div>
+          <div class="book-card-content"><h3>Science Wonders</h3><p class="author">Knowledge Seeker</p><div class="book-footer"><div class="book-price">$4.99<span>/week</span></div><button class="btn btn-accent btn-sm">Rent</button></div></div>
+        </div>
+
+        <!-- duplicates to simulate more items -->
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-1.jpg" alt="Fiction Fomen"><span class="book-badge badge-buy">Buy Now</span></div>
+          <div class="book-card-content"><h3>Fiction Fomen</h3><p class="author">Shen Gerdings</p><div class="book-footer"><div class="book-price">$12.99</div><button class="btn btn-secondary btn-sm">Buy</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-2.jpg" alt="Nook"><span class="book-badge badge-rent">For Rent</span></div>
+          <div class="book-card-content"><h3>Nook</h3><p class="author">Bab Giuing</p><div class="book-footer"><div class="book-price">$3.99<span>/week</span></div><button class="btn btn-accent btn-sm">Rent</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-3.jpg" alt="Mystic Tales"><span class="book-badge badge-buy">Buy Now</span></div>
+          <div class="book-card-content"><h3>Mystic Tales</h3><p class="author">Fantasy Author</p><div class="book-footer"><div class="book-price">$15.99</div><button class="btn btn-secondary btn-sm">Buy</button></div></div>
+        </div>
+
+        <div class="book-card">
+          <div class="book-card-image"><img src="../src/assets/book-4.jpg" alt="Science Wonders"><span class="book-badge badge-rent">For Rent</span></div>
+          <div class="book-card-content"><h3>Science Wonders</h3><p class="author">Knowledge Seeker</p><div class="book-footer"><div class="book-price">$4.99<span>/week</span></div><button class="btn btn-accent btn-sm">Rent</button></div></div>
+        </div>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="btn btn-outline">Previous</button>
+        <button class="btn btn-outline active">1</button>
+        <button class="btn btn-outline">2</button>
+        <button class="btn btn-outline">3</button>
+        <button class="btn btn-outline">Next</button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2025 BOOK HUB. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
