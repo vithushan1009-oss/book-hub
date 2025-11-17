@@ -1,0 +1,44 @@
+/* BOOK HUB - CSS Variables (Design System) */
+
+:root {
+  /* Colors - Light Mode */
+  --background: hsl(210, 17%, 95%);
+  --foreground: hsl(210, 14%, 24%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 14%, 24%);
+  --primary: hsl(210, 29%, 24%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(6, 78%, 57%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 17%, 95%);
+  --muted-foreground: hsl(210, 14%, 45%);
+  --accent: hsl(38, 90%, 51%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 17%, 85%);
+  --input: hsl(210, 17%, 85%);
+  --ring: hsl(210, 29%, 24%);
+
+  /* Spacing & Layout */
+  --radius: 0.75rem;
+  --container-max-width: 1280px;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Glass morphism */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.18);
+
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

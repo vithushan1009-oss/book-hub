@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="BOOK HUB - Discover your next great read. Rent physical books or buy digital editions instantly.">
   <title>BOOK HUB - Discover Your Next Great Read</title>
-  <link rel="stylesheet" href="styles.css">
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/books.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body class="home-page">
   <!-- Navigation -->
@@ -31,8 +39,8 @@
 
         <!-- Desktop CTA -->
         <div class="nav-cta">
-          <button class="btn btn-outline">Sign In</button>
-          <button class="btn btn-secondary">Get Started</button>
+          <a href="login.html" class="btn btn-outline">Sign In</a>
+          <a href="register.html" class="btn btn-secondary">Get Started</a>
         </div>
 
         <!-- Mobile Menu Button -->
@@ -63,7 +71,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-bg">
-      <img src="../src/assets/hero-library.jpg" alt="Library">
+      <img src="assets/hero-library.jpg" alt="Library">
       <div class="hero-overlay"></div>
     </div>
 
@@ -145,7 +153,7 @@
         <!-- Book Card 1 -->
         <div class="book-card">
           <div class="book-card-image">
-            <img src="../src/assets/book-1.jpg" alt="Fiction Fomen">
+            <img src="assets/book-1.jpg" alt="Fiction Fomen">
             <span class="book-badge badge-buy">Buy Now</span>
           </div>
           <div class="book-card-content">
@@ -175,7 +183,7 @@
         <!-- Book Card 2 -->
         <div class="book-card">
           <div class="book-card-image">
-            <img src="../src/assets/book-2.jpg" alt="Nook">
+            <img src="assets/book-2.jpg" alt="Nook">
             <span class="book-badge badge-rent">For Rent</span>
           </div>
           <div class="book-card-content">
@@ -204,7 +212,7 @@
         <!-- Book Card 3 -->
         <div class="book-card">
           <div class="book-card-image">
-            <img src="../src/assets/book-3.jpg" alt="Mystic Tales">
+            <img src="assets/book-3.jpg" alt="Mystic Tales">
             <span class="book-badge badge-buy">Buy Now</span>
           </div>
           <div class="book-card-content">
@@ -234,7 +242,7 @@
         <!-- Book Card 4 -->
         <div class="book-card">
           <div class="book-card-image">
-            <img src="../src/assets/book-4.jpg" alt="Science Wonders">
+            <img src="assets/book-4.jpg" alt="Science Wonders">
             <span class="book-badge badge-rent">For Rent</span>
           </div>
           <div class="book-card-content">
@@ -435,6 +443,8 @@
     </div>
   </footer>
 
-  <script src="scripts.js"></script>
+  <!-- JavaScript Files -->
+  <script src="js/common.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>

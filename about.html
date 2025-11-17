@@ -4,7 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Us — BOOK HUB</title>
-  <link rel="stylesheet" href="styles.css">
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
   <!-- Navigation -->
@@ -27,11 +34,17 @@
         </ul>
 
         <div class="nav-cta">
-          <button class="btn btn-outline">Sign In</button>
-          <button class="btn btn-secondary">Get Started</button>
+          <a href="login.html" class="btn btn-outline">Sign In</a>
+          <a href="register.html" class="btn btn-secondary">Get Started</a>
         </div>
 
-        <button class="mobile-menu-btn">☰</button>
+        <button class="mobile-menu-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
       </div>
 
       <div class="mobile-menu">
@@ -57,7 +70,14 @@
   <!-- Mission & Vision -->
   <section style="padding: 5rem 0;">
     <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
+      <style>
+        @media (min-width: 768px) {
+          .about-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+      </style>
+      <div class="about-grid" style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
         <div class="benefit-card" style="padding: 2rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);">
@@ -94,7 +114,7 @@
       </div>
 
       <div style="max-width: 64rem; margin: 0 auto;">
-        <img src="../src/assets/about-team.jpg" alt="BOOK HUB Team" style="width: 100%; border-radius: 1rem; box-shadow: var(--shadow-xl);">
+        <img src="assets/about-team.jpg" alt="BOOK HUB Team" style="width: 100%; border-radius: 1rem; box-shadow: var(--shadow-xl);">
       </div>
 
       <div style="text-align: center; margin-top: 2rem; max-width: 48rem; margin-left: auto; margin-right: auto;">
@@ -306,6 +326,7 @@
     </div>
   </footer>
 
-  <script src="scripts.js"></script>
+  <!-- JavaScript Files -->
+  <script src="js/common.js"></script>
 </body>
 </html>
