@@ -7,13 +7,21 @@ function loadEnv($path) {
     
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) {
+        $line = trim($line);
+        
+        // Skip comments and empty lines
+        if (empty($line) || strpos($line, '#') === 0) {
+            continue;
+        }
+        
+        // Skip lines without =
+        if (strpos($line, '=') === false) {
             continue;
         }
         
         list($name, $value) = explode('=', $line, 2);
         $name = trim($name);
-        $value = trim($value);
+        $value = trim($value ?? '');
         
         // Remove quotes if present
         if (preg_match('/^"(.*)"$/', $value, $matches)) {
@@ -29,7 +37,7 @@ function loadEnv($path) {
 }
 
 // Load environment variables
-loadEnv(__DIR__ . '/.env');
+loadEnv(dirname(__DIR__) . '/.env');
 
 // Helper function to get env variable
 function env($key, $default = null) {

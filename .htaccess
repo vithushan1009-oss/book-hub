@@ -84,9 +84,14 @@ ErrorDocument 500 /500.html
     # Protect src directory
     RewriteRule ^src/ - [F,L]
     
-    # Allow direct access to static files
+    # Allow direct access to HTML files in public directory
+    RewriteCond %{REQUEST_URI} \.html$
+    RewriteCond %{DOCUMENT_ROOT}/BOOKHUB/book-hub-central/public%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ public/$1 [L]
+    
+    # Allow direct access to public files (CSS, JS, images)
     RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^public/(static|assets)/ - [L]
+    RewriteRule ^(public/.*|static/.*|assets/.*)$ - [L]
     
     # Route everything through index.php
     RewriteCond %{REQUEST_FILENAME} !-f

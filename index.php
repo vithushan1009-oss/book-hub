@@ -17,9 +17,41 @@ $route = str_replace($base_path, '', parse_url($request_uri, PHP_URL_PATH));
 // Remove trailing slash
 $route = rtrim($route, '/');
 
+// Remove .html extension if present
+$route = preg_replace('/\.html$/', '', $route);
+
 // Default route
 if ($route === '' || $route === '/') {
     $route = '/index';
+}
+
+// Handle direct file requests for static assets
+if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $route)) {
+    $file = __DIR__ . '/public' . $route;
+    if (file_exists($file)) {
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $content_types = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            'ico' => 'image/x-icon',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf',
+            'eot' => 'application/vnd.ms-fontobject'
+        ];
+        
+        if (isset($content_types[$ext])) {
+            header('Content-Type: ' . $content_types[$ext]);
+        }
+        
+        readfile($file);
+        exit;
+    }
 }
 
 // Route to public HTML pages

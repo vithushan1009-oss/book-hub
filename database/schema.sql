@@ -195,14 +195,14 @@ HAVING attempt_count >= 3;
 -- ============================================
 -- Database Information
 -- ============================================
--- Show all tables
-SHOW TABLES;
+-- Note: The following queries can be run manually if needed
+-- SHOW TABLES;
 
--- Display table statistics
-SELECT 
-    TABLE_NAME as 'Table',
-    TABLE_ROWS as 'Rows',
-    ROUND(((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024), 2) AS 'Size (MB)'
-FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = 'bookhub_db'
-ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;
+-- Display table statistics (run manually if needed)
+-- SELECT 
+--     TABLE_NAME as 'Table',
+--     TABLE_ROWS as 'Rows',
+--     ROUND(((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024), 2) AS 'Size (MB)'
+-- FROM information_schema.TABLES
+-- WHERE TABLE_SCHEMA = 'bookhub_db'
+-- ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;
