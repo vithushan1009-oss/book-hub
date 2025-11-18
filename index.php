@@ -1,0 +1,111 @@
+<?php
+/**
+ * BOOK HUB - Front Controller
+ * Routes all requests to appropriate handlers
+ */
+
+// Include configuration
+require_once __DIR__ . '/src/config.php';
+
+// Get the request URI
+$request_uri = $_SERVER['REQUEST_URI'];
+$base_path = '/BOOKHUB/book-hub-central';
+
+// Remove base path and query string
+$route = str_replace($base_path, '', parse_url($request_uri, PHP_URL_PATH));
+
+// Remove trailing slash
+$route = rtrim($route, '/');
+
+// Default route
+if ($route === '' || $route === '/') {
+    $route = '/index';
+}
+
+// Route to public HTML pages
+$public_pages = [
+    '/index', '/login', '/register', '/admin-login', 
+    '/books', '/about', '/contact', '/gallery'
+];
+
+if (in_array($route, $public_pages)) {
+    $file = __DIR__ . '/public' . $route . '.html';
+    if (file_exists($file)) {
+        readfile($file);
+        exit;
+    }
+}
+
+// Route to protected views (requires authentication)
+$protected_views = [
+    '/user' => 'user.php',
+    '/admin' => 'admin.php',
+    '/profile' => 'profile.php',
+    '/manage-users' => 'manage-users.php'
+];
+
+if (isset($protected_views[$route])) {
+    $file = __DIR__ . '/src/views/' . $protected_views[$route];
+    if (file_exists($file)) {
+        require_once $file;
+        exit;
+    }
+}
+
+// Route to handlers
+if (strpos($route, '/handler/') === 0) {
+    $handler = str_replace('/handler/', '', $route) . '.php';
+    $file = __DIR__ . '/src/handlers/' . $handler;
+    if (file_exists($file)) {
+        require_once $file;
+        exit;
+    }
+}
+
+// Serve static files from public directory
+if (strpos($route, '/static/') === 0 || strpos($route, '/assets/') === 0) {
+    $file = __DIR__ . '/public' . $route;
+    if (file_exists($file)) {
+        // Set appropriate content type
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $content_types = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml'
+        ];
+        
+        if (isset($content_types[$ext])) {
+            header('Content-Type: ' . $content_types[$ext]);
+        }
+        
+        readfile($file);
+        exit;
+    }
+}
+
+// 404 Not Found
+http_response_code(404);
+echo '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        h1 { font-size: 48px; color: #e74c3c; }
+        p { font-size: 18px; color: #555; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>404</h1>
+    <p>Page Not Found</p>
+    <a href="' . $base_path . '">Go Back to Homepage</a>
+</body>
+</html>';

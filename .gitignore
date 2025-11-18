@@ -1,0 +1,265 @@
+# ============================================
+# BOOK HUB - Git Ignore Configuration
+# ============================================
+
+# ============================================
+# SENSITIVE FILES (NEVER COMMIT)
+# ============================================
+
+# Environment variables - CONTAINS PASSWORDS!
+.env
+
+# Database credentials and backups
+*.sql
+database/backups/
+database/*.sql
+
+# Email configuration
+smtp-config.php
+
+# ============================================
+# USER UPLOADS & GENERATED CONTENT
+# ============================================
+
+# User uploaded files
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
+
+# Generated thumbnails
+public/assets/uploads/thumbnails/
+
+# Temporary files
+tmp/
+temp/
+cache/
+
+# ============================================
+# LOGS & DEBUG FILES
+# ============================================
+
+# Error logs
+*.log
+error_log
+error_log.txt
+debug.log
+
+# PHP error logs
+php_errors.log
+php-error.log
+
+# Email logs (may contain sensitive data)
+email_logs.txt
+
+# ============================================
+# DEVELOPMENT FILES
+# ============================================
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# PHPStorm / IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# ============================================
+# OPERATING SYSTEM FILES
+# ============================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# DEPENDENCIES & VENDOR FILES
+# ============================================
+
+# Composer (if using PHP dependencies)
+/vendor/
+composer.lock
+
+# Node modules (if using npm/yarn)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# ============================================
+# BUILD & COMPILED FILES
+# ============================================
+
+# Compiled CSS/JS (if using preprocessors)
+public/static/css/compiled/
+public/static/js/compiled/
+*.min.css
+*.min.js
+*.map
+
+# ============================================
+# BACKUP FILES
+# ============================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*_backup
+*_old
+backup/
+
+# Database backups
+*.sql.gz
+*.sql.zip
+db_backup_*.sql
+
+# ============================================
+# TESTING FILES
+# ============================================
+
+# Test files and coverage
+/tests/
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# ============================================
+# SECURITY & CONFIGURATION
+# ============================================
+
+# SSL certificates (if stored locally)
+*.pem
+*.key
+*.crt
+*.csr
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Configuration files with sensitive data
+config_local.php
+local_config.php
+
+# ============================================
+# TEMPORARY & CACHE FILES
+# ============================================
+
+# Session files
+sessions/
+*.sess
+
+# Cache directories
+cache/
+cached/
+*.cache
+
+# Temporary uploads
+uploads/tmp/
+
+# ============================================
+# VERSION CONTROL
+# ============================================
+
+# Git
+.git/
+.gitattributes
+
+# SVN
+.svn/
+
+# Mercurial
+.hg/
+
+# ============================================
+# DOCUMENTATION TEMP FILES
+# ============================================
+
+# Markdown temp files
+*.md~
+*.md.bak
+
+# Documentation builds
+docs/_build/
+site/
+
+# ============================================
+# PROJECT-SPECIFIC IGNORES
+# ============================================
+
+# PowerShell scripts (already executed)
+update-paths.ps1
+
+# Development tools
+phpinfo.php
+test.php
+debug.php
+
+# Old/archived files
+_archive/
+_old/
+deprecated/
+
+# ============================================
+# EXCEPTIONS (FILES TO KEEP)
+# ============================================
+
+# Keep .env.example
+!.env.example
+
+# Keep .htaccess
+!.htaccess
+
+# Keep README and documentation
+!README.md
+!docs/*.md
+
+# Keep empty directories with .gitkeep
+!.gitkeep
+
+# Keep database schema template
+!database/schema.sql
+
+# ============================================
+# NOTES
+# ============================================
+
+# IMPORTANT:
+# - Never commit .env file (contains passwords)
+# - Never commit user uploads (images, documents)
+# - Never commit logs (may contain sensitive info)
+# - Always use .env.example as template
+# - Keep database schema.sql for setup only
+# ============================================

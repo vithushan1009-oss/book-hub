@@ -59,16 +59,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show loading state
     submitButton.classList.add('loading');
     submitButton.disabled = true;
+    submitButton.textContent = 'Signing in...';
     
-    // Simulate authentication (replace with actual API call)
-    setTimeout(() => {
-      // Demo credentials for testing
-      if (email === 'admin@bookhub.com' && password === 'admin123') {
-        showMessage('Login successful! Redirecting to dashboard...', 'success');
+    // API call
+    fetch('api/admin-login.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        twoFactorCode: code || null
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      submitButton.classList.remove('loading');
+      submitButton.disabled = false;
+      submitButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Sign In to Dashboard
+      `;
+      
+      if (data.success) {
+        showMessage(data.message, 'success');
         
         // Store admin session
         localStorage.setItem('adminLoggedIn', 'true');
         localStorage.setItem('adminEmail', email);
+        localStorage.setItem('adminName', data.admin.name);
+        localStorage.setItem('adminRole', data.admin.role);
         localStorage.setItem('loginTime', new Date().toISOString());
         
         // Redirect to admin dashboard
@@ -76,14 +99,24 @@ document.addEventListener('DOMContentLoaded', function() {
           window.location.href = 'admin.html';
         }, 1500);
       } else {
-        submitButton.classList.remove('loading');
-        submitButton.disabled = false;
-        showMessage('Invalid credentials. Please try again.', 'error');
+        showMessage(data.message, 'error');
         
         // Log failed attempt
         logFailedAttempt(email);
       }
-    }, 1500);
+    })
+    .catch(error => {
+      console.error('Admin login error:', error);
+      submitButton.classList.remove('loading');
+      submitButton.disabled = false;
+      submitButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Sign In to Dashboard
+      `;
+      showMessage('An error occurred. Please try again.', 'error');
+    });
   });
   
   // Check if already logged in

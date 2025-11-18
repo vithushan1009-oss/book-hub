@@ -6,11 +6,11 @@
   <title>Admin Login — BOOK HUB</title>
   
   <!-- CSS Files -->
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/auth.css">
-  <link rel="stylesheet" href="css/admin-login.css">
+  <link rel="stylesheet" href="static/css/variables.css">
+  <link rel="stylesheet" href="static/css/base.css">
+  <link rel="stylesheet" href="static/css/components.css">
+  <link rel="stylesheet" href="static/css/auth.css">
+  <link rel="stylesheet" href="static/css/admin-login.css">
 </head>
 <body class="admin-login-page">
   <!-- Auth Container -->
@@ -94,7 +94,10 @@
             <p>Sign in with your administrator credentials</p>
           </div>
 
-          <form class="auth-form" id="admin-login-form">
+          <!-- Message Container -->
+          <div id="message-container"></div>
+
+          <form class="auth-form" id="admin-login-form" action="../handler/admin-login-handler.php" method="POST">
             <div class="form-group">
               <label for="admin-email">Administrator Email</label>
               <div class="input-with-icon">
@@ -129,13 +132,13 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
-                <input type="text" id="admin-code" name="code" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}">
+                <input type="text" id="admin-code" name="two_factor_code" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}">
               </div>
             </div>
 
             <div class="form-options">
               <label class="checkbox-label">
-                <input type="checkbox" name="remember">
+                <input type="checkbox" name="remember" value="1">
                 <span>Remember this device</span>
               </label>
               <a href="#" class="forgot-password">Request Access</a>
@@ -181,7 +184,38 @@
   </div>
 
   <!-- JavaScript Files -->
-  <script src="js/common.js"></script>
-  <script src="js/admin-login.js"></script>
+  <script src="static/js/common.js"></script>
+  <script src="static/js/admin-login.js"></script>
+  
+  <!-- Message Display Script -->
+  <script>
+  function displayMessages() {
+    const params = new URLSearchParams(window.location.search);
+    const messageContainer = document.getElementById('message-container');
+    const error = params.get('error');
+    const success = params.get('success');
+    if (error) {
+      messageContainer.innerHTML = `<div class="alert alert-error">${decodeURIComponent(error)}</div>`;
+      params.delete('error');
+      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+    }
+    if (success) {
+      messageContainer.innerHTML = `<div class="alert alert-success">${decodeURIComponent(success)}</div>`;
+      params.delete('success');
+      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+    }
+    if (error || success) {
+      setTimeout(() => {
+        const alert = messageContainer.querySelector('.alert');
+        if (alert) {
+          alert.style.opacity = '0';
+          alert.style.transition = 'opacity 0.3s';
+          setTimeout(() => messageContainer.innerHTML = '', 300);
+        }
+      }, 5000);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', displayMessages);
+  </script>
 </body>
 </html>

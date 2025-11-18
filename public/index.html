@@ -7,15 +7,18 @@
   <title>BOOK HUB - Discover Your Next Great Read</title>
   
   <!-- CSS Files -->
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/navigation.css">
-  <link rel="stylesheet" href="css/footer.css">
-  <link rel="stylesheet" href="css/books.css">
-  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="static/css/variables.css">
+  <link rel="stylesheet" href="static/css/base.css">
+  <link rel="stylesheet" href="static/css/components.css">
+  <link rel="stylesheet" href="static/css/navigation.css">
+  <link rel="stylesheet" href="static/css/footer.css">
+  <link rel="stylesheet" href="static/css/books.css">
+  <link rel="stylesheet" href="static/css/home.css">
 </head>
 <body class="home-page">
+  <!-- Success Message Container -->
+  <div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+  
   <!-- Navigation -->
   <nav>
     <div class="container">
@@ -444,7 +447,30 @@
   </footer>
 
   <!-- JavaScript Files -->
-  <script src="js/common.js"></script>
-  <script src="js/home.js"></script>
+  <script src="static/js/common.js"></script>
+  <script src="static/js/home.js"></script>
+  
+  <!-- Message Display Script -->
+  <script>
+  function displayMessages() {
+    const params = new URLSearchParams(window.location.search);
+    const messageContainer = document.getElementById('message-container');
+    const success = params.get('success');
+    if (success) {
+      messageContainer.innerHTML = `<div class="alert alert-success" style="padding: 16px 20px; background: #10b981; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); font-size: 15px;">${decodeURIComponent(success)}</div>`;
+      params.delete('success');
+      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+      setTimeout(() => {
+        const alert = messageContainer.querySelector('.alert');
+        if (alert) {
+          alert.style.opacity = '0';
+          alert.style.transition = 'opacity 0.3s';
+          setTimeout(() => messageContainer.innerHTML = '', 300);
+        }
+      }, 4000);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', displayMessages);
+  </script>
 </body>
 </html>

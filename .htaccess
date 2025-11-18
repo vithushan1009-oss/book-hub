@@ -1,0 +1,141 @@
+# BOOK HUB - Security & Configuration
+
+# Disable directory browsing
+Options -Indexes
+
+# Prevent viewing of .htaccess file
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect sensitive files and directories
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect src directory from direct access
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/src/
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+# Protect database directory
+<FilesMatch "\.(sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Enable XSS protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (adjust as needed)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+    
+    # Remove X-Powered-By header
+    Header unset X-Powered-By
+</IfModule>
+
+# Error Pages
+ErrorDocument 404 /404.html
+ErrorDocument 403 /403.html
+ErrorDocument 500 /500.html
+
+# Custom PHP settings
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_value error_log error_log.txt
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 30
+    php_value max_input_time 30
+</IfModule>
+
+# URL Rewriting for clean URLs and routing
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /BOOKHUB/book-hub-central/
+    
+    # Force HTTPS (uncomment when you have SSL certificate)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Protect src directory
+    RewriteRule ^src/ - [F,L]
+    
+    # Allow direct access to static files
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^public/(static|assets)/ - [L]
+    
+    # Route everything through index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+    
+    # Remove trailing slashes
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [R=301,L]
+    
+    # Protect against SQL injection attempts
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule ^(.*)$ index.php [F,L]
+</IfModule>
+
+# Cache Control for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Images
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS and JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    
+    # Fonts
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    
+    # HTML (no cache)
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# Prevent access to backup and log files
+<FilesMatch "\.(bak|config|sql|log|txt|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow access to specific files
+<FilesMatch "^(SETUP\.md|README\.md)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>

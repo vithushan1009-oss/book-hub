@@ -83,8 +83,8 @@ function calculatePasswordStrength(password) {
 
 // Form Validation
 function initFormValidation() {
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
   
   if (loginForm) {
     loginForm.addEventListener('submit', handleLoginSubmit);
@@ -100,6 +100,7 @@ function handleLoginSubmit(e) {
   
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+  const rememberMe = document.querySelector('input[name="remember"]').checked;
   const submitBtn = e.target.querySelector('.auth-submit');
   
   // Clear previous errors
@@ -123,20 +124,47 @@ function handleLoginSubmit(e) {
   // Show loading state
   submitBtn.classList.add('loading');
   submitBtn.disabled = true;
+  submitBtn.textContent = 'Signing in...';
   
-  // Simulate API call
-  setTimeout(() => {
+  // API call
+  fetch('api/login.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+      rememberMe: rememberMe
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
     submitBtn.classList.remove('loading');
     submitBtn.disabled = false;
+    submitBtn.textContent = 'Sign In';
     
-    // Success animation
-    showSuccessMessage('Login successful! Redirecting...');
-    
-    // Redirect to home page after 1.5 seconds
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1500);
-  }, 1500);
+    if (data.success) {
+      showSuccessMessage(data.message);
+      
+      // Store user info
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Redirect to home page after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    } else {
+      showError('email', data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Login error:', error);
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Sign In';
+    showError('email', 'An error occurred. Please try again.');
+  });
 }
 
 function handleRegisterSubmit(e) {
@@ -147,7 +175,7 @@ function handleRegisterSubmit(e) {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirm-password').value;
-  const terms = document.getElementById('terms').checked;
+  const terms = document.querySelector('input[name="terms"]').checked;
   const submitBtn = e.target.querySelector('.auth-submit');
   
   // Clear previous errors
@@ -191,20 +219,45 @@ function handleRegisterSubmit(e) {
   // Show loading state
   submitBtn.classList.add('loading');
   submitBtn.disabled = true;
+  submitBtn.textContent = 'Creating Account...';
   
-  // Simulate API call
-  setTimeout(() => {
+  // API call
+  fetch('api/register.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
     submitBtn.classList.remove('loading');
     submitBtn.disabled = false;
+    submitBtn.textContent = 'Create Account';
     
-    // Success animation
-    showSuccessMessage('Account created successfully! Redirecting...');
-    
-    // Redirect to login page after 1.5 seconds
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 1500);
-  }, 1500);
+    if (data.success) {
+      showSuccessMessage(data.message);
+      
+      // Redirect to login page after 3 seconds
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 3000);
+    } else {
+      showError('email', data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Registration error:', error);
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Create Account';
+    showError('email', 'An error occurred. Please try again.');
+  });
 }
 
 function isValidEmail(email) {
