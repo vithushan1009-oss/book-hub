@@ -75,7 +75,7 @@
       <div class="auth-form-container">
         <div class="auth-form-wrapper">
           <!-- Back to Site Link -->
-          <a href="index.html" class="back-to-site">
+          <a href="/BOOKHUB/book-hub-central/public/index.php" class="back-to-site">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="19" y1="12" x2="5" y2="12"/>
               <polyline points="12 19 5 12 12 5"/>
@@ -97,7 +97,7 @@
           <!-- Message Container -->
           <div id="message-container"></div>
 
-          <form class="auth-form" id="admin-login-form" action="../handler/admin-login-handler.php" method="POST">
+          <form class="auth-form" id="admin-login-form" action="/BOOKHUB/book-hub-central/src/handlers/admin-login-handler.php" method="POST">
             <div class="form-group">
               <label for="admin-email">Administrator Email</label>
               <div class="input-with-icon">
@@ -123,16 +123,6 @@
                     <circle cx="12" cy="12" r="3"/>
                   </svg>
                 </button>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="admin-code">Two-Factor Authentication Code (Optional)</label>
-              <div class="input-with-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                <input type="text" id="admin-code" name="two_factor_code" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}">
               </div>
             </div>
 
@@ -175,7 +165,7 @@
           </div>
 
           <div class="auth-footer admin-footer">
-            <p>Need help? <a href="contact.html">Contact Support</a></p>
+            <p>Need help? <a href="/BOOKHUB/book-hub-central/public/contact.php">Contact Support</a></p>
             <p class="copyright">&copy; 2025 BOOK HUB. All rights reserved.</p>
           </div>
         </div>

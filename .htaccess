@@ -86,6 +86,10 @@ ErrorDocument 500 /500.html
     RewriteCond %{DOCUMENT_ROOT}/BOOKHUB/book-hub-central/public%{REQUEST_URI} -f
     RewriteRule ^(.*)$ public/$1 [L]
     
+    # Allow direct access to src/handlers and src/views
+    RewriteCond %{REQUEST_URI} ^/BOOKHUB/book-hub-central/src/(handlers|views)/
+    RewriteRule ^(.*)$ - [L]
+    
     # Allow direct access to public files (CSS, JS, images)
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^(public/.*|static/.*|assets/.*)$ - [L]

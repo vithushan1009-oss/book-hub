@@ -20,20 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const loginForm = document.getElementById('admin-login-form');
   const emailInput = document.getElementById('admin-email');
   const passwordInput = document.getElementById('admin-password');
-  const codeInput = document.getElementById('admin-code');
   const submitButton = loginForm.querySelector('.admin-submit');
-  
-  // Auto-format 2FA code (numbers only)
-  if (codeInput) {
-    codeInput.addEventListener('input', function(e) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-    });
-  }
   
   // Form submission
   loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
     // Remove any existing messages
     const existingMessages = document.querySelectorAll('.error-message, .success-message');
     existingMessages.forEach(msg => msg.remove());
@@ -41,10 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get form values
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    const code = codeInput.value.trim();
     
     // Basic validation
     if (!email || !password) {
+      e.preventDefault();
       showMessage('Please fill in all required fields.', 'error');
       return;
     }
@@ -52,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      e.preventDefault();
       showMessage('Please enter a valid email address.', 'error');
       return;
     }
@@ -61,66 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
     submitButton.disabled = true;
     submitButton.textContent = 'Signing in...';
     
-    // API call
-    fetch('api/admin-login.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        twoFactorCode: code || null
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      submitButton.classList.remove('loading');
-      submitButton.disabled = false;
-      submitButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        Sign In to Dashboard
-      `;
-      
-      if (data.success) {
-        showMessage(data.message, 'success');
-        
-        // Store admin session
-        localStorage.setItem('adminLoggedIn', 'true');
-        localStorage.setItem('adminEmail', email);
-        localStorage.setItem('adminName', data.admin.name);
-        localStorage.setItem('adminRole', data.admin.role);
-        localStorage.setItem('loginTime', new Date().toISOString());
-        
-        // Redirect to admin dashboard
-        setTimeout(() => {
-          window.location.href = 'admin.html';
-        }, 1500);
-      } else {
-        showMessage(data.message, 'error');
-        
-        // Log failed attempt
-        logFailedAttempt(email);
-      }
-    })
-    .catch(error => {
-      console.error('Admin login error:', error);
-      submitButton.classList.remove('loading');
-      submitButton.disabled = false;
-      submitButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        Sign In to Dashboard
-      `;
-      showMessage('An error occurred. Please try again.', 'error');
-    });
+    // Form will submit normally to PHP handler
   });
-  
-  // Check if already logged in
-  checkAdminSession();
   
   // Auto-focus email field
   emailInput.focus();
@@ -146,25 +79,7 @@ function showMessage(message, type) {
 
 // ===== Check Admin Session =====
 function checkAdminSession() {
-  const isLoggedIn = localStorage.getItem('adminLoggedIn');
-  const loginTime = localStorage.getItem('loginTime');
-  
-  if (isLoggedIn === 'true' && loginTime) {
-    const loginDate = new Date(loginTime);
-    const now = new Date();
-    const hoursSinceLogin = (now - loginDate) / (1000 * 60 * 60);
-    
-    // Session valid for 8 hours
-    if (hoursSinceLogin < 8) {
-      // Redirect to dashboard if already logged in
-      window.location.href = 'admin.html';
-    } else {
-      // Clear expired session
-      localStorage.removeItem('adminLoggedIn');
-      localStorage.removeItem('adminEmail');
-      localStorage.removeItem('loginTime');
-    }
-  }
+  // Removed auto-redirect - let PHP handle session checking
 }
 
 // ===== Log Failed Attempt =====
