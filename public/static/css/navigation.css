@@ -25,6 +25,39 @@ body.home-page nav .nav-logo svg {
   color: white;
 }
 
+/* User nav actions on home page - white theme */
+body.home-page nav .notification-btn {
+  color: white;
+}
+
+body.home-page nav .notification-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+body.home-page nav .user-profile-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+body.home-page nav .user-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+body.home-page nav .user-name-display {
+  color: white;
+}
+
+body.home-page nav .dropdown-arrow {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+body.home-page nav .user-profile-btn.active .dropdown-arrow {
+  color: white;
+}
+
 /* Solid nav for other pages */
 body:not(.home-page) nav {
   background: rgba(255, 255, 255, 0.95);
@@ -54,6 +87,39 @@ body.home-page nav.scrolled .nav-logo svg {
 
 body.home-page nav.scrolled .nav-logo .accent {
   color: var(--secondary);
+}
+
+/* Revert user nav actions to normal when scrolled */
+body.home-page nav.scrolled .notification-btn {
+  color: var(--foreground);
+}
+
+body.home-page nav.scrolled .notification-btn:hover {
+  background: var(--muted);
+  color: var(--primary);
+}
+
+body.home-page nav.scrolled .user-profile-btn {
+  background: var(--background);
+  border-color: var(--border);
+}
+
+body.home-page nav.scrolled .user-profile-btn:hover {
+  background: var(--muted);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.home-page nav.scrolled .user-name-display {
+  color: var(--foreground);
+}
+
+body.home-page nav.scrolled .dropdown-arrow {
+  color: var(--muted-foreground);
+}
+
+body.home-page nav.scrolled .user-profile-btn.active .dropdown-arrow {
+  color: var(--primary);
 }
 
 .nav-content {
@@ -131,6 +197,24 @@ body.home-page nav.scrolled .nav-logo .accent {
   display: block;
   color: var(--primary);
   font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: var(--transition-smooth);
+}
+
+/* Mobile menu button on home page */
+body.home-page nav .mobile-menu-btn {
+  color: white;
+}
+
+body.home-page nav.scrolled .mobile-menu-btn {
+  color: var(--primary);
+}
+
+.mobile-menu-btn:hover {
+  opacity: 0.8;
 }
 
 .mobile-menu {
@@ -142,6 +226,25 @@ body.home-page nav.scrolled .nav-logo .accent {
 
 .mobile-menu.active {
   display: flex;
+}
+
+/* Mobile menu on home page needs background */
+body.home-page nav .mobile-menu {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  margin: 1rem -1rem -1.5rem -1rem;
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.home-page nav .mobile-menu a {
+  color: var(--foreground);
+}
+
+body.home-page nav .mobile-menu .btn-outline {
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .mobile-menu a {

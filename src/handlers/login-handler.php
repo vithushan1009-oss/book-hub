@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: ../../login.html');
+    header('Location: /BOOKHUB/book-hub-central/public/login.html');
     exit();
 }
 
@@ -25,7 +25,7 @@ $attempts = $result->fetch_assoc()['attempts'];
 
 if ($attempts >= $max_attempts) {
     $_SESSION['error'] = "Too many failed attempts. Please try again in 15 minutes.";
-    header('Location: ../../login.html?error=' . urlencode('Too many failed attempts. Please try again in 15 minutes.'));
+    header('Location: /BOOKHUB/book-hub-central/public/login.html?error=' . urlencode('Too many failed attempts. Please try again in 15 minutes.'));
     exit();
 }
 
@@ -45,7 +45,7 @@ if ($result->num_rows == 0) {
     $log_stmt->execute();
     
     $_SESSION['error'] = 'Invalid email or password';
-    header('Location: ../../login.html?error=' . urlencode('Invalid email or password'));
+    header('Location: /BOOKHUB/book-hub-central/public/login.html?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
@@ -60,14 +60,14 @@ if (!password_verify($password, $user['password'])) {
     $log_stmt->execute();
     
     $_SESSION['error'] = 'Invalid email or password';
-    header('Location: ../../login.html?error=' . urlencode('Invalid email or password'));
+    header('Location: /BOOKHUB/book-hub-central/public/login.html?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
 // Check if email is verified
 if (!$user['email_verified']) {
     $_SESSION['error'] = 'Please verify your email before logging in. Check your inbox for the verification link.';
-    header('Location: ../../login.html?error=' . urlencode('Please verify your email before logging in.'));
+    header('Location: /BOOKHUB/book-hub-central/public/login.html?error=' . urlencode('Please verify your email before logging in.'));
     exit();
 }
 
@@ -96,15 +96,16 @@ if ($remember) {
     setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/');
     
     // Store token in database
-    $token_sql = "INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))";
+    $expires_at = date('Y-m-d H:i:s', strtotime('+30 days'));
+    $token_sql = "INSERT INTO sessions (user_id, token, user_type, expires_at) VALUES (?, ?, 'user', ?)";
     $token_stmt = $conn->prepare($token_sql);
-    $token_stmt->bind_param("is", $user['id'], $token);
+    $token_stmt->bind_param("iss", $user['id'], $token, $expires_at);
     $token_stmt->execute();
 }
 
 $conn->close();
 
 // Redirect to user dashboard
-header('Location: ../../user.php');
+header('Location: /BOOKHUB/book-hub-central/src/views/user.php');
 exit();
 ?>

@@ -1,5 +1,30 @@
 // BOOK HUB - Authentication Page Scripts
 
+// Global function for password toggle (called from HTML)
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  
+  const button = input.closest('.input-with-icon').querySelector('.toggle-password');
+  const eyeIcon = button.querySelector('.eye-open');
+  const eyeOffIcon = button.querySelector('.eye-off');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (eyeIcon) eyeIcon.style.display = 'none';
+    if (eyeOffIcon) {
+      eyeOffIcon.style.display = 'block';
+    } else {
+      // If eye-off doesn't exist, just hide eye-open
+      button.innerHTML = '<svg class="eye-off" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    }
+  } else {
+    input.type = 'password';
+    if (eyeIcon) eyeIcon.style.display = 'block';
+    if (eyeOffIcon) eyeOffIcon.style.display = 'none';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   initPasswordToggle();
   initPasswordStrength();
@@ -96,12 +121,8 @@ function initFormValidation() {
 }
 
 function handleLoginSubmit(e) {
-  e.preventDefault();
-  
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
-  const rememberMe = document.querySelector('input[name="remember"]').checked;
-  const submitBtn = e.target.querySelector('.auth-submit');
   
   // Clear previous errors
   clearErrors();
@@ -119,64 +140,27 @@ function handleLoginSubmit(e) {
     isValid = false;
   }
   
-  if (!isValid) return;
+  if (!isValid) {
+    e.preventDefault();
+    return false;
+  }
   
   // Show loading state
+  const submitBtn = e.target.querySelector('.auth-submit');
   submitBtn.classList.add('loading');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Signing in...';
   
-  // API call
-  fetch('api/login.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password,
-      rememberMe: rememberMe
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Sign In';
-    
-    if (data.success) {
-      showSuccessMessage(data.message);
-      
-      // Store user info
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Redirect to home page after 1.5 seconds
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
-    } else {
-      showError('email', data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Login error:', error);
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Sign In';
-    showError('email', 'An error occurred. Please try again.');
-  });
+  // Allow form to submit naturally - don't prevent default
 }
 
 function handleRegisterSubmit(e) {
-  e.preventDefault();
-  
   const firstName = document.getElementById('first-name').value;
   const lastName = document.getElementById('last-name').value;
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirm-password').value;
   const terms = document.querySelector('input[name="terms"]').checked;
-  const submitBtn = e.target.querySelector('.auth-submit');
   
   // Clear previous errors
   clearErrors();
@@ -214,50 +198,18 @@ function handleRegisterSubmit(e) {
     isValid = false;
   }
   
-  if (!isValid) return;
+  if (!isValid) {
+    e.preventDefault();
+    return false;
+  }
   
   // Show loading state
+  const submitBtn = e.target.querySelector('.auth-submit');
   submitBtn.classList.add('loading');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Creating Account...';
   
-  // API call
-  fetch('api/register.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Create Account';
-    
-    if (data.success) {
-      showSuccessMessage(data.message);
-      
-      // Redirect to login page after 3 seconds
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 3000);
-    } else {
-      showError('email', data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Registration error:', error);
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Create Account';
-    showError('email', 'An error occurred. Please try again.');
-  });
+  // Allow form to submit naturally - don't prevent default
 }
 
 function isValidEmail(email) {

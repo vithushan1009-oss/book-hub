@@ -15,14 +15,14 @@ Options -Indexes
     Deny from all
 </FilesMatch>
 
-# Protect src directory from direct access
-<IfModule mod_rewrite.c>
-    RewriteCond %{REQUEST_URI} ^/src/
-    RewriteRule ^ - [F,L]
-</IfModule>
-
 # Protect database directory
 <FilesMatch "\.(sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect config.php and other sensitive PHP files in src (except handlers)
+<FilesMatch "config\.php$">
     Order allow,deny
     Deny from all
 </FilesMatch>
@@ -80,9 +80,6 @@ ErrorDocument 500 /500.html
     # Force HTTPS (uncomment when you have SSL certificate)
     # RewriteCond %{HTTPS} off
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-    
-    # Protect src directory
-    RewriteRule ^src/ - [F,L]
     
     # Allow direct access to HTML files in public directory
     RewriteCond %{REQUEST_URI} \.html$
