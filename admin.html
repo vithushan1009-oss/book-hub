@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BOOK HUB - Admin Dashboard">
+  <title>Admin Dashboard - BOOK HUB</title>
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+  
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+        </svg>
+        <span>BOOK <span class="accent">HUB</span></span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h3 class="nav-section-title">Main</h3>
+        <a href="#dashboard" class="nav-item active" data-section="dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#books" class="nav-item" data-section="books">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+          </svg>
+          <span>Books</span>
+        </a>
+        <a href="#users" class="nav-item" data-section="users">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Users</span>
+        </a>
+        <a href="#rentals" class="nav-item" data-section="rentals">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>Rentals</span>
+        </a>
+        <a href="#sales" class="nav-item" data-section="sales">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="8" cy="21" r="1"/>
+            <circle cx="19" cy="21" r="1"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+          <span>Sales</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">Management</h3>
+        <a href="#categories" class="nav-item" data-section="categories">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          <span>Categories</span>
+        </a>
+        <a href="#inventory" class="nav-item" data-section="inventory">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+          <span>Inventory</span>
+        </a>
+        <a href="#reviews" class="nav-item" data-section="reviews">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Reviews</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h3 class="nav-section-title">Settings</h3>
+        <a href="#settings" class="nav-item" data-section="settings">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m-9-9h6m6 0h6m-3.87-6.87 4.24 4.24m-12.73 0 4.24 4.24m0 6.36 4.24 4.24m-12.73 0 4.24 4.24"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name">Admin User</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn-logout" title="Logout">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <button class="mobile-menu-btn" id="mobileSidebarToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      
+      <div class="top-bar-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="text" placeholder="Search books, users, orders...">
+      </div>
+
+      <div class="top-bar-actions">
+        <button class="icon-btn" title="Notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="badge">5</span>
+        </button>
+        <a href="index.html" class="icon-btn" title="View Website">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="content-area">
+      <!-- Dashboard Section -->
+      <section id="dashboard-section" class="content-section active">
+        <div class="section-header">
+          <h1>Dashboard Overview</h1>
+          <div class="header-actions">
+            <button class="btn btn-outline btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Total Books</div>
+              <div class="stat-value">10,234</div>
+              <div class="stat-change positive">+12% from last month</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Active Users</div>
+              <div class="stat-value">5,428</div>
+              <div class="stat-change positive">+8% from last month</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon accent">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Active Rentals</div>
+              <div class="stat-value">1,842</div>
+              <div class="stat-change positive">+18% from last month</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Monthly Revenue</div>
+              <div class="stat-value">$48,392</div>
+              <div class="stat-change positive">+23% from last month</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts and Recent Activity -->
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3>Recent Sales</h3>
+              <button class="btn-link">View All</button>
+            </div>
+            <div class="card-content">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Book</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#ORD-001</td>
+                    <td>Fiction Fomen</td>
+                    <td>John Doe</td>
+                    <td>$12.99</td>
+                    <td><span class="status-badge success">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-002</td>
+                    <td>Mystic Tales</td>
+                    <td>Jane Smith</td>
+                    <td>$15.99</td>
+                    <td><span class="status-badge success">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-003</td>
+                    <td>Science Wonders</td>
+                    <td>Bob Johnson</td>
+                    <td>$18.50</td>
+                    <td><span class="status-badge pending">Processing</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-004</td>
+                    <td>Nook</td>
+                    <td>Alice Brown</td>
+                    <td>$10.99</td>
+                    <td><span class="status-badge success">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-005</td>
+                    <td>Fiction Fomen</td>
+                    <td>Charlie Wilson</td>
+                    <td>$12.99</td>
+                    <td><span class="status-badge pending">Processing</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3>Popular Books</h3>
+              <button class="btn-link">View All</button>
+            </div>
+            <div class="card-content">
+              <div class="popular-books-list">
+                <div class="popular-book-item">
+                  <div class="book-rank">1</div>
+                  <div class="book-info">
+                    <div class="book-title">Fiction Fomen</div>
+                    <div class="book-meta">Shen Gerdings • 428 sales</div>
+                  </div>
+                  <div class="book-trend positive">+15%</div>
+                </div>
+                <div class="popular-book-item">
+                  <div class="book-rank">2</div>
+                  <div class="book-info">
+                    <div class="book-title">Mystic Tales</div>
+                    <div class="book-meta">Fantasy Author • 392 sales</div>
+                  </div>
+                  <div class="book-trend positive">+12%</div>
+                </div>
+                <div class="popular-book-item">
+                  <div class="book-rank">3</div>
+                  <div class="book-info">
+                    <div class="book-title">Nook</div>
+                    <div class="book-meta">Bab Giuing • 354 sales</div>
+                  </div>
+                  <div class="book-trend positive">+8%</div>
+                </div>
+                <div class="popular-book-item">
+                  <div class="book-rank">4</div>
+                  <div class="book-info">
+                    <div class="book-title">Science Wonders</div>
+                    <div class="book-meta">Knowledge Seeker • 298 sales</div>
+                  </div>
+                  <div class="book-trend negative">-3%</div>
+                </div>
+                <div class="popular-book-item">
+                  <div class="book-rank">5</div>
+                  <div class="book-info">
+                    <div class="book-title">History Chronicles</div>
+                    <div class="book-meta">History Writer • 276 sales</div>
+                  </div>
+                  <div class="book-trend positive">+5%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Books Section -->
+      <section id="books-section" class="content-section">
+        <div class="section-header">
+          <h1>Books Management</h1>
+          <div class="header-actions">
+            <button class="btn btn-secondary btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add New Book
+            </button>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-filters">
+            <input type="text" placeholder="Search books..." class="filter-input">
+            <select class="filter-select">
+              <option>All Categories</option>
+              <option>Fiction</option>
+              <option>Non-Fiction</option>
+              <option>Science</option>
+              <option>Fantasy</option>
+            </select>
+            <select class="filter-select">
+              <option>All Status</option>
+              <option>Available</option>
+              <option>Out of Stock</option>
+            </select>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="book-cover">FF</div></td>
+                <td>Fiction Fomen</td>
+                <td>Shen Gerdings</td>
+                <td>Fiction</td>
+                <td>45</td>
+                <td>$12.99</td>
+                <td><span class="status-badge success">Available</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="book-cover">MT</div></td>
+                <td>Mystic Tales</td>
+                <td>Fantasy Author</td>
+                <td>Fantasy</td>
+                <td>32</td>
+                <td>$15.99</td>
+                <td><span class="status-badge success">Available</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="book-cover">NK</div></td>
+                <td>Nook</td>
+                <td>Bab Giuing</td>
+                <td>Fiction</td>
+                <td>0</td>
+                <td>$10.99</td>
+                <td><span class="status-badge danger">Out of Stock</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="book-cover">SW</div></td>
+                <td>Science Wonders</td>
+                <td>Knowledge Seeker</td>
+                <td>Science</td>
+                <td>28</td>
+                <td>$18.50</td>
+                <td><span class="status-badge success">Available</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="table-pagination">
+            <div class="pagination-info">Showing 1-4 of 10,234</div>
+            <div class="pagination-controls">
+              <button class="btn btn-outline btn-sm">Previous</button>
+              <button class="btn btn-outline btn-sm active">1</button>
+              <button class="btn btn-outline btn-sm">2</button>
+              <button class="btn btn-outline btn-sm">3</button>
+              <button class="btn btn-outline btn-sm">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Users Section -->
+      <section id="users-section" class="content-section">
+        <div class="section-header">
+          <h1>Users Management</h1>
+          <div class="header-actions">
+            <button class="btn btn-secondary btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add New User
+            </button>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="card-filters">
+            <input type="text" placeholder="Search users..." class="filter-input">
+            <select class="filter-select">
+              <option>All Roles</option>
+              <option>Admin</option>
+              <option>Customer</option>
+            </select>
+            <select class="filter-select">
+              <option>All Status</option>
+              <option>Active</option>
+              <option>Inactive</option>
+            </select>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Avatar</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="user-avatar-sm">JD</div></td>
+                <td>John Doe</td>
+                <td>john.doe@example.com</td>
+                <td>Customer</td>
+                <td>2025-01-15</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="user-avatar-sm">JS</div></td>
+                <td>Jane Smith</td>
+                <td>jane.smith@example.com</td>
+                <td>Customer</td>
+                <td>2025-02-10</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="user-avatar-sm">BJ</div></td>
+                <td>Bob Johnson</td>
+                <td>bob.johnson@example.com</td>
+                <td>Customer</td>
+                <td>2025-03-05</td>
+                <td><span class="status-badge warning">Inactive</span></td>
+                <td>
+                  <button class="icon-btn-sm" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn-sm" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Other sections (Rentals, Sales, etc.) with placeholder content -->
+      <section id="rentals-section" class="content-section">
+        <div class="section-header">
+          <h1>Rentals Management</h1>
+        </div>
+        <div class="content-card">
+          <p>Rental management content will be displayed here.</p>
+        </div>
+      </section>
+
+      <section id="sales-section" class="content-section">
+        <div class="section-header">
+          <h1>Sales Management</h1>
+        </div>
+        <div class="content-card">
+          <p>Sales management content will be displayed here.</p>
+        </div>
+      </section>
+
+      <section id="categories-section" class="content-section">
+        <div class="section-header">
+          <h1>Categories Management</h1>
+        </div>
+        <div class="content-card">
+          <p>Categories management content will be displayed here.</p>
+        </div>
+      </section>
+
+      <section id="inventory-section" class="content-section">
+        <div class="section-header">
+          <h1>Inventory Management</h1>
+        </div>
+        <div class="content-card">
+          <p>Inventory management content will be displayed here.</p>
+        </div>
+      </section>
+
+      <section id="reviews-section" class="content-section">
+        <div class="section-header">
+          <h1>Reviews Management</h1>
+        </div>
+        <div class="content-card">
+          <p>Reviews management content will be displayed here.</p>
+        </div>
+      </section>
+
+      <section id="settings-section" class="content-section">
+        <div class="section-header">
+          <h1>Settings</h1>
+        </div>
+        <div class="content-card">
+          <p>Settings content will be displayed here.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- JavaScript Files -->
+  <script src="js/admin.js"></script>
+</body>
+</html>
