@@ -7,6 +7,11 @@
 // Include configuration
 require_once __DIR__ . '/src/config.php';
 
+// Start session for all requests (check if not already started)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Get the request URI
 $request_uri = $_SERVER['REQUEST_URI'];
 $base_path = '/BOOKHUB/book-hub-central';

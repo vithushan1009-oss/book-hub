@@ -1,38 +1,6 @@
 // BOOK HUB - Admin Dashboard JavaScript
 
-// ===== Check Authentication =====
-function checkAuthentication() {
-  const isLoggedIn = localStorage.getItem('adminLoggedIn');
-  const loginTime = localStorage.getItem('loginTime');
-  
-  if (isLoggedIn !== 'true' || !loginTime) {
-    // Redirect to admin login if not authenticated
-    window.location.href = 'admin-login.html';
-    return false;
-  }
-  
-  // Check session expiry (8 hours)
-  const loginDate = new Date(loginTime);
-  const now = new Date();
-  const hoursSinceLogin = (now - loginDate) / (1000 * 60 * 60);
-  
-  if (hoursSinceLogin >= 8) {
-    // Clear expired session
-    localStorage.removeItem('adminLoggedIn');
-    localStorage.removeItem('adminEmail');
-    localStorage.removeItem('loginTime');
-    window.location.href = 'admin-login.html';
-    return false;
-  }
-  
-  return true;
-}
-
-// Run authentication check immediately
-if (!checkAuthentication()) {
-  // Stop script execution if not authenticated
-  throw new Error('Authentication required');
-}
+console.log('Admin Dashboard JavaScript loaded');
 
 // ===== Global State =====
 const state = {
@@ -40,35 +8,169 @@ const state = {
   currentSection: 'dashboard'
 };
 
-// ===== DOM Elements =====
-const sidebar = document.getElementById('sidebar');
-const sidebarToggle = document.getElementById('sidebarToggle');
-const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
-const navItems = document.querySelectorAll('.nav-item');
-const contentSections = document.querySelectorAll('.content-section');
+// ===== DOM Ready =====
+document.addEventListener('DOMContentLoaded', function() {
+  initializeDashboard();
+});
 
-// ===== Sidebar Functions =====
-function toggleSidebar() {
-  state.sidebarCollapsed = !state.sidebarCollapsed;
-  sidebar.classList.toggle('collapsed');
-  localStorage.setItem('sidebarCollapsed', state.sidebarCollapsed);
+// ===== Initialize Dashboard =====
+function initializeDashboard() {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+  const navItems = document.querySelectorAll('.nav-item');
+  const logoutBtn = document.querySelector('.btn-logout');
+  const themeToggle = document.getElementById('themeToggle');
+
+  // Theme Toggle
+  if (themeToggle) {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    themeToggle.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+  }
+
+  // Sidebar toggle (desktop)
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('collapsed');
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      localStorage.setItem('sidebarCollapsed', state.sidebarCollapsed);
+    });
+  }
+
+  // Mobile sidebar toggle
+  if (mobileSidebarToggle) {
+    mobileSidebarToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('mobile-visible');
+    });
+  }
+
+  // Navigation items
+  navItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      const sectionId = this.dataset.section;
+      
+      if (sectionId) {
+        // Remove active class from all nav items
+        navItems.forEach(nav => nav.classList.remove('active'));
+        
+        // Add active class to clicked item
+        this.classList.add('active');
+        
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section
+        const selectedSection = document.getElementById(`${sectionId}-section`);
+        if (selectedSection) {
+          selectedSection.classList.add('active');
+        }
+        
+        // Close mobile sidebar
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove('mobile-visible');
+        }
+        
+        // Update state
+        state.currentSection = sectionId;
+        localStorage.setItem('currentSection', sectionId);
+      }
+    });
+  });
+
+  // Logout functionality
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      if (confirm('Are you sure you want to logout?')) {
+        // Redirect to logout handler
+        window.location.href = '/BOOKHUB/book-hub-central/src/handlers/admin-logout-handler.php';
+      }
+    });
+  }
+
+  // Close mobile sidebar when clicking outside
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768 && sidebar) {
+      const isClickInsideSidebar = sidebar.contains(e.target);
+      const isClickOnToggle = mobileSidebarToggle && mobileSidebarToggle.contains(e.target);
+      
+      if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('mobile-visible')) {
+        sidebar.classList.remove('mobile-visible');
+      }
+    }
+  });
+
+  // Restore sidebar state
+  const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+  if (savedSidebarState === 'true' && sidebar) {
+    sidebar.classList.add('collapsed');
+    state.sidebarCollapsed = true;
+  }
+
+  // Restore section state
+  const savedSection = localStorage.getItem('currentSection');
+  const hash = window.location.hash.substring(1);
+  
+  if (hash) {
+    switchToSection(hash);
+  } else if (savedSection) {
+    switchToSection(savedSection);
+  }
+
+  // Handle hash changes
+  window.addEventListener('hashchange', function() {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      switchToSection(hash);
+    }
+  });
+
+  // Responsive behavior
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      if (window.innerWidth > 768 && sidebar) {
+        sidebar.classList.remove('mobile-visible');
+      }
+    }, 250);
+  });
+
+  // Add smooth animations to stat cards
+  animateStatCards();
+
+  console.log('Dashboard initialized successfully');
 }
 
-function toggleMobileSidebar() {
-  sidebar.classList.toggle('mobile-visible');
-}
-
-function closeMobileSidebar() {
-  sidebar.classList.remove('mobile-visible');
-}
-
-// ===== Navigation Functions =====
-function switchSection(sectionId) {
-  // Update state
-  state.currentSection = sectionId;
+// ===== Switch Section Function =====
+function switchToSection(sectionId) {
+  const navItems = document.querySelectorAll('.nav-item');
+  
+  // Remove active class from all nav items
+  navItems.forEach(nav => nav.classList.remove('active'));
+  
+  // Add active to target nav item
+  const targetNav = document.querySelector(`[data-section="${sectionId}"]`);
+  if (targetNav) {
+    targetNav.classList.add('active');
+  }
   
   // Hide all sections
-  contentSections.forEach(section => {
+  document.querySelectorAll('.content-section').forEach(section => {
     section.classList.remove('active');
   });
   
@@ -78,202 +180,58 @@ function switchSection(sectionId) {
     selectedSection.classList.add('active');
   }
   
-  // Update active nav item
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.dataset.section === sectionId) {
-      item.classList.add('active');
-    }
-  });
-  
-  // Close mobile sidebar after navigation
-  if (window.innerWidth <= 768) {
-    closeMobileSidebar();
-  }
-  
-  // Save to localStorage
-  localStorage.setItem('currentSection', sectionId);
-  
-  // Update URL hash
-  window.location.hash = sectionId;
+  state.currentSection = sectionId;
 }
 
-// ===== Event Listeners =====
-document.addEventListener('DOMContentLoaded', function() {
-  
-  // Sidebar toggle
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', toggleSidebar);
-  }
-  
-  // Mobile sidebar toggle
-  if (mobileSidebarToggle) {
-    mobileSidebarToggle.addEventListener('click', toggleMobileSidebar);
-  }
-  
-  // Navigation items
-  navItems.forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.preventDefault();
-      const sectionId = this.dataset.section;
-      if (sectionId) {
-        switchSection(sectionId);
-      }
-    });
-  });
-  
-  // Close mobile sidebar when clicking outside
-  document.addEventListener('click', function(e) {
-    if (window.innerWidth <= 768) {
-      const isClickInsideSidebar = sidebar.contains(e.target);
-      const isClickOnToggle = mobileSidebarToggle.contains(e.target);
-      
-      if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('mobile-visible')) {
-        closeMobileSidebar();
-      }
-    }
-  });
-  
-  // Restore sidebar state from localStorage
-  const savedSidebarState = localStorage.getItem('sidebarCollapsed');
-  if (savedSidebarState === 'true') {
-    state.sidebarCollapsed = true;
-    sidebar.classList.add('collapsed');
-  }
-  
-  // Restore section from localStorage or URL hash
-  const hash = window.location.hash.substring(1);
-  const savedSection = localStorage.getItem('currentSection');
-  
-  if (hash) {
-    switchSection(hash);
-  } else if (savedSection) {
-    switchSection(savedSection);
-  } else {
-    switchSection('dashboard');
-  }
-  
-  // Handle browser back/forward
-  window.addEventListener('hashchange', function() {
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-      switchSection(hash);
-    }
-  });
-  
-  // Logout button
-  const logoutBtn = document.querySelector('.btn-logout');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', function() {
-      if (confirm('Are you sure you want to logout?')) {
-        // Clear all admin session data
-        localStorage.removeItem('currentSection');
-        localStorage.removeItem('sidebarCollapsed');
-        localStorage.removeItem('adminLoggedIn');
-        localStorage.removeItem('adminEmail');
-        localStorage.removeItem('loginTime');
-        
-        // Redirect to admin login page
-        window.location.href = 'admin-login.html';
-      }
-    });
-  }
-  
-  // Display admin email in user profile
-  const adminEmail = localStorage.getItem('adminEmail');
-  if (adminEmail) {
-    const userNameElement = document.querySelector('.user-name');
-    const userRoleElement = document.querySelector('.user-role');
-    if (userNameElement) {
-      userNameElement.textContent = adminEmail.split('@')[0];
-    }
-    if (userRoleElement) {
-      userRoleElement.textContent = 'Administrator';
-    }
-  }
-  
-  // Initialize dashboard
-  initDashboard();
-  
-  console.log('Admin Dashboard initialized');
-});
-
-// ===== Dashboard Functions =====
-function initDashboard() {
-  // Add animation to stat cards
+// ===== Animate Stat Cards =====
+function animateStatCards() {
   const statCards = document.querySelectorAll('.stat-card');
   statCards.forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    
     setTimeout(() => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
       card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-      
-      requestAnimationFrame(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      });
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
     }, index * 100);
   });
+}
+
+// ===== Notification System =====
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.style.cssText = `
+    position: fixed;
+    top: 5rem;
+    right: 1.5rem;
+    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    font-size: 0.875rem;
+    font-weight: 500;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease;
+  `;
   
-  // Real-time clock for dashboard (optional)
-  updateDashboardTime();
-  setInterval(updateDashboardTime, 60000); // Update every minute
-}
-
-function updateDashboardTime() {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
-  const dateString = now.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+  notification.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <span>${message}</span>
+    </div>
+  `;
   
-  // You can display this in a dashboard element if needed
-  // console.log(`${dateString} - ${timeString}`);
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
 }
-
-// ===== Table Functions =====
-function initTables() {
-  // Add row click handlers
-  const tableRows = document.querySelectorAll('.data-table tbody tr');
-  tableRows.forEach(row => {
-    row.style.cursor = 'pointer';
-  });
-}
-
-// ===== Search Functionality =====
-const searchInput = document.querySelector('.top-bar-search input');
-if (searchInput) {
-  searchInput.addEventListener('input', debounce(function(e) {
-    const query = e.target.value.toLowerCase();
-    console.log('Searching for:', query);
-    // Implement search logic here
-  }, 300));
-}
-
-// ===== Filter Functions =====
-const filterInputs = document.querySelectorAll('.filter-input');
-filterInputs.forEach(input => {
-  input.addEventListener('input', debounce(function(e) {
-    const query = e.target.value.toLowerCase();
-    console.log('Filtering:', query);
-    // Implement filter logic here
-  }, 300));
-});
-
-const filterSelects = document.querySelectorAll('.filter-select');
-filterSelects.forEach(select => {
-  select.addEventListener('change', function(e) {
-    const value = e.target.value;
-    console.log('Filter changed:', value);
-    // Implement filter logic here
-  });
-});
 
 // ===== Utility Functions =====
 function debounce(func, wait) {
@@ -288,89 +246,29 @@ function debounce(func, wait) {
   };
 }
 
-function showNotification(message, type = 'info') {
-  // Simple notification system
-  const notification = document.createElement('div');
-  notification.textContent = message;
-  notification.style.cssText = `
-    position: fixed;
-    top: 5rem;
-    right: 1.5rem;
-    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: slideInRight 0.3s ease;
-  `;
-  
-  document.body.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.style.animation = 'slideOutRight 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-  }, 3000);
-}
-
-// ===== Export Report Function =====
-const exportButton = document.querySelector('.section-header button');
-if (exportButton && exportButton.textContent.includes('Export')) {
-  exportButton.addEventListener('click', function() {
-    showNotification('Report exported successfully!', 'success');
-    // Implement actual export logic here
-  });
-}
-
-// ===== Action Buttons (Edit, Delete) =====
-document.addEventListener('click', function(e) {
-  // Edit button
-  if (e.target.closest('.icon-btn-sm[title="Edit"]')) {
-    const row = e.target.closest('tr');
-    console.log('Edit clicked for row:', row);
-    showNotification('Edit functionality coming soon!', 'info');
-    // Implement edit logic here
-  }
-  
-  // Delete button
-  if (e.target.closest('.icon-btn-sm[title="Delete"]')) {
-    if (confirm('Are you sure you want to delete this item?')) {
-      const row = e.target.closest('tr');
-      console.log('Delete clicked for row:', row);
-      showNotification('Item deleted successfully!', 'success');
-      // Implement delete logic here
-      row.style.opacity = '0';
-      setTimeout(() => row.remove(), 300);
+// ===== Add CSS Animations =====
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
-});
-
-// ===== Add New Buttons =====
-const addButtons = document.querySelectorAll('.header-actions .btn-secondary');
-addButtons.forEach(button => {
-  if (button.textContent.includes('Add')) {
-    button.addEventListener('click', function() {
-      const sectionName = this.textContent.replace('Add New ', '').trim();
-      showNotification(`Add ${sectionName} functionality coming soon!`, 'info');
-      // Implement add logic here
-    });
-  }
-});
-
-// ===== Responsive Behavior =====
-let resizeTimer;
-window.addEventListener('resize', function() {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(function() {
-    // Close mobile sidebar on desktop view
-    if (window.innerWidth > 768) {
-      sidebar.classList.remove('mobile-visible');
+  
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
     }
-  }, 250);
-});
-
-// ===== Initialize =====
-document.addEventListener('DOMContentLoaded', function() {
-  initTables();
-  console.log('All admin features initialized');
-});
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+`;
+document.head.appendChild(style);
