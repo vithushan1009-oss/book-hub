@@ -1,12 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
-session_start();
-
-// Admin-only access
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: /BOOKHUB/book-hub-central/public/admin-login.html');
-    exit();
-}
+require_once __DIR__ . '/../admin-session-check.php';
 
 $admin_id = $_SESSION['admin_id'];
 $admin_name = $_SESSION['admin_name'] ?? '';
@@ -17,25 +10,48 @@ $admin_email = $_SESSION['admin_email'] ?? '';
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Profile - BookHub</title>
+    <title>Admin Profile - BOOK HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
+    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
     <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
   </head>
   <body>
-    <main class="admin-container">
-      <header class="admin-header">
-        <h1>Admin Profile</h1>
-        <nav style="margin-left:auto">
-          <a href="/BOOKHUB/book-hub-central/src/views/admin.php">Dashboard</a>
-          <a href="/BOOKHUB/book-hub-central/src/handlers/logout-handler.php" style="margin-left:1rem; color:#c00">Log Out</a>
-        </nav>
-      </header>
+    <div class="admin-page">
+      <?php require_once __DIR__ . '/../components/admin-sidebar.php'; ?>
+      <div class="main-content">
+        <?php require_once __DIR__ . '/../components/admin-topbar.php'; ?>
 
-      <section class="profile-card" style="max-width:720px; margin:2rem auto; padding:1.5rem; border:1px solid #eee; border-radius:8px; background:#fff;">
-        <h2><?php echo htmlspecialchars($admin_name); ?></h2>
-        <p><strong>ID:</strong> <?php echo htmlspecialchars($admin_id); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($admin_email); ?></p>
-        <p style="margin-top:1rem;"><a href="/BOOKHUB/book-hub-central/src/views/settings.php">Edit Settings</a></p>
-      </section>
-    </main>
+        <div class="content-area">
+          <div class="section-header">
+            <h1>Admin Profile</h1>
+          </div>
+          <div class="content-card" style="background: var(--admin-card-bg); border:1px solid var(--admin-border); border-radius:1rem; padding:1.5rem; max-width: 720px;">
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+              <div class="user-avatar" style="width:3rem; height:3rem;"><?= strtoupper(substr($admin_name,0,1)) ?></div>
+              <div>
+                <h2 style="margin:0; font-size:1.25rem;"><?= htmlspecialchars($admin_name) ?></h2>
+                <div style="color: var(--admin-text-muted)">ID: <?= htmlspecialchars($admin_id) ?></div>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+              <div>
+                <div style="color: var(--admin-text-muted); font-size:.85rem;">Email</div>
+                <div><?= htmlspecialchars($admin_email) ?></div>
+              </div>
+              <div>
+                <div style="color: var(--admin-text-muted); font-size:.85rem;">Role</div>
+                <div><?= htmlspecialchars($_SESSION['admin_role'] ?? 'Administrator') ?></div>
+              </div>
+            </div>
+            <div style="margin-top:1.5rem;">
+              <a class="btn btn-primary" href="/BOOKHUB/book-hub-central/public/admin-settings.php"><i class="fas fa-user-cog"></i> Edit Settings</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
   </body>
-</html>
+  </html>

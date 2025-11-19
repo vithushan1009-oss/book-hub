@@ -1,24 +1,6 @@
 <?php
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../admin-session-check.php';
 require_once __DIR__ . '/../config.php';
-
-// Debug logging
-$log_file = __DIR__ . '/../../admin-dashboard-debug.log';
-file_put_contents($log_file, date('Y-m-d H:i:s') . " - Admin page accessed\n", FILE_APPEND);
-file_put_contents($log_file, date('Y-m-d H:i:s') . " - Session ID: " . session_id() . "\n", FILE_APPEND);
-file_put_contents($log_file, date('Y-m-d H:i:s') . " - Session data: " . print_r($_SESSION, true) . "\n", FILE_APPEND);
-
-// Admin-only access
-if (!isset($_SESSION['admin_id'])) {
-  file_put_contents($log_file, date('Y-m-d H:i:s') . " - No admin_id in session, redirecting to login\n", FILE_APPEND);
-  header('Location: /BOOKHUB/book-hub-central/admin-login');
-  exit();
-}
-
-file_put_contents($log_file, date('Y-m-d H:i:s') . " - Admin authenticated: ID={$_SESSION['admin_id']}\n", FILE_APPEND);
 
 $conn = getDbConnection();
 
@@ -48,95 +30,11 @@ $recent_users = $conn->query($recent_users_query);
 <body>
 
 <div class="admin-page">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <i class="fas fa-book-reader"></i>
-        <span>BOOK <span class="accent">HUB</span></span>
-      </div>
-      <button class="sidebar-toggle" id="sidebarToggle">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <h4 class="nav-section-title">Main</h4>
-        <a href="#dashboard" class="nav-item active" data-section="dashboard">
-          <i class="fas fa-th-large"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="#users" class="nav-item" data-section="users">
-          <i class="fas fa-users"></i>
-          <span>Users</span>
-        </a>
-        <a href="#books" class="nav-item" data-section="books">
-          <i class="fas fa-book"></i>
-          <span>Books</span>
-        </a>
-        <a href="#rentals" class="nav-item" data-section="rentals">
-          <i class="fas fa-shopping-cart"></i>
-          <span>Rentals</span>
-        </a>
-      </div>
-
-      <div class="nav-section">
-        <h4 class="nav-section-title">Management</h4>
-        <a href="#admins" class="nav-item" data-section="admins">
-          <i class="fas fa-user-shield"></i>
-          <span>Administrators</span>
-        </a>
-        <a href="#settings" class="nav-item" data-section="settings">
-          <i class="fas fa-cog"></i>
-          <span>Settings</span>
-        </a>
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-profile">
-        <div class="user-avatar">
-          <?php echo strtoupper(substr($_SESSION['admin_name'] ?? 'A', 0, 1)); ?>
-        </div>
-        <div class="user-info">
-          <div class="user-name"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Admin'); ?></div>
-          <div class="user-role"><?php echo htmlspecialchars($_SESSION['admin_role'] ?? 'Administrator'); ?></div>
-        </div>
-      </div>
-      <button class="btn-logout" title="Logout">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
-    </div>
-  </aside>
+  <?php require_once __DIR__ . '/../components/admin-sidebar.php'; ?>
 
   <!-- Main Content -->
   <div class="main-content">
-    <!-- Top Bar -->
-    <header class="top-bar">
-      <button class="mobile-menu-btn" id="mobileSidebarToggle">
-        <i class="fas fa-bars"></i>
-      </button>
-      
-      <div class="top-bar-search">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search...">
-      </div>
-
-      <div class="top-bar-actions">
-        <button class="icon-btn" id="themeToggle" title="Toggle Theme">
-          <i class="fas fa-moon"></i>
-        </button>
-        <button class="icon-btn" title="Notifications">
-          <i class="fas fa-bell"></i>
-          <span class="badge">3</span>
-        </button>
-        <button class="icon-btn" title="Messages">
-          <i class="fas fa-envelope"></i>
-          <span class="badge">5</span>
-        </button>
-      </div>
-    </header>
+    <?php require_once __DIR__ . '/../components/admin-topbar.php'; ?>
 
     <!-- Content Area -->
     <div class="content-area">

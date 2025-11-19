@@ -1,36 +1,29 @@
 <?php
+require_once __DIR__ . '/../admin-session-check.php';
 require_once __DIR__ . '/../config.php';
-session_start();
-
-if(!isset($_SESSION['admin'])) {
-    header("Location: admin-login.html");
-    exit();
-}
 
 $conn = getDbConnection();
 
 // Handle delete
 if(isset($_POST['delete'])) {
-    $id = $_POST['id'];
+    $id = (int)$_POST['id'];
     $sql = "DELETE FROM users WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    echo "<script>alert('User deleted successfully!');</script>";
 }
 
 // Handle update
 if(isset($_POST['update'])) {
-    $id = $_POST['id'];
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
-    $email = $_POST['email'];
+    $id = (int)$_POST['id'];
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
     
     $sql = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssi", $first_name, $last_name, $email, $id);
     $stmt->execute();
-    echo "<script>alert('User updated successfully!');</script>";
 }
 
 // Fetch users
@@ -43,69 +36,32 @@ $result = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users — BOOK HUB</title>
-    <link rel="stylesheet" href="../static/css/admin.css">
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #667eea;
-            color: white;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="email"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-        }
-        button {
-            padding: 8px 16px;
-            margin: 2px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button[name="update"] {
-            background: #10b981;
-            color: white;
-        }
-        button[name="delete"] {
-            background: #ef4444;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
+    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
+    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
 </head>
 <body>
 
-<div class="admin-container">
-    <aside class="sidebar">
-        <h2>BOOK HUB Admin</h2>
-        <nav class="menu">
-            <ul>
-                <li><a href="admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="manage-users" class="active"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="manage-books.php"><i class="fas fa-book"></i> Books</a></li>
-            </ul>
-        </nav>
-        <form method="post" action="backend/logout-handler.php">
-            <button name="logoff" type="submit" class="logout-btn">Log Out</button>
-        </form>
-    </aside>
+<div class="admin-page">
+    <?php require_once __DIR__ . '/../components/admin-sidebar.php'; ?>
 
-    <main class="main-content">
-        <h1>Manage Users</h1>
-        <table>
+    <div class="main-content">
+        <?php require_once __DIR__ . '/../components/admin-topbar.php'; ?>
+
+        <div class="content-area">
+        <div class="section-header">
+          <h1>User Management</h1>
+          <div class="header-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-user-plus"></i> Add New User
+            </button>
+          </div>
+        </div>
+
+        <div class="content-card" style="background: var(--admin-card-bg); border:1px solid var(--admin-border); border-radius:1rem; overflow:hidden;">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -118,27 +74,30 @@ $result = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <form method="POST" action="">
-                        <td><?= $row['id'] ?></td>
-                        <td><input type="text" name="first_name" value="<?= htmlspecialchars($row['first_name']) ?>"></td>
-                        <td><input type="text" name="last_name" value="<?= htmlspecialchars($row['last_name']) ?>"></td>
-                        <td><input type="email" name="email" value="<?= htmlspecialchars($row['email']) ?>"></td>
-                        <td><?= $row['email_verified'] ? 'Yes' : 'No' ?></td>
-                        <td><?= date('Y-m-d', strtotime($row['created_at'])) ?></td>
-                        <td>
-                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                            <button type="submit" name="update">Update</button>
-                            <button type="submit" name="delete" onclick="return confirm('Delete this user?')">Delete</button>
-                        </td>
-                    </form>
-                </tr>
-                <?php endwhile; ?>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <form method="POST" action="">
+                                    <tr>
+                                        <td><?= (int)$row['id'] ?></td>
+                                        <td><input type="text" name="first_name" value="<?= htmlspecialchars($row['first_name']) ?>" /></td>
+                                        <td><input type="text" name="last_name" value="<?= htmlspecialchars($row['last_name']) ?>" /></td>
+                                        <td><input type="email" name="email" value="<?= htmlspecialchars($row['email']) ?>" /></td>
+                                        <td><?= $row['email_verified'] ? '<span class="status-badge success">Verified</span>' : '<span class="status-badge pending">Pending</span>' ?></td>
+                                        <td><?= date('Y-m-d', strtotime($row['created_at'])) ?></td>
+                                        <td>
+                                            <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
+                                            <button class="btn btn-primary" type="submit" name="update"><i class="fas fa-save"></i> Save</button>
+                                            <button class="btn btn-secondary" type="submit" name="delete" onclick="return confirm('Delete this user?')"><i class="fas fa-trash"></i> Delete</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                <?php endwhile; ?>
             </tbody>
         </table>
+        </div>
+        </div>
     </main>
 </div>
 
+<script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
 </body>
 </html>
