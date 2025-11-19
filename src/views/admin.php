@@ -21,8 +21,14 @@ $recent_users = $conn->query($recent_users_query);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — BOOK HUB</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+
+  <!-- CSS Files -->
   <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
   <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
   <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
@@ -110,7 +116,7 @@ $recent_users = $conn->query($recent_users_query);
           <div class="dashboard-card">
             <div class="card-header">
               <h3>Recent Users</h3>
-              <a href="#users" class="btn-link" data-section="users">View All</a>
+              <a href="/BOOKHUB/book-hub-central/public/admin-users.php" class="btn-link">View All</a>
             </div>
             <div class="card-content">
               <table class="data-table">
@@ -265,10 +271,100 @@ $recent_users = $conn->query($recent_users_query);
           </p>
         </div>
       </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics-section" class="content-section">
+        <div class="section-header">
+          <h1>Analytics</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Analytics features coming soon
+          </p>
+        </div>
+      </section>
+
+      <!-- Categories Section -->
+      <section id="categories-section" class="content-section">
+        <div class="section-header">
+          <h1>Categories</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Category management features coming soon
+          </p>
+        </div>
+      </section>
+
+      <!-- Permissions Section -->
+      <section id="permissions-section" class="content-section">
+        <div class="section-header">
+          <h1>Permissions</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Permission management features coming soon
+          </p>
+        </div>
+      </section>
+
+      <!-- Reports Section -->
+      <section id="reports-section" class="content-section">
+        <div class="section-header">
+          <h1>Reports</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Reports features coming soon
+          </p>
+        </div>
+      </section>
+
+      <!-- Backup Section -->
+      <section id="backup-section" class="content-section">
+        <div class="section-header">
+          <h1>Backup</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Backup features coming soon
+          </p>
+        </div>
+      </section>
+
+      <!-- Activity Logs Section -->
+      <section id="logs-section" class="content-section">
+        <div class="section-header">
+          <h1>Activity Logs</h1>
+        </div>
+        <div class="content-card">
+          <p style="text-align: center; padding: 2rem; color: var(--muted-foreground);">
+            Activity logs features coming soon
+          </p>
+        </div>
+      </section>
     </div>
   </div>
 </div>
 
 <script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
+
+<!-- Force-load Font Awesome -->
+<script>
+  (function() {
+    var fa = document.createElement('link');
+    fa.rel = 'stylesheet';
+    fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+    fa.integrity = 'sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==';
+    fa.crossOrigin = 'anonymous';
+    fa.referrerPolicy = 'no-referrer';
+    document.head.appendChild(fa);
+  })();
+</script>
+
+<!-- Simple Icon Check -->
+<script>
+console.log('Admin dashboard loaded');
+</script>
 </body>
 </html>
