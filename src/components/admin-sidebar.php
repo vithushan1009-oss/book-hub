@@ -63,10 +63,15 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <div class="nav-count">4</div>
       </a>
 
-      <a href="<?= $base ?>/books.php" class="nav-item">
+      <a href="<?= $base ?>/admin-books.php"
+         class="nav-item <?= $current === 'admin-books.php' ? 'active' : '' ?>">
         <i class="fas fa-book"></i>
+        <span>Book Management</span>
+      </a>
+
+      <a href="<?= $base ?>/books.php" class="nav-item">
+        <i class="fas fa-book-open"></i>
         <span>Book Library</span>
-        <div class="nav-count">156</div>
       </a>
 
       <a href="<?= $base ?>/admin.php#categories" class="nav-item" data-section="categories">

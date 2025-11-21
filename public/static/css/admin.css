@@ -2508,6 +2508,42 @@ body.dark-mode .content-card {
   color: var(--text-tertiary);
 }
 
+/* ===== Book Cover Styles ===== */
+.book-cover-small {
+  width: 50px;
+  height: 70px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.book-cover-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.book-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.book-isbn {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
 /* ===== Action Buttons ===== */
 .action-buttons {
   display: flex;
