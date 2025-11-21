@@ -17,25 +17,34 @@ if(isset($_POST['delete'])) {
     }
 }
 
-// Handle update
-if(isset($_POST['update'])) {
+
+// Handle toggle active status
+if(isset($_POST['toggle_active'])) {
     $id = (int)$_POST['id'];
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $email = trim($_POST['email']);
-    
-    // Validate email
-    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $sql = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $first_name, $last_name, $email, $id);
-        if($stmt->execute()) {
-            $success_message = "User updated successfully!";
-        } else {
-            $error_message = "Failed to update user.";
-        }
+    $current_status = $conn->query("SELECT is_active FROM users WHERE id = $id")->fetch_assoc()['is_active'];
+    $new_status = $current_status ? 0 : 1;
+    $sql = "UPDATE users SET is_active = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $new_status, $id);
+    if($stmt->execute()) {
+        $success_message = "User status updated successfully!";
     } else {
-        $error_message = "Invalid email address.";
+        $error_message = "Failed to update user status.";
+    }
+}
+
+// Handle toggle verification
+if(isset($_POST['toggle_verification'])) {
+    $id = (int)$_POST['id'];
+    $current_status = $conn->query("SELECT email_verified FROM users WHERE id = $id")->fetch_assoc()['email_verified'];
+    $new_status = $current_status ? 0 : 1;
+    $sql = "UPDATE users SET email_verified = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $new_status, $id);
+    if($stmt->execute()) {
+        $success_message = "User verification status updated successfully!";
+    } else {
+        $error_message = "Failed to update verification status.";
     }
 }
 
@@ -45,20 +54,11 @@ $verified_users = $conn->query("SELECT COUNT(*) as count FROM users WHERE email_
 $pending_users = $total_users - $verified_users;
 $recent_users = $conn->query("SELECT COUNT(*) as count FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['count'];
 
-// Get database info
-$db_name = $conn->query("SELECT DATABASE() as db_name")->fetch_assoc()['db_name'];
-$db_size_query = "SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'size_mb' FROM information_schema.tables WHERE table_schema = ?";
-$db_size_stmt = $conn->prepare($db_size_query);
-$db_size_stmt->bind_param("s", $db_name);
-$db_size_stmt->execute();
-$db_size = $db_size_stmt->get_result()->fetch_assoc()['size_mb'] ?? 0;
-
 // Fetch users with pagination
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $per_page = 10;
 $offset = ($page - 1) * $per_page;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$filter_status = isset($_GET['status']) ? $_GET['status'] : '';
 
 $where_clause = "1=1";
 $params = [];
@@ -71,12 +71,6 @@ if($search) {
     $params[] = $search_param;
     $params[] = $search_param;
     $types .= "sss";
-}
-
-if($filter_status === 'verified') {
-    $where_clause .= " AND email_verified = 1";
-} elseif($filter_status === 'pending') {
-    $where_clause .= " AND email_verified = 0";
 }
 
 // Get total count
@@ -136,11 +130,6 @@ if(!empty($params)) {
         <div class="content-area">
             <div class="section-header">
                 <h1>User Management</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="showAddUserModal()">
-                        <i class="fas fa-user-plus"></i> Add New User
-                    </button>
-                </div>
             </div>
 
             <!-- Success/Error Messages -->
@@ -195,50 +184,12 @@ if(!empty($params)) {
                 </div>
             </div>
 
-            <!-- Database Details Card -->
-            <div class="dashboard-card" style="margin-bottom: 2rem;">
-                <div class="card-header">
-                    <h3><i class="fas fa-database"></i> Database Information</h3>
-                </div>
-                <div class="card-content">
-                    <div class="db-info-grid">
-                        <div class="db-info-item">
-                            <div class="db-info-label">
-                                <i class="fas fa-database"></i> Database Name
-                            </div>
-                            <div class="db-info-value"><?php echo htmlspecialchars($db_name); ?></div>
-                        </div>
-                        <div class="db-info-item">
-                            <div class="db-info-label">
-                                <i class="fas fa-hdd"></i> Database Size
-                            </div>
-                            <div class="db-info-value"><?php echo number_format($db_size, 2); ?> MB</div>
-                        </div>
-                        <div class="db-info-item">
-                            <div class="db-info-label">
-                                <i class="fas fa-server"></i> Server Version
-                            </div>
-                            <div class="db-info-value"><?php echo $conn->server_info; ?></div>
-                        </div>
-                        <div class="db-info-item">
-                            <div class="db-info-label">
-                                <i class="fas fa-plug"></i> Connection Status
-                            </div>
-                            <div class="db-info-value">
-                                <span class="status-badge success">
-                                    <i class="fas fa-check-circle"></i> Connected
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Filters and Search -->
+            <!-- Search -->
             <div class="content-card">
                 <div class="card-filters">
                     <form method="GET" action="" class="filter-form">
-                        <div class="search-group">
+                        <div class="search-group" style="flex: 1; max-width: 100%;">
                             <i class="fas fa-search search-icon-input"></i>
                             <input type="text" 
                                    name="search" 
@@ -246,15 +197,7 @@ if(!empty($params)) {
                                    placeholder="Search by name or email..." 
                                    value="<?php echo htmlspecialchars($search); ?>">
                         </div>
-                        <select name="status" class="filter-select">
-                            <option value="">All Status</option>
-                            <option value="verified" <?php echo $filter_status === 'verified' ? 'selected' : ''; ?>>Verified</option>
-                            <option value="pending" <?php echo $filter_status === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <?php if($search || $filter_status): ?>
+                        <?php if($search): ?>
                             <a href="?" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Clear
                             </a>
@@ -270,7 +213,8 @@ if(!empty($params)) {
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Status</th>
+                                <th>Verification</th>
+                                <th>Active Status</th>
                                 <th>Registered</th>
                                 <th>Last Login</th>
                                 <th>Actions</th>
@@ -304,25 +248,36 @@ if(!empty($params)) {
                                                 </span>
                                             <?php endif; ?>
                                         </td>
+                                        <td>
+                                            <?php if($row['is_active']): ?>
+                                                <span class="status-badge success">
+                                                    <i class="fas fa-check-circle"></i> Active
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="status-badge pending">
+                                                    <i class="fas fa-ban"></i> Inactive
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
                                         <td>
                                             <?php echo $row['last_login'] ? date('M d, Y', strtotime($row['last_login'])) : 'Never'; ?>
                                         </td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon btn-edit" onclick="editUser(<?php echo htmlspecialchars(json_encode($row)); ?>)" title="Edit User">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn-icon btn-delete" onclick="deleteUser(<?php echo (int)$row['id']; ?>, '<?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?>')" title="Delete User">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
+                                        <td style="position: relative; width: 80px; min-width: 80px;">
+                                            <button type="button" 
+                                                    class="btn-icon btn-settings" 
+                                                    title="User Settings"
+                                                    data-user-id="<?php echo (int)$row['id']; ?>"
+                                                    data-user-data='<?php echo htmlspecialchars(json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8'); ?>'
+                                                    onclick="handleSettingsClick(this, event)">
+                                                <i class="fas fa-cog"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="7" class="empty-state">
+                                    <td colspan="8" class="empty-state">
                                         <i class="fas fa-users"></i>
                                         <p>No users found</p>
                                     </td>
@@ -336,7 +291,7 @@ if(!empty($params)) {
                 <?php if($total_pages > 1): ?>
                     <div class="pagination">
                         <?php if($page > 1): ?>
-                            <a href="?page=<?php echo $page - 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?><?php echo $filter_status ? '&status=' . urlencode($filter_status) : ''; ?>" class="pagination-btn">
+                            <a href="?page=<?php echo $page - 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="pagination-btn">
                                 <i class="fas fa-chevron-left"></i> Previous
                             </a>
                         <?php endif; ?>
@@ -346,7 +301,7 @@ if(!empty($params)) {
                         </div>
                         
                         <?php if($page < $total_pages): ?>
-                            <a href="?page=<?php echo $page + 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?><?php echo $filter_status ? '&status=' . urlencode($filter_status) : ''; ?>" class="pagination-btn">
+                            <a href="?page=<?php echo $page + 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="pagination-btn">
                                 Next <i class="fas fa-chevron-right"></i>
                             </a>
                         <?php endif; ?>
@@ -357,47 +312,42 @@ if(!empty($params)) {
     </div>
 </div>
 
-<!-- Edit User Modal -->
-<div id="editUserModal" class="modal">
-    <div class="modal-content">
+<!-- User Settings Popup -->
+<div id="userSettingsModal" class="modal">
+    <div class="modal-content modal-small">
         <div class="modal-header">
-            <h2><i class="fas fa-user-edit"></i> Edit User</h2>
-            <button class="modal-close" onclick="closeEditModal()">
+            <h2><i class="fas fa-cog"></i> User Settings</h2>
+            <button class="modal-close" onclick="closeUserSettings()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form method="POST" action="" id="editUserForm">
-            <div class="modal-body">
-                <input type="hidden" name="id" id="edit_user_id">
-                
-                <div class="form-group">
-                    <label for="edit_first_name">
-                        <i class="fas fa-user"></i> First Name
-                    </label>
-                    <input type="text" name="first_name" id="edit_first_name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_last_name">
-                        <i class="fas fa-user"></i> Last Name
-                    </label>
-                    <input type="text" name="last_name" id="edit_last_name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_email">
-                        <i class="fas fa-envelope"></i> Email
-                    </label>
-                    <input type="email" name="email" id="edit_email" required>
-                </div>
+        <div class="modal-body">
+            <div style="margin-bottom: 1rem;">
+                <strong id="settings_user_name"></strong><br>
+                <small style="color: var(--text-tertiary);" id="settings_user_email"></small>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                <button type="submit" name="update" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Changes
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <form method="POST" action="" id="settings_active_form" style="display: inline;" onsubmit="return confirm('Are you sure you want to change the active status of this user?');">
+                    <input type="hidden" name="id" id="settings_user_id">
+                    <button type="submit" name="toggle_active" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-check" id="settings_active_icon"></i> 
+                        <span id="settings_active_text">Toggle Active Status</span>
+                    </button>
+                </form>
+                <form method="POST" action="" id="settings_verify_form" style="display: none;" onsubmit="return confirm('Are you sure you want to verify this user?');">
+                    <input type="hidden" name="id" id="settings_verify_user_id">
+                    <button type="submit" name="toggle_verification" class="btn btn-success" style="width: 100%;">
+                        <i class="fas fa-check-circle"></i> Verify User
+                    </button>
+                </form>
+                <button type="button" class="btn btn-danger" onclick="showDeleteFromSettings()" style="width: 100%;">
+                    <i class="fas fa-trash"></i> Remove User
                 </button>
             </div>
-        </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeUserSettings()">Close</button>
+        </div>
     </div>
 </div>
 
@@ -429,5 +379,23 @@ if(!empty($params)) {
 <!-- JavaScript Files -->
 <script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
 <script src="/BOOKHUB/book-hub-central/public/static/js/user-management.js"></script>
+<script>
+// Debug: Test if modal exists
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('userSettingsModal');
+    console.log('Modal element found:', !!modal);
+    if (modal) {
+        console.log('Modal display:', window.getComputedStyle(modal).display);
+        console.log('Modal z-index:', window.getComputedStyle(modal).zIndex);
+    }
+    
+    // Test button click
+    const testButton = document.querySelector('.btn-settings');
+    if (testButton) {
+        console.log('Settings button found:', !!testButton);
+        console.log('Button data:', testButton.getAttribute('data-user-data') ? 'Has data' : 'No data');
+    }
+});
+</script>
 </body>
 </html>

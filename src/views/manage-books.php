@@ -67,19 +67,19 @@ if(isset($_POST['update'])) {
     if($cover_image && $pdf_file) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, cover_image = ?, cover_image_type = ?, pdf_file = ?, pdf_file_name = ?, pdf_file_size = ?, pdf_file_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssidsssssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddssssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
     } elseif($cover_image) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, cover_image = ?, cover_image_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssidsssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $id);
     } elseif($pdf_file) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, pdf_file = ?, pdf_file_name = ?, pdf_file_size = ?, pdf_file_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssidsssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
     } else {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssidssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $id);
     }
     
     if($stmt->execute()) {

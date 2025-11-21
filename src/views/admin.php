@@ -10,6 +10,14 @@ $total_admins = $conn->query("SELECT COUNT(*) as count FROM admins")->fetch_asso
 $verified_users = $conn->query("SELECT COUNT(*) as count FROM users WHERE email_verified = 1")->fetch_assoc()['count'];
 $pending_users = $total_users - $verified_users;
 
+// Get database info
+$db_name = $conn->query("SELECT DATABASE() as db_name")->fetch_assoc()['db_name'];
+$db_size_query = "SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'size_mb' FROM information_schema.tables WHERE table_schema = ?";
+$db_size_stmt = $conn->prepare($db_size_query);
+$db_size_stmt->bind_param("s", $db_name);
+$db_size_stmt->execute();
+$db_size = $db_size_stmt->get_result()->fetch_assoc()['size_mb'] ?? 0;
+
 // Fetch recent users
 $recent_users_query = "SELECT id, CONCAT(first_name, ' ', last_name) as full_name, email, created_at, email_verified FROM users ORDER BY created_at DESC LIMIT 5";
 $recent_users = $conn->query($recent_users_query);
@@ -173,6 +181,45 @@ $recent_users = $conn->query($recent_users_query);
                 <button class="btn btn-secondary" style="width: 100%;">
                   <i class="fas fa-chart-bar"></i> View Reports
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Database Information Card -->
+        <div class="dashboard-card" style="margin-top: 2rem;">
+          <div class="card-header">
+            <h3><i class="fas fa-database"></i> Database Information</h3>
+          </div>
+          <div class="card-content">
+            <div class="db-info-grid">
+              <div class="db-info-item">
+                <div class="db-info-label">
+                  <i class="fas fa-database"></i> Database Name
+                </div>
+                <div class="db-info-value"><?php echo htmlspecialchars($db_name); ?></div>
+              </div>
+              <div class="db-info-item">
+                <div class="db-info-label">
+                  <i class="fas fa-hdd"></i> Database Size
+                </div>
+                <div class="db-info-value"><?php echo number_format($db_size, 2); ?> MB</div>
+              </div>
+              <div class="db-info-item">
+                <div class="db-info-label">
+                  <i class="fas fa-server"></i> Server Version
+                </div>
+                <div class="db-info-value"><?php echo $conn->server_info; ?></div>
+              </div>
+              <div class="db-info-item">
+                <div class="db-info-label">
+                  <i class="fas fa-plug"></i> Connection Status
+                </div>
+                <div class="db-info-value">
+                  <span class="status-badge success">
+                    <i class="fas fa-check-circle"></i> Connected
+                  </span>
+                </div>
               </div>
             </div>
           </div>
