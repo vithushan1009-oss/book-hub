@@ -4,6 +4,21 @@ require_once __DIR__ . '/../config.php';
 
 $conn = getDbConnection();
 
+// Get success/error messages from session or URL
+if(isset($_SESSION['success'])) {
+    $success_message = $_SESSION['success'];
+    unset($_SESSION['success']);
+} elseif(isset($_GET['success'])) {
+    $success_message = $_GET['success'];
+}
+
+if(isset($_SESSION['error'])) {
+    $error_message = $_SESSION['error'];
+    unset($_SESSION['error']);
+} elseif(isset($_GET['error'])) {
+    $error_message = $_GET['error'];
+}
+
 // Handle delete
 if(isset($_POST['delete'])) {
     $id = (int)$_POST['id'];
@@ -100,8 +115,6 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $per_page = 10;
 $offset = ($page - 1) * $per_page;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$filter_type = isset($_GET['type']) ? $_GET['type'] : '';
-$filter_genre = isset($_GET['genre']) ? $_GET['genre'] : '';
 
 $where_clause = "1=1";
 $params = [];
@@ -114,18 +127,6 @@ if($search) {
     $params[] = $search_param;
     $params[] = $search_param;
     $types .= "sss";
-}
-
-if($filter_type === 'physical') {
-    $where_clause .= " AND book_type = 'physical'";
-} elseif($filter_type === 'online') {
-    $where_clause .= " AND book_type = 'online'";
-}
-
-if($filter_genre) {
-    $where_clause .= " AND genre = ?";
-    $params[] = $filter_genre;
-    $types .= "s";
 }
 
 // Get total count
@@ -161,12 +162,6 @@ if(!empty($params)) {
     $result = $conn->query($query);
 }
 
-// Get unique genres for filter
-$genres_result = $conn->query("SELECT DISTINCT genre FROM books WHERE genre IS NOT NULL AND genre != '' ORDER BY genre");
-$genres = [];
-while($row = $genres_result->fetch_assoc()) {
-    $genres[] = $row['genre'];
-}
 ?>
 
 <!DOCTYPE html>
@@ -192,22 +187,17 @@ while($row = $genres_result->fetch_assoc()) {
         <div class="content-area">
             <div class="section-header">
                 <h1>Book Management</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="showAddBookModal()">
-                        <i class="fas fa-book-medical"></i> Add New Book
-                    </button>
-                </div>
             </div>
 
             <!-- Success/Error Messages -->
-            <?php if(isset($success_message)): ?>
+            <?php if(isset($success_message) || isset($_GET['success'])): ?>
                 <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success_message); ?>
+                    <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success_message ?? $_GET['success']); ?>
                 </div>
             <?php endif; ?>
-            <?php if(isset($error_message)): ?>
+            <?php if(isset($error_message) || isset($_GET['error'])): ?>
                 <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_message); ?>
+                    <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_message ?? $_GET['error']); ?>
                 </div>
             <?php endif; ?>
 
@@ -251,11 +241,11 @@ while($row = $genres_result->fetch_assoc()) {
                 </div>
             </div>
 
-            <!-- Filters and Search -->
+            <!-- Search and Add Book -->
             <div class="content-card">
                 <div class="card-filters">
                     <form method="GET" action="" class="filter-form">
-                        <div class="search-group">
+                        <div class="search-group" style="flex: 1; max-width: 100%;">
                             <i class="fas fa-search search-icon-input"></i>
                             <input type="text" 
                                    name="search" 
@@ -263,27 +253,14 @@ while($row = $genres_result->fetch_assoc()) {
                                    placeholder="Search by title, author, or ISBN..." 
                                    value="<?php echo htmlspecialchars($search); ?>">
                         </div>
-                        <select name="type" class="filter-select">
-                            <option value="">All Types</option>
-                            <option value="physical" <?php echo $filter_type === 'physical' ? 'selected' : ''; ?>>Physical</option>
-                            <option value="online" <?php echo $filter_type === 'online' ? 'selected' : ''; ?>>Online</option>
-                        </select>
-                        <select name="genre" class="filter-select">
-                            <option value="">All Genres</option>
-                            <?php foreach($genres as $genre): ?>
-                                <option value="<?php echo htmlspecialchars($genre); ?>" <?php echo $filter_genre === $genre ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($genre); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <?php if($search || $filter_type || $filter_genre): ?>
+                        <?php if($search): ?>
                             <a href="?" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Clear
                             </a>
                         <?php endif; ?>
+                        <button type="button" class="btn btn-primary" onclick="showAddBookModal()">
+                            <i class="fas fa-book-medical"></i> Add New Book
+                        </button>
                     </form>
                 </div>
 
@@ -385,7 +362,7 @@ while($row = $genres_result->fetch_assoc()) {
                 <?php if($total_pages > 1): ?>
                     <div class="pagination">
                         <?php if($page > 1): ?>
-                            <a href="?page=<?php echo $page - 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?><?php echo $filter_type ? '&type=' . urlencode($filter_type) : ''; ?><?php echo $filter_genre ? '&genre=' . urlencode($filter_genre) : ''; ?>" class="pagination-btn">
+                            <a href="?page=<?php echo $page - 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="pagination-btn">
                                 <i class="fas fa-chevron-left"></i> Previous
                             </a>
                         <?php endif; ?>
@@ -395,7 +372,7 @@ while($row = $genres_result->fetch_assoc()) {
                         </div>
                         
                         <?php if($page < $total_pages): ?>
-                            <a href="?page=<?php echo $page + 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?><?php echo $filter_type ? '&type=' . urlencode($filter_type) : ''; ?><?php echo $filter_genre ? '&genre=' . urlencode($filter_genre) : ''; ?>" class="pagination-btn">
+                            <a href="?page=<?php echo $page + 1; ?><?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="pagination-btn">
                                 Next <i class="fas fa-chevron-right"></i>
                             </a>
                         <?php endif; ?>

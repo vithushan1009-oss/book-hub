@@ -452,9 +452,8 @@ function showAddUserModal() {
   showNotification('Add User feature coming soon!', 'info');
 }
 
-function showAddBookModal() {
-  showNotification('Add Book feature coming soon!', 'info');
-}
+// showAddBookModal function is defined in book-management.js
+// This placeholder has been removed to avoid conflicts
 
 function showConfirmModal(title, message, confirmText, cancelText, onConfirm) {
   // Create modal backdrop

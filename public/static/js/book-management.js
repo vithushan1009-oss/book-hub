@@ -44,12 +44,15 @@ const BookManagement = {
 
     // Setup event listeners
     setupEventListeners: function() {
-        // Form submission handlers
+        // Form submission handlers with validation
         const addForm = document.getElementById('addBookForm');
         if (addForm) {
             addForm.addEventListener('submit', function(e) {
-                // Validation can be added here
-                console.log('Add book form submitted');
+                if (!BookManagement.validateAddBookForm()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
             });
         }
 
@@ -93,6 +96,8 @@ const BookManagement = {
             const form = document.getElementById('addBookForm');
             if (form) {
                 form.reset();
+                // Clear all form errors
+                this.clearFormErrors('addBookForm');
                 toggleBookTypeFields();
             }
             
@@ -105,10 +110,12 @@ const BookManagement = {
             }, 10);
 
             // Focus on first input
-            const firstInput = document.getElementById('add_title');
-            if (firstInput) {
-                firstInput.focus();
-            }
+            setTimeout(function() {
+                const firstInput = document.getElementById('add_title');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100);
         }
     },
 
@@ -236,6 +243,143 @@ const BookManagement = {
                 modal.style.display = 'none';
             }, 300);
         }
+    },
+
+    // Validate Add Book Form
+    validateAddBookForm: function() {
+        let isValid = true;
+        const errors = [];
+
+        // Clear previous error messages
+        this.clearFormErrors('addBookForm');
+
+        // Get form elements
+        const title = document.getElementById('add_title');
+        const author = document.getElementById('add_author');
+        const bookType = document.getElementById('add_book_type');
+        const totalQuantity = document.getElementById('add_total_quantity');
+        const rentalPrice = document.getElementById('add_rental_price');
+        const purchasePrice = document.getElementById('add_purchase_price');
+        const coverImage = document.getElementById('add_cover_image');
+        const pdfFile = document.getElementById('add_pdf_file');
+
+        // Validate title
+        if (!title || !title.value.trim()) {
+            this.showFieldError('add_title', 'Title is required');
+            isValid = false;
+        } else if (title.value.trim().length < 2) {
+            this.showFieldError('add_title', 'Title must be at least 2 characters');
+            isValid = false;
+        }
+
+        // Validate author
+        if (!author || !author.value.trim()) {
+            this.showFieldError('add_author', 'Author is required');
+            isValid = false;
+        } else if (author.value.trim().length < 2) {
+            this.showFieldError('add_author', 'Author name must be at least 2 characters');
+            isValid = false;
+        }
+
+        // Validate book type specific fields
+        if (bookType && bookType.value === 'physical') {
+            // Physical book validation
+            if (!totalQuantity || !totalQuantity.value || parseInt(totalQuantity.value) < 1) {
+                this.showFieldError('add_total_quantity', 'Quantity must be at least 1');
+                isValid = false;
+            }
+
+            if (!rentalPrice || !rentalPrice.value || parseFloat(rentalPrice.value) <= 0) {
+                this.showFieldError('add_rental_price', 'Rental price must be greater than 0');
+                isValid = false;
+            }
+        } else if (bookType && bookType.value === 'online') {
+            // Online book validation
+            if (!purchasePrice || !purchasePrice.value || parseFloat(purchasePrice.value) <= 0) {
+                this.showFieldError('add_purchase_price', 'Purchase price must be greater than 0');
+                isValid = false;
+            }
+
+            // PDF file is optional but validate if provided
+            if (pdfFile && pdfFile.files.length > 0) {
+                const file = pdfFile.files[0];
+                if (file.type !== 'application/pdf') {
+                    this.showFieldError('add_pdf_file', 'Only PDF files are allowed');
+                    isValid = false;
+                } else if (file.size > 50 * 1024 * 1024) {
+                    this.showFieldError('add_pdf_file', 'PDF file size must be less than 50MB');
+                    isValid = false;
+                }
+            }
+        }
+
+        // Validate cover image if provided
+        if (coverImage && coverImage.files.length > 0) {
+            const file = coverImage.files[0];
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            
+            if (!allowedTypes.includes(file.type)) {
+                this.showFieldError('add_cover_image', 'Only JPG, PNG, GIF, and WebP images are allowed');
+                isValid = false;
+            } else if (file.size > 5 * 1024 * 1024) {
+                this.showFieldError('add_cover_image', 'Image size must be less than 5MB');
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            // Show error notification
+            this.showFormError('Please fix the errors in the form');
+        }
+
+        return isValid;
+    },
+
+    // Show field error
+    showFieldError: function(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        // Remove existing error
+        const existingError = field.parentElement.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+
+        // Add error class to field
+        field.classList.add('error');
+        
+        // Create error message element
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.color = 'var(--error)';
+        errorDiv.style.fontSize = '0.875rem';
+        errorDiv.style.marginTop = '0.25rem';
+        errorDiv.textContent = message;
+        
+        // Insert after the input field
+        field.parentElement.appendChild(errorDiv);
+    },
+
+    // Clear all form errors
+    clearFormErrors: function(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+
+        // Remove all error classes
+        const errorFields = form.querySelectorAll('.error');
+        errorFields.forEach(field => field.classList.remove('error'));
+
+        // Remove all error messages
+        const errorMessages = form.querySelectorAll('.field-error');
+        errorMessages.forEach(msg => msg.remove());
+    },
+
+    // Show form error notification
+    showFormError: function(message) {
+        // You can customize this to show a notification or alert
+        alert(message);
+        // Or create a better notification system
     }
 };
 

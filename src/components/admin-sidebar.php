@@ -69,16 +69,6 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <span>Book Management</span>
       </a>
 
-      <a href="<?= $base ?>/books.php" class="nav-item">
-        <i class="fas fa-book-open"></i>
-        <span>Book Library</span>
-      </a>
-
-      <a href="<?= $base ?>/admin.php#categories" class="nav-item" data-section="categories">
-        <i class="fas fa-tags"></i>
-        <span>Categories</span>
-      </a>
-
       <a href="<?= $base ?>/admin.php#rentals" class="nav-item" data-section="rentals">
         <i class="fas fa-handshake"></i>
         <span>Rentals</span>
