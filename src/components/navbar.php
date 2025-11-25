@@ -17,7 +17,7 @@ if ($is_logged_in && $user_data) {
 <nav>
   <div class="container">
     <div class="nav-content">
-      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.html'; ?>" class="nav-logo">
+      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>" class="nav-logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
         </svg>
@@ -25,7 +25,7 @@ if ($is_logged_in && $user_data) {
       </a>
 
       <ul class="nav-links">
-        <li><a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.html'; ?>">Home</a></li>
+        <li><a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>">Home</a></li>
         <li><a href="/BOOKHUB/book-hub-central/public/books.php">Books</a></li>
         <li><a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a></li>
         <li><a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a></li>
@@ -119,7 +119,7 @@ if ($is_logged_in && $user_data) {
 
     <!-- Mobile Menu -->
     <div class="mobile-menu">
-      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.html'; ?>">Home</a>
+      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>">Home</a>
       <a href="/BOOKHUB/book-hub-central/public/books.php">Books</a>
       <a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a>
       <a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a>

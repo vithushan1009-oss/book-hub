@@ -148,11 +148,11 @@ if ($currentHour < 12) {
           </div>
           
           <div class="dropdown-menu">
-            <a href="/BOOKHUB/book-hub-central/public/admin-profile.php" class="dropdown-item">
+            <a href="/BOOKHUB/book-hub-central/admin-profile" class="dropdown-item">
               <i class="fas fa-user"></i>
               <span>My Profile</span>
             </a>
-            <a href="/BOOKHUB/book-hub-central/public/admin-settings.php" class="dropdown-item">
+            <a href="/BOOKHUB/book-hub-central/admin-settings" class="dropdown-item">
               <i class="fas fa-cog"></i>
               <span>Settings</span>
             </a>

@@ -46,7 +46,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
               </div>
             </div>
             <div style="margin-top:1.5rem;">
-              <a class="btn btn-primary" href="/BOOKHUB/book-hub-central/public/admin-settings.php"><i class="fas fa-user-cog"></i> Edit Settings</a>
+              <a class="btn btn-primary" href="/BOOKHUB/book-hub-central/admin-settings"><i class="fas fa-user-cog"></i> Edit Settings</a>
             </div>
           </div>
         </div>

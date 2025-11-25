@@ -124,7 +124,7 @@ $recent_users = $conn->query($recent_users_query);
           <div class="dashboard-card">
             <div class="card-header">
               <h3>Recent Users</h3>
-              <a href="/BOOKHUB/book-hub-central/public/admin-users.php" class="btn-link">View All</a>
+              <a href="/BOOKHUB/book-hub-central/admin-users" class="btn-link">View All</a>
             </div>
             <div class="card-content">
               <table class="data-table">

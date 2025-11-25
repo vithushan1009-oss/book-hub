@@ -36,6 +36,8 @@
         <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
         <?php if (!$is_logged_in): ?>
         <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Get Started</a>
+        <?php else: ?>
+        <a href="/BOOKHUB/book-hub-central/src/views/user.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Dashboard</a>
         <?php endif; ?>
       </div>
 
@@ -124,13 +126,17 @@
             </div>
             <div class="book-footer">
               <div class="book-price">$12.99</div>
-              <button class="btn btn-secondary btn-sm">
+              <?php if ($is_logged_in): ?>
+              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
                 </svg>
                 Buy
-              </button>
+              </a>
+              <?php else: ?>
+              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">View Details</a>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -154,12 +160,16 @@
             </div>
             <div class="book-footer">
               <div class="book-price">$3.99<span>/week</span></div>
-              <button class="btn btn-accent btn-sm">
+              <?php if ($is_logged_in): ?>
+              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-accent btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
                 </svg>
                 Rent
-              </button>
+              </a>
+              <?php else: ?>
+              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-accent btn-sm">View Details</a>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -183,13 +193,17 @@
             </div>
             <div class="book-footer">
               <div class="book-price">$15.99</div>
-              <button class="btn btn-secondary btn-sm">
+              <?php if ($is_logged_in): ?>
+              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
                 </svg>
                 Buy
-              </button>
+              </a>
+              <?php else: ?>
+              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">View Details</a>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -213,19 +227,23 @@
             </div>
             <div class="book-footer">
               <div class="book-price">$4.99<span>/week</span></div>
-              <button class="btn btn-accent btn-sm">
+              <?php if ($is_logged_in): ?>
+              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-accent btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
                 </svg>
                 Rent
-              </button>
+              </a>
+              <?php else: ?>
+              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-accent btn-sm">View Details</a>
+              <?php endif; ?>
             </div>
           </div>
         </div>
       </div>
 
       <div style="text-align: center; margin-top: 2rem;">
-        <a href="books.html" class="btn btn-primary btn-lg">View All Books</a>
+        <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-primary btn-lg">View All Books</a>
       </div>
     </div>
   </section>
@@ -291,7 +309,11 @@
     <div class="container">
       <h2>Ready to Start Your Reading Journey?</h2>
       <p>Join thousands of readers and get access to our vast collection of books today</p>
+      <?php if (!$is_logged_in): ?>
       <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-secondary btn-lg">Sign Up Now</a>
+      <?php else: ?>
+      <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
+      <?php endif; ?>
     </div>
   </section>
 

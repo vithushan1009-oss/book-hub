@@ -188,9 +188,9 @@ while($row = $genres_result->fetch_assoc()) {
                   </div>
                   <?php if($is_logged_in): ?>
                     <?php if($book['book_type'] === 'physical'): ?>
-                      <button class="btn btn-accent btn-sm" onclick="rentBook(<?php echo (int)$book['id']; ?>)">Rent</button>
+                      <button class="btn btn-accent btn-sm" onclick="openRentModal(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', <?php echo number_format($book['rental_price_per_day'], 2); ?>)">Rent</button>
                     <?php else: ?>
-                      <button class="btn btn-secondary btn-sm" onclick="purchaseBook(<?php echo (int)$book['id']; ?>)">Buy</button>
+                      <button class="btn btn-secondary btn-sm" onclick="purchaseBook(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', <?php echo number_format($book['purchase_price'], 2); ?>)">Buy</button>
                     <?php endif; ?>
                   <?php else: ?>
                     <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
@@ -213,19 +213,122 @@ while($row = $genres_result->fetch_assoc()) {
 
   <?php require_once __DIR__ . '/../src/components/footer.php'; ?>
 
+  <!-- Rent Modal -->
+  <?php if($is_logged_in): ?>
+  <div id="rentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
+      <h2 style="margin-top: 0;">Rent Book</h2>
+      <form id="rentForm" method="POST" action="/BOOKHUB/book-hub-central/src/handlers/rent-book-handler.php">
+        <input type="hidden" name="book_id" id="rent_book_id">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
+          <p id="rent_book_title" style="margin: 0; color: var(--muted-foreground);"></p>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date:</label>
+          <input type="date" name="start_date" id="rent_start_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date:</label>
+          <input type="date" name="end_date" id="rent_end_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number:</label>
+          <input type="tel" name="phone_number" required placeholder="Enter your phone number" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" onclick="closeRentModal()" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-accent">Submit Rental Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <?php endif; ?>
+
+  <!-- Message Container -->
+  <div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+
   <!-- JavaScript Files -->
   <script src="static/js/common.js"></script>
   <script src="static/js/books.js"></script>
   <script>
-    function rentBook(bookId) {
-      // TODO: Implement rental functionality
-      alert('Rental functionality coming soon!');
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('rent_start_date')?.setAttribute('min', today);
+    document.getElementById('rent_end_date')?.setAttribute('min', today);
+
+    function openRentModal(bookId, bookTitle, pricePerDay) {
+      document.getElementById('rent_book_id').value = bookId;
+      document.getElementById('rent_book_title').textContent = bookTitle + ' (LKR ' + pricePerDay + '/day)';
+      document.getElementById('rentModal').style.display = 'flex';
+    }
+
+    function closeRentModal() {
+      document.getElementById('rentModal').style.display = 'none';
+      document.getElementById('rentForm').reset();
+    }
+
+    function purchaseBook(bookId, bookTitle, price) {
+      if (confirm('Purchase "' + bookTitle + '" for LKR ' + price + '?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/BOOKHUB/book-hub-central/src/handlers/purchase-book-handler.php';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'book_id';
+        input.value = bookId;
+        form.appendChild(input);
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }
+
+    // Display messages
+    function displayMessages() {
+      const params = new URLSearchParams(window.location.search);
+      const messageContainer = document.getElementById('message-container');
+      const success = params.get('success');
+      const error = params.get('error');
+      
+      if (success) {
+        messageContainer.innerHTML = `<div class="alert alert-success" style="padding: 16px 20px; background: #10b981; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); font-size: 15px; margin-bottom: 1rem;">${decodeURIComponent(success)}</div>`;
+        params.delete('success');
+        window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+        setTimeout(() => {
+          const alert = messageContainer.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.3s';
+            setTimeout(() => messageContainer.innerHTML = '', 300);
+          }
+        }, 5000);
+      }
+      
+      if (error) {
+        messageContainer.innerHTML = `<div class="alert alert-error" style="padding: 16px 20px; background: #ef4444; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(239,68,68,0.3); font-size: 15px; margin-bottom: 1rem;">${decodeURIComponent(error)}</div>`;
+        params.delete('error');
+        window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+        setTimeout(() => {
+          const alert = messageContainer.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.3s';
+            setTimeout(() => messageContainer.innerHTML = '', 300);
+          }
+        }, 5000);
+      }
     }
     
-    function purchaseBook(bookId) {
-      // TODO: Implement purchase functionality
-      alert('Purchase functionality coming soon!');
-    }
+    document.addEventListener('DOMContentLoaded', displayMessages);
+
+    // Close modal when clicking outside
+    document.getElementById('rentModal')?.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeRentModal();
+      }
+    });
   </script>
 </body>
 </html>

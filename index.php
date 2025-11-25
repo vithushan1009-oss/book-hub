@@ -59,16 +59,24 @@ if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $ro
     }
 }
 
-// Route to public HTML pages
+// Route to public pages (prefer PHP over HTML for dynamic content)
 $public_pages = [
     '/index', '/login', '/register', '/admin-login', 
     '/books', '/about', '/contact', '/gallery'
 ];
 
 if (in_array($route, $public_pages)) {
-    $file = __DIR__ . '/public' . $route . '.html';
-    if (file_exists($file)) {
-        readfile($file);
+    // Try PHP file first (dynamic content)
+    $php_file = __DIR__ . '/public' . $route . '.php';
+    if (file_exists($php_file)) {
+        require_once $php_file;
+        exit;
+    }
+    
+    // Fallback to HTML file (static content)
+    $html_file = __DIR__ . '/public' . $route . '.html';
+    if (file_exists($html_file)) {
+        readfile($html_file);
         exit;
     }
 }
@@ -77,6 +85,10 @@ if (in_array($route, $public_pages)) {
 $protected_views = [
     '/user' => 'user.php',
     '/admin' => 'admin.php',
+    '/admin-users' => 'manage-users.php',
+    '/admin-books' => 'manage-books.php',
+    '/admin-profile' => 'admin-profile.php',
+    '/admin-settings' => 'admin-settings.php',
     '/profile' => 'profile.php',
     '/manage-users' => 'manage-users.php'
 ];

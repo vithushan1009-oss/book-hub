@@ -36,15 +36,15 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <i class="fas fa-tachometer-alt"></i> Overview
       </h4>
 
-      <a href="<?= $base ?>/admin.php"
-         class="nav-item <?= $current === 'admin.php' ? 'active' : '' ?>"
+      <a href="<?= $base ?>/admin"
+         class="nav-item <?= $current === 'admin' ? 'active' : '' ?>"
          data-section="dashboard">
         <i class="fas fa-chart-pie"></i>
         <span>Dashboard</span>
         <div class="nav-badge">Live</div>
       </a>
 
-      <a href="<?= $base ?>/admin.php#analytics" class="nav-item" data-section="analytics">
+      <a href="<?= $base ?>/admin#analytics" class="nav-item" data-section="analytics">
         <i class="fas fa-chart-line"></i>
         <span>Analytics</span>
       </a>
@@ -56,20 +56,20 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <i class="fas fa-database"></i> Content
       </h4>
 
-      <a href="<?= $base ?>/admin-users.php"
-         class="nav-item <?= $current === 'admin-users.php' ? 'active' : '' ?>">
+      <a href="<?= $base ?>/admin-users"
+         class="nav-item <?= $current === 'admin-users' ? 'active' : '' ?>">
         <i class="fas fa-users"></i>
         <span>User Management</span>
         <div class="nav-count">4</div>
       </a>
 
-      <a href="<?= $base ?>/admin-books.php"
-         class="nav-item <?= $current === 'admin-books.php' ? 'active' : '' ?>">
+      <a href="<?= $base ?>/admin-books"
+         class="nav-item <?= $current === 'admin-books' ? 'active' : '' ?>">
         <i class="fas fa-book"></i>
         <span>Book Management</span>
       </a>
 
-      <a href="<?= $base ?>/admin.php#rentals" class="nav-item" data-section="rentals">
+      <a href="<?= $base ?>/admin#rentals" class="nav-item" data-section="rentals">
         <i class="fas fa-handshake"></i>
         <span>Rentals</span>
         <div class="nav-badge warning">12 Active</div>
@@ -82,19 +82,19 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <i class="fas fa-cogs"></i> Administration
       </h4>
 
-      <a href="<?= $base ?>/admin-profile.php"
-         class="nav-item <?= $current === 'admin-profile.php' ? 'active' : '' ?>">
+      <a href="<?= $base ?>/admin-profile"
+         class="nav-item <?= $current === 'admin-profile' ? 'active' : '' ?>">
         <i class="fas fa-user-shield"></i>
         <span>Admin Profile</span>
       </a>
 
-      <a href="<?= $base ?>/admin.php#permissions" class="nav-item" data-section="permissions">
+      <a href="<?= $base ?>/admin#permissions" class="nav-item" data-section="permissions">
         <i class="fas fa-key"></i>
         <span>Permissions</span>
       </a>
 
-      <a href="<?= $base ?>/admin-settings.php"
-         class="nav-item <?= $current === 'admin-settings.php' ? 'active' : '' ?>">
+      <a href="<?= $base ?>/admin-settings"
+         class="nav-item <?= $current === 'admin-settings' ? 'active' : '' ?>">
         <i class="fas fa-sliders-h"></i>
         <span>System Settings</span>
       </a>
@@ -106,17 +106,17 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
         <i class="fas fa-tools"></i> Tools
       </h4>
 
-      <a href="<?= $base ?>/admin.php#reports" class="nav-item" data-section="reports">
+      <a href="<?= $base ?>/admin#reports" class="nav-item" data-section="reports">
         <i class="fas fa-chart-bar"></i>
         <span>Reports</span>
       </a>
 
-      <a href="<?= $base ?>/admin.php#backup" class="nav-item" data-section="backup">
+      <a href="<?= $base ?>/admin#backup" class="nav-item" data-section="backup">
         <i class="fas fa-server"></i>
         <span>Backup</span>
       </a>
 
-      <a href="<?= $base ?>/admin.php#logs" class="nav-item" data-section="logs">
+      <a href="<?= $base ?>/admin#logs" class="nav-item" data-section="logs">
         <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
       </a>
@@ -150,7 +150,7 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
       </div>
 
       <div class="user-actions">
-        <a href="<?= $base ?>/admin-profile.php" class="action-btn" title="Profile Settings">
+        <a href="<?= $base ?>/admin-profile" class="action-btn" title="Profile Settings">
           <i class="fas fa-user-cog"></i>
         </a>
 
