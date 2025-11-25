@@ -61,17 +61,34 @@ switch($sort) {
 
 // Get books
 $query = "SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE $where_clause ORDER BY $order_by LIMIT 50";
-if(!empty($params)) {
+$result = null;
+
+if(!empty($params) && !empty($types)) {
     $stmt = $conn->prepare($query);
     if($stmt) {
         $stmt->bind_param($types, ...$params);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        if($stmt->execute()) {
+            $result = $stmt->get_result();
+        } else {
+            // Fallback query on error
+            $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
+        }
     } else {
+        // Fallback query on prepare error
         $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
     }
 } else {
+    // No parameters, execute directly
     $result = $conn->query($query);
+    if(!$result) {
+        // Fallback query on error
+        $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
+    }
+}
+
+// Ensure result is valid
+if(!$result) {
+    $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
 }
 
 // Get unique genres for filter
@@ -109,54 +126,60 @@ while($row = $genres_result->fetch_assoc()) {
     </div>
   </header>
 
-  <section class="filters">
-    <div class="container">
-      <div class="filter-controls">
-        <form method="GET" action="" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; width: 100%;">
-          <div class="search-input" style="flex: 1; min-width: 200px;">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/></svg>
-            <input type="text" name="search" placeholder="Search books, authors, ISBN..." value="<?php echo htmlspecialchars($search); ?>">
-          </div>
-
-          <select name="category" id="category">
-            <option value="all">All Categories</option>
-            <?php foreach($genres as $genre): ?>
-              <option value="<?php echo htmlspecialchars($genre); ?>" <?php echo $category === $genre ? 'selected' : ''; ?>>
-                <?php echo htmlspecialchars($genre); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-
-          <select name="sort" id="sort">
-            <option value="popular" <?php echo $sort === 'popular' ? 'selected' : ''; ?>>Most Popular</option>
-            <option value="newest" <?php echo $sort === 'newest' ? 'selected' : ''; ?>>Newest First</option>
-            <option value="price-low" <?php echo $sort === 'price-low' ? 'selected' : ''; ?>>Price: Low to High</option>
-            <option value="price-high" <?php echo $sort === 'price-high' ? 'selected' : ''; ?>>Price: High to Low</option>
-            <option value="rating" <?php echo $sort === 'rating' ? 'selected' : ''; ?>>Highest Rated</option>
-          </select>
-
-          <select name="type" id="type">
-            <option value="all">All Types</option>
-            <option value="physical" <?php echo $book_type === 'physical' ? 'selected' : ''; ?>>Physical Books</option>
-            <option value="online" <?php echo $book_type === 'online' ? 'selected' : ''; ?>>Online Books</option>
-          </select>
-
-          <button type="submit" class="btn btn-outline">Filter</button>
-          <?php if($search || $category !== 'all' || $book_type !== 'all'): ?>
-            <a href="?" class="btn btn-outline">Clear</a>
-          <?php endif; ?>
-        </form>
-      </div>
-    </div>
-  </section>
 
   <section>
     <div class="container">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <p class="muted">Showing <strong><?php echo $result->num_rows; ?></strong> books</p>
+      <!-- Search Bar Only -->
+      <div class="books-search-bar">
+        <form method="GET" action="/BOOKHUB/book-hub-central/public/books.php" id="searchForm">
+          <div class="search-input-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input 
+              type="text" 
+              name="search" 
+              id="searchInput" 
+              placeholder="Search books, authors, ISBN..." 
+              value="<?php echo htmlspecialchars($search); ?>" 
+              autocomplete="off"
+              class="search-input-field">
+            <?php if($search): ?>
+              <button type="button" class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            <?php endif; ?>
+          </div>
+          <button type="submit" class="search-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+            Search
+          </button>
+        </form>
       </div>
 
-      <div class="books-grid">
+      <div class="books-layout">
+        <div class="books-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <p class="muted">
+              <?php if($search || $category !== 'all' || $book_type !== 'all'): ?>
+                Showing <strong><?php echo $result->num_rows; ?></strong> book<?php echo $result->num_rows !== 1 ? 's' : ''; ?>
+                <?php if($search): ?>
+                  matching "<strong><?php echo htmlspecialchars($search); ?></strong>"
+                <?php endif; ?>
+              <?php else: ?>
+                Showing <strong><?php echo $result->num_rows; ?></strong> book<?php echo $result->num_rows !== 1 ? 's' : ''; ?>
+              <?php endif; ?>
+            </p>
+          </div>
+
+          <div class="books-grid">
         <?php if($result && $result->num_rows > 0): ?>
           <?php while($book = $result->fetch_assoc()): ?>
             <div class="book-card">
@@ -205,9 +228,10 @@ while($row = $genres_result->fetch_assoc()) {
             <p style="color: var(--muted-foreground);">No books found. Try adjusting your filters.</p>
           </div>
         <?php endif; ?>
-      </div>
+        </div>
 
-      <!-- Pagination can be added here later -->
+        <!-- Pagination can be added here later -->
+      </div>
     </div>
   </section>
 
@@ -252,6 +276,30 @@ while($row = $genres_result->fetch_assoc()) {
   <script src="static/js/common.js"></script>
   <script src="static/js/books.js"></script>
   <script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      
+      // Clear search button
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+          window.location.href = '/BOOKHUB/book-hub-central/public/books.php';
+        });
+      }
+      
+      // Submit on Enter key
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            searchForm.submit();
+          }
+        });
+      }
+    });
+    
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('rent_start_date')?.setAttribute('min', today);

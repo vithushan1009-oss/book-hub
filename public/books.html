@@ -56,38 +56,38 @@
     </div>
   </header>
 
-  <section class="filters">
-    <div class="container">
-      <div class="filter-controls">
-        <div class="search-input">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/></svg>
-          <input type="text" placeholder="Search books, authors, ISBN...">
-        </div>
-
-        <select id="category">
-          <option value="all">All Categories</option>
-          <option value="fiction">Fiction</option>
-          <option value="non-fiction">Non-Fiction</option>
-          <option value="fantasy">Fantasy</option>
-          <option value="science">Science</option>
-          <option value="biography">Biography</option>
-        </select>
-
-        <select id="sort">
-          <option value="popular">Most Popular</option>
-          <option value="newest">Newest First</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-
-        <button class="btn btn-outline">Filters</button>
-      </div>
-    </div>
-  </section>
-
   <section>
     <div class="container">
+      <!-- Search Bar Only -->
+      <div class="books-search-bar">
+        <form method="GET" action="books.html" id="searchForm">
+          <div class="search-input-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input 
+              type="text" 
+              name="search"
+              id="searchInput" 
+              placeholder="Search books, authors, ISBN..." 
+              value=""
+              autocomplete="off"
+              class="search-input-field">
+            <!-- Clear button will be added dynamically by JavaScript when search has value -->
+          </div>
+          <button type="submit" class="search-submit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+            Search
+          </button>
+        </form>
+      </div>
+
+      <div class="books-layout">
+        <div class="books-content">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
         <p class="muted">Showing <strong>8</strong> books</p>
       </div>
@@ -135,17 +135,17 @@
           <div class="book-card-content"><h3>Science Wonders</h3><p class="author">Knowledge Seeker</p><div class="book-footer"><div class="book-price">$4.99<span>/week</span></div><button class="btn btn-accent btn-sm">Rent</button></div></div>
         </div>
 
-      </div>
+        </div>
 
-      <!-- Pagination -->
-      <div class="pagination">
-        <button class="btn btn-outline">Previous</button>
-        <button class="btn btn-outline active">1</button>
-        <button class="btn btn-outline">2</button>
-        <button class="btn btn-outline">3</button>
-        <button class="btn btn-outline">Next</button>
+        <!-- Pagination -->
+        <div class="pagination">
+          <button class="btn btn-outline">Previous</button>
+          <button class="btn btn-outline active">1</button>
+          <button class="btn btn-outline">2</button>
+          <button class="btn btn-outline">3</button>
+          <button class="btn btn-outline">Next</button>
+        </div>
       </div>
-
     </div>
   </section>
 
@@ -165,5 +165,66 @@
   <!-- JavaScript Files -->
   <script src="static/js/common.js"></script>
   <script src="static/js/books.js"></script>
+  <script>
+    // Search functionality - matches books.php behavior
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const searchWrapper = document.querySelector('.search-input-wrapper');
+      
+      // Get search parameter from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchValue = urlParams.get('search') || '';
+      
+      // Function to add/remove clear button
+      function updateClearButton() {
+        const existingBtn = document.getElementById('clearSearchBtn');
+        const hasValue = searchInput && searchInput.value.trim() !== '';
+        
+        if (hasValue && !existingBtn && searchWrapper) {
+          // Add clear button
+          const clearBtn = document.createElement('button');
+          clearBtn.type = 'button';
+          clearBtn.className = 'clear-search-btn';
+          clearBtn.id = 'clearSearchBtn';
+          clearBtn.setAttribute('aria-label', 'Clear search');
+          clearBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          `;
+          clearBtn.addEventListener('click', function() {
+            window.location.href = 'books.html';
+          });
+          searchWrapper.appendChild(clearBtn);
+        } else if (!hasValue && existingBtn) {
+          // Remove clear button
+          existingBtn.remove();
+        }
+      }
+      
+      // Set search input value if present in URL
+      if (searchInput && searchValue) {
+        searchInput.value = searchValue;
+        updateClearButton();
+      }
+      
+      // Update clear button on input change
+      if (searchInput) {
+        searchInput.addEventListener('input', updateClearButton);
+        
+        // Submit on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            if (searchForm) {
+              searchForm.submit();
+            }
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

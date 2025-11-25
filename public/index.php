@@ -1,3 +1,26 @@
+<?php
+require_once __DIR__ . '/../src/config.php';
+require_once __DIR__ . '/../src/session-check.php';
+
+$conn = getDbConnection();
+
+// Fetch featured books (latest 4 books)
+$featured_books_query = "SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 4";
+$featured_books_result = $conn->query($featured_books_query);
+
+if (!$featured_books_result) {
+    $featured_books_result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 4");
+}
+
+// Get total book count for stats
+$total_books_query = "SELECT COUNT(*) as total FROM books WHERE is_active = 1";
+$total_books_result = $conn->query($total_books_query);
+$total_books = 0;
+if ($total_books_result) {
+    $row = $total_books_result->fetch_assoc();
+    $total_books = $row['total'];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,7 +88,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
           </svg>
-          <h3>10,000+</h3>
+          <h3><?php echo number_format($total_books); ?>+</h3>
           <p>Books Available</p>
         </div>
         <div class="stat-item">
@@ -107,139 +130,86 @@
       </div>
 
       <div class="books-grid">
-        <!-- Book Card 1 -->
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="assets/images/book-1.jpg" alt="Fiction Fomen">
-            <span class="book-badge badge-buy">Buy Now</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Fiction Fomen</h3>
-            <p class="author">Shen Gerdings</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(5.0)</span>
+        <?php if($featured_books_result && $featured_books_result->num_rows > 0): ?>
+          <?php while($book = $featured_books_result->fetch_assoc()): ?>
+            <div class="book-card">
+              <div class="book-card-image">
+                <img src="/BOOKHUB/book-hub-central/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
+                     alt="<?php echo htmlspecialchars($book['title']); ?>"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                <?php if($book['book_type'] === 'physical'): ?>
+                  <span class="book-badge badge-rent">For Rent</span>
+                <?php else: ?>
+                  <span class="book-badge badge-buy">Buy Now</span>
+                <?php endif; ?>
+              </div>
+              <div class="book-card-content">
+                <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                <p class="author"><?php echo htmlspecialchars($book['author']); ?></p>
+                <?php if($book['genre']): ?>
+                  <p class="genre" style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.25rem;">
+                    <?php echo htmlspecialchars($book['genre']); ?>
+                  </p>
+                <?php endif; ?>
+                <div class="book-rating">
+                  <?php 
+                  // Simple rating display (can be enhanced with actual ratings later)
+                  $rating = 4.5; // Placeholder - can be fetched from database later
+                  $full_stars = floor($rating);
+                  $has_half = ($rating - $full_stars) >= 0.5;
+                  for($i = 0; $i < $full_stars; $i++): ?>
+                    <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endfor; ?>
+                  <?php if($has_half): ?>
+                    <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endif; ?>
+                  <?php 
+                  $empty_stars = 5 - $full_stars - ($has_half ? 1 : 0);
+                  for($i = 0; $i < $empty_stars; $i++): ?>
+                    <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endfor; ?>
+                  <span>(<?php echo number_format($rating, 1); ?>)</span>
+                </div>
+                <div class="book-footer">
+                  <div class="book-price">
+                    <?php if($book['book_type'] === 'physical' && $book['rental_price_per_day']): ?>
+                      LKR <?php echo number_format($book['rental_price_per_day'], 2); ?><span>/day</span>
+                    <?php elseif($book['book_type'] === 'online' && $book['purchase_price']): ?>
+                      LKR <?php echo number_format($book['purchase_price'], 2); ?>
+                    <?php else: ?>
+                      N/A
+                    <?php endif; ?>
+                  </div>
+                  <?php if ($is_logged_in): ?>
+                    <?php if($book['book_type'] === 'physical'): ?>
+                      <button class="btn btn-accent btn-sm" onclick="openRentModal(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', <?php echo number_format($book['rental_price_per_day'], 2); ?>)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                        </svg>
+                        Rent
+                      </button>
+                    <?php else: ?>
+                      <button class="btn btn-secondary btn-sm" onclick="purchaseBook(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', <?php echo number_format($book['purchase_price'], 2); ?>)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+                          <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                        </svg>
+                        Buy
+                      </button>
+                    <?php endif; ?>
+                  <?php else: ?>
+                    <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
+                  <?php endif; ?>
+                </div>
+              </div>
             </div>
-            <div class="book-footer">
-              <div class="book-price">$12.99</div>
-              <?php if ($is_logged_in): ?>
-              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-                  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-                </svg>
-                Buy
-              </a>
-              <?php else: ?>
-              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">View Details</a>
-              <?php endif; ?>
-            </div>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p class="muted">No featured books available at the moment.</p>
+            <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-primary">Browse All Books</a>
           </div>
-        </div>
-
-        <!-- Book Card 2 -->
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="assets/images/book-2.jpg" alt="Nook">
-            <span class="book-badge badge-rent">For Rent</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Nook</h3>
-            <p class="author">Bab Giuing</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(4.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$3.99<span>/week</span></div>
-              <?php if ($is_logged_in): ?>
-              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-accent btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                </svg>
-                Rent
-              </a>
-              <?php else: ?>
-              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-accent btn-sm">View Details</a>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Card 3 -->
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="assets/images/book-3.jpg" alt="Mystic Tales">
-            <span class="book-badge badge-buy">Buy Now</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Mystic Tales</h3>
-            <p class="author">Fantasy Author</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(5.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$15.99</div>
-              <?php if ($is_logged_in): ?>
-              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-                  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-                </svg>
-                Buy
-              </a>
-              <?php else: ?>
-              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">View Details</a>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Card 4 -->
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="assets/images/book-4.jpg" alt="Science Wonders">
-            <span class="book-badge badge-rent">For Rent</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Science Wonders</h3>
-            <p class="author">Knowledge Seeker</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(4.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$4.99<span>/week</span></div>
-              <?php if ($is_logged_in): ?>
-              <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-accent btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                </svg>
-                Rent
-              </a>
-              <?php else: ?>
-              <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-accent btn-sm">View Details</a>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
 
       <div style="text-align: center; margin-top: 2rem;">
@@ -319,31 +289,121 @@
 
   <?php require_once __DIR__ . '/../src/components/footer.php'; ?>
 
+  <!-- Rent Modal -->
+  <?php if($is_logged_in): ?>
+  <div id="rentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
+      <h2 style="margin-top: 0;">Rent Book</h2>
+      <form id="rentForm" method="POST" action="/BOOKHUB/book-hub-central/src/handlers/rent-book-handler.php">
+        <input type="hidden" name="book_id" id="rent_book_id">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
+          <p id="rent_book_title" style="margin: 0; color: var(--muted-foreground);"></p>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date:</label>
+          <input type="date" name="start_date" id="rent_start_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date:</label>
+          <input type="date" name="end_date" id="rent_end_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number:</label>
+          <input type="tel" name="phone_number" required placeholder="Enter your phone number" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" onclick="closeRentModal()" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-secondary">Rent Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- JavaScript Files -->
   <script src="static/js/common.js"></script>
   <script src="static/js/home.js"></script>
+  <script src="static/js/books.js"></script>
   
-  <!-- Message Display Script -->
   <script>
-  function displayMessages() {
-    const params = new URLSearchParams(window.location.search);
-    const messageContainer = document.getElementById('message-container');
-    const success = params.get('success');
-    if (success) {
-      messageContainer.innerHTML = `<div class="alert alert-success" style="padding: 16px 20px; background: #10b981; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); font-size: 15px;">${decodeURIComponent(success)}</div>`;
-      params.delete('success');
-      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
-      setTimeout(() => {
-        const alert = messageContainer.querySelector('.alert');
-        if (alert) {
-          alert.style.opacity = '0';
-          alert.style.transition = 'opacity 0.3s';
-          setTimeout(() => messageContainer.innerHTML = '', 300);
-        }
-      }, 4000);
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('rent_start_date')?.setAttribute('min', today);
+    document.getElementById('rent_end_date')?.setAttribute('min', today);
+
+    function openRentModal(bookId, bookTitle, pricePerDay) {
+      document.getElementById('rent_book_id').value = bookId;
+      document.getElementById('rent_book_title').textContent = bookTitle + ' (LKR ' + pricePerDay + '/day)';
+      document.getElementById('rentModal').style.display = 'flex';
     }
-  }
-  document.addEventListener('DOMContentLoaded', displayMessages);
+
+    function closeRentModal() {
+      document.getElementById('rentModal').style.display = 'none';
+      document.getElementById('rentForm').reset();
+    }
+
+    function purchaseBook(bookId, bookTitle, price) {
+      if (confirm('Purchase "' + bookTitle + '" for LKR ' + price + '?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/BOOKHUB/book-hub-central/src/handlers/purchase-book-handler.php';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'book_id';
+        input.value = bookId;
+        form.appendChild(input);
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }
+
+    // Display messages
+    function displayMessages() {
+      const params = new URLSearchParams(window.location.search);
+      const messageContainer = document.getElementById('message-container');
+      const success = params.get('success');
+      const error = params.get('error');
+      
+      if (success) {
+        messageContainer.innerHTML = `<div class="alert alert-success" style="padding: 16px 20px; background: #10b981; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); font-size: 15px;">${decodeURIComponent(success)}</div>`;
+        params.delete('success');
+        window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+        setTimeout(() => {
+          const alert = messageContainer.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.3s';
+            setTimeout(() => messageContainer.innerHTML = '', 300);
+          }
+        }, 4000);
+      }
+      
+      if (error) {
+        messageContainer.innerHTML = `<div class="alert alert-error" style="padding: 16px 20px; background: #ef4444; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(239,68,68,0.3); font-size: 15px;">${decodeURIComponent(error)}</div>`;
+        params.delete('error');
+        window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+        setTimeout(() => {
+          const alert = messageContainer.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.3s';
+            setTimeout(() => messageContainer.innerHTML = '', 300);
+          }
+        }, 4000);
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', displayMessages);
+
+    // Close modal when clicking outside
+    document.getElementById('rentModal')?.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeRentModal();
+      }
+    });
   </script>
 </body>
 </html>
