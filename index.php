@@ -14,7 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Get the request URI
 $request_uri = $_SERVER['REQUEST_URI'];
-$base_path = '/BOOKHUB/book-hub-central';
+$base_path = '/book-hub';
 
 // Remove base path and query string
 $route = str_replace($base_path, '', parse_url($request_uri, PHP_URL_PATH));

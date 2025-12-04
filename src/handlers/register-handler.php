@@ -16,7 +16,7 @@ require_once __DIR__ . '/email-functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     file_put_contents($debug_log, "Not a POST request, redirecting\n", FILE_APPEND);
-    header('Location: /BOOKHUB/book-hub-central/public/register.html');
+    header('Location: /book-hub/public/register.html');
     exit();
 }
 
@@ -83,7 +83,7 @@ if (empty($errors)) {
 if (!empty($errors)) {
     file_put_contents($debug_log, "Validation errors: " . implode(', ', $errors) . "\n", FILE_APPEND);
     $_SESSION['error'] = implode(', ', $errors);
-    header('Location: /BOOKHUB/book-hub-central/public/register.html?error=' . urlencode(implode(', ', $errors)));
+    header('Location: /book-hub/public/register.html?error=' . urlencode(implode(', ', $errors)));
     exit();
 }
 
@@ -104,7 +104,7 @@ $insert_stmt = $conn->prepare($insert_sql);
 if (!$insert_stmt) {
     error_log("Prepare statement failed: " . $conn->error);
     $_SESSION['error'] = 'Database error occurred';
-    header('Location: /BOOKHUB/book-hub-central/public/register.html?error=' . urlencode('Database error. Please try again.'));
+    header('Location: /book-hub/public/register.html?error=' . urlencode('Database error. Please try again.'));
     exit();
 }
 
@@ -135,7 +135,7 @@ if ($insert_stmt->execute()) {
         $log_stmt->execute();
         
         $_SESSION['success'] = 'Registration successful! Please check your email to verify your account.';
-        header('Location: /BOOKHUB/book-hub-central/public/login.html?success=' . urlencode($_SESSION['success']));
+        header('Location: /book-hub/public/login.html?success=' . urlencode($_SESSION['success']));
     } else {
         // Auto-verify for development and auto-login
         $verify_sql = "UPDATE users SET email_verified = 1 WHERE id = ?";
@@ -163,14 +163,14 @@ if ($insert_stmt->execute()) {
         $update_stmt->execute();
         
         $_SESSION['success'] = 'Welcome to BOOK HUB! Your account has been created successfully.';
-        header('Location: /BOOKHUB/book-hub-central/src/views/user.php?welcome=1');
+        header('Location: /book-hub/src/views/user.php?welcome=1');
     }
 } else {
     $error_message = 'Registration failed: ' . $insert_stmt->error;
     error_log("Insert failed: " . $insert_stmt->error);
     file_put_contents($debug_log, "INSERT FAILED: " . $insert_stmt->error . "\n", FILE_APPEND);
     $_SESSION['error'] = $error_message;
-    header('Location: /BOOKHUB/book-hub-central/public/register.html?error=' . urlencode('Registration failed. Please try again.'));
+    header('Location: /book-hub/public/register.html?error=' . urlencode('Registration failed. Please try again.'));
 }
 
 file_put_contents($debug_log, "=== END ATTEMPT ===\n", FILE_APPEND);
@@ -178,3 +178,4 @@ file_put_contents($debug_log, "=== END ATTEMPT ===\n", FILE_APPEND);
 $conn->close();
 exit();
 ?>
+

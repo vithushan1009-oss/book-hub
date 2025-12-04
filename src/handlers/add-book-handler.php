@@ -4,7 +4,7 @@ require_once __DIR__ . '/../admin-session-check.php';
 require_once __DIR__ . '/../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php');
+    header('Location: /book-hub/src/views/manage-books.php');
     exit;
 }
 
@@ -53,7 +53,7 @@ if($book_type === 'physical') {
 
 if(!empty($errors)) {
     $_SESSION['error'] = implode(', ', $errors);
-    header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode(implode(', ', $errors)));
+    header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode(implode(', ', $errors)));
     exit;
 }
 
@@ -71,12 +71,12 @@ if(isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_E
             $cover_image_type = $file['type'];
         } else {
             $_SESSION['error'] = 'Cover image size must be less than 5MB';
-            header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode('Cover image size must be less than 5MB'));
+            header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode('Cover image size must be less than 5MB'));
             exit;
         }
     } else {
         $_SESSION['error'] = 'Invalid image format. Allowed: JPG, PNG, GIF, WebP';
-        header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode('Invalid image format'));
+        header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode('Invalid image format'));
         exit;
     }
 }
@@ -98,12 +98,12 @@ if($book_type === 'online' && isset($_FILES['pdf_file']) && $_FILES['pdf_file'][
             $pdf_file_type = $file['type'];
         } else {
             $_SESSION['error'] = 'PDF file size must be less than 50MB';
-            header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode('PDF file size must be less than 50MB'));
+            header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode('PDF file size must be less than 50MB'));
             exit;
         }
     } else {
         $_SESSION['error'] = 'Invalid file format. Only PDF files are allowed';
-        header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode('Invalid file format'));
+        header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode('Invalid file format'));
         exit;
     }
 }
@@ -133,13 +133,14 @@ if($cover_image && $pdf_file) {
 if($stmt->execute()) {
     $conn->close();
     $_SESSION['success'] = 'Book added successfully!';
-    header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?success=' . urlencode('Book added successfully!'));
+    header('Location: /book-hub/src/views/manage-books.php?success=' . urlencode('Book added successfully!'));
     exit;
 } else {
     $conn->close();
     $_SESSION['error'] = 'Failed to add book: ' . $conn->error;
-    header('Location: /BOOKHUB/book-hub-central/src/views/manage-books.php?error=' . urlencode('Failed to add book'));
+    header('Location: /book-hub/src/views/manage-books.php?error=' . urlencode('Failed to add book'));
     exit;
 }
 ?>
+
 

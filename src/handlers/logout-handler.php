@@ -9,6 +9,7 @@ setcookie('remember_token', '', time() - 3600, '/');
 setcookie('admin_remember_token', '', time() - 3600, '/');
 
 // Redirect to home page
-header('Location: /BOOKHUB/book-hub-central/public/index.php');
+header('Location: /book-hub/public/index.php');
 exit();
 ?>
+

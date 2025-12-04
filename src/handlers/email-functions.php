@@ -152,3 +152,4 @@ function sendPasswordResetEmail($email, $firstName, $token) {
     return sendEmail($email, $subject, $body, true);
 }
 ?>
+

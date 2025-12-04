@@ -131,7 +131,7 @@ while($row = $genres_result->fetch_assoc()) {
     <div class="container">
       <!-- Search Bar Only -->
       <div class="books-search-bar">
-        <form method="GET" action="/BOOKHUB/book-hub-central/public/books.php" id="searchForm">
+        <form method="GET" action="/book-hub/public/books.php" id="searchForm">
           <div class="search-input-wrapper">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="11" cy="11" r="7"/>
@@ -184,7 +184,7 @@ while($row = $genres_result->fetch_assoc()) {
           <?php while($book = $result->fetch_assoc()): ?>
             <div class="book-card">
               <div class="book-card-image">
-                <img src="/BOOKHUB/book-hub-central/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
+                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
                      alt="<?php echo htmlspecialchars($book['title']); ?>"
                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
                 <?php if($book['book_type'] === 'physical'): ?>
@@ -216,7 +216,7 @@ while($row = $genres_result->fetch_assoc()) {
                       <button class="btn btn-secondary btn-sm" onclick="purchaseBook(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', <?php echo number_format($book['purchase_price'], 2); ?>)">Buy</button>
                     <?php endif; ?>
                   <?php else: ?>
-                    <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
+                    <a href="/book-hub/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
                   <?php endif; ?>
                 </div>
               </div>
@@ -242,7 +242,7 @@ while($row = $genres_result->fetch_assoc()) {
   <div id="rentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
     <div class="modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
       <h2 style="margin-top: 0;">Rent Book</h2>
-      <form id="rentForm" method="POST" action="/BOOKHUB/book-hub-central/src/handlers/rent-book-handler.php">
+      <form id="rentForm" method="POST" action="/book-hub/src/handlers/rent-book-handler.php">
         <input type="hidden" name="book_id" id="rent_book_id">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
@@ -285,7 +285,7 @@ while($row = $genres_result->fetch_assoc()) {
       // Clear search button
       if (clearSearchBtn) {
         clearSearchBtn.addEventListener('click', function() {
-          window.location.href = '/BOOKHUB/book-hub-central/public/books.php';
+          window.location.href = '/book-hub/public/books.php';
         });
       }
       
@@ -320,7 +320,7 @@ while($row = $genres_result->fetch_assoc()) {
       if (confirm('Purchase "' + bookTitle + '" for LKR ' + price + '?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/BOOKHUB/book-hub-central/src/handlers/purchase-book-handler.php';
+        form.action = '/book-hub/src/handlers/purchase-book-handler.php';
         
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -380,3 +380,4 @@ while($row = $genres_result->fetch_assoc()) {
   </script>
 </body>
 </html>
+

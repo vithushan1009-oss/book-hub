@@ -170,11 +170,11 @@ if(!empty($params)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management — BOOK HUB</title>
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+    <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/admin.css">
 </head>
 <body>
 
@@ -287,7 +287,7 @@ if(!empty($params)) {
                                         <td><?php echo (int)$row['id']; ?></td>
                                         <td>
                                             <div class="book-cover-small">
-                                                <img src="/BOOKHUB/book-hub-central/src/handlers/book-image.php?id=<?php echo (int)$row['id']; ?>" 
+                                                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$row['id']; ?>" 
                                                      alt="<?php echo htmlspecialchars($row['title']); ?>"
                                                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'80\'%3E%3Crect fill=\'%23ddd\' width=\'60\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'12\'%3ENo Image%3C/text%3E%3C/svg%3E'">
                                             </div>
@@ -392,7 +392,7 @@ if(!empty($params)) {
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form method="POST" action="/BOOKHUB/book-hub-central/src/handlers/add-book-handler.php" enctype="multipart/form-data" id="addBookForm">
+        <form method="POST" action="/book-hub/src/handlers/add-book-handler.php" enctype="multipart/form-data" id="addBookForm">
             <div class="modal-body">
                 <div class="form-group">
                     <label for="add_title">
@@ -693,8 +693,9 @@ if(!empty($params)) {
 </div>
 
 <!-- JavaScript Files -->
-<script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
-<script src="/BOOKHUB/book-hub-central/public/static/js/book-management.js"></script>
+<script src="/book-hub/public/static/js/admin.js"></script>
+<script src="/book-hub/public/static/js/book-management.js"></script>
 </body>
 </html>
+
 

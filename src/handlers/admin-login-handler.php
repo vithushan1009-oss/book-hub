@@ -12,7 +12,7 @@ file_put_contents($log_file, date('Y-m-d H:i:s') . " - Login attempt started\n",
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Not POST request, redirecting\n", FILE_APPEND);
-    header('Location: /BOOKHUB/book-hub-central/admin-login');
+    header('Location: /book-hub/admin-login');
     exit();
 }
 
@@ -29,7 +29,7 @@ file_put_contents($log_file, date('Y-m-d H:i:s') . " - Password length: " . strl
 if (empty($email) || empty($password)) {
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Empty email or password\n", FILE_APPEND);
     $_SESSION['error'] = 'Email and password are required';
-    header('Location: /BOOKHUB/book-hub-central/admin-login?error=' . urlencode('Email and password are required'));
+    header('Location: /book-hub/admin-login?error=' . urlencode('Email and password are required'));
     exit();
 }
 
@@ -43,7 +43,7 @@ $result = $stmt->get_result();
 if ($result->num_rows == 0) {
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - No admin found with email: $email\n", FILE_APPEND);
     $_SESSION['error'] = 'Invalid credentials';
-    header('Location: /BOOKHUB/book-hub-central/admin-login?error=' . urlencode('Invalid email or password'));
+    header('Location: /book-hub/admin-login?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
@@ -55,7 +55,7 @@ file_put_contents($log_file, date('Y-m-d H:i:s') . " - Password hash starts with
 if (!password_verify($password, $admin['password'])) {
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Password verification FAILED\n", FILE_APPEND);
     $_SESSION['error'] = 'Invalid credentials';
-    header('Location: /BOOKHUB/book-hub-central/admin-login?error=' . urlencode('Invalid email or password'));
+    header('Location: /book-hub/admin-login?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
@@ -87,6 +87,7 @@ $conn->close();
 file_put_contents($log_file, date('Y-m-d H:i:s') . " - Redirecting to admin dashboard\n", FILE_APPEND);
 
 // Redirect to admin dashboard
-header('Location: /BOOKHUB/book-hub-central/admin');
+header('Location: /book-hub/admin');
 exit();
+
 

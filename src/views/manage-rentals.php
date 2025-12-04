@@ -146,11 +146,11 @@ if(!empty($params)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rental Management — BOOK HUB</title>
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+    <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/admin.css">
 </head>
 <body>
 
@@ -240,7 +240,7 @@ if(!empty($params)) {
 
             <!-- Filters and Search -->
             <div class="content-card">
-                <form method="GET" action="/BOOKHUB/book-hub-central/admin-rentals" class="card-filters">
+                <form method="GET" action="/book-hub/admin-rentals" class="card-filters">
                     <input type="text" name="search" class="filter-input" placeholder="Search by user name, email, or book title..." value="<?php echo htmlspecialchars($search); ?>">
                     <select name="status" class="filter-select">
                         <option value="all" <?php echo $status_filter === 'all' ? 'selected' : ''; ?>>All Status</option>
@@ -254,7 +254,7 @@ if(!empty($params)) {
                         <i class="fas fa-search"></i> Filter
                     </button>
                     <?php if($search || $status_filter !== 'all'): ?>
-                        <a href="/BOOKHUB/book-hub-central/admin-rentals" class="btn btn-outline">
+                        <a href="/book-hub/admin-rentals" class="btn btn-outline">
                             <i class="fas fa-times"></i> Clear
                         </a>
                     <?php endif; ?>
@@ -401,14 +401,15 @@ if(!empty($params)) {
     </div>
 </div>
 
-<script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
+<script src="/book-hub/public/static/js/admin.js"></script>
 <script>
     function exportRentals() {
         const params = new URLSearchParams(window.location.search);
         params.set('export', 'rentals');
-        window.location.href = `/BOOKHUB/book-hub-central/admin-rentals?${params.toString()}`;
+        window.location.href = `/book-hub/admin-rentals?${params.toString()}`;
     }
 </script>
 </body>
 </html>
+
 

@@ -17,7 +17,7 @@ if ($is_logged_in && $user_data) {
 <nav>
   <div class="container">
     <div class="nav-content">
-      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>" class="nav-logo">
+      <a href="<?php echo $is_logged_in ? '/book-hub/src/views/user.php' : '/book-hub/public/index.php'; ?>" class="nav-logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
         </svg>
@@ -25,11 +25,11 @@ if ($is_logged_in && $user_data) {
       </a>
 
       <ul class="nav-links">
-        <li><a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>">Home</a></li>
-        <li><a href="/BOOKHUB/book-hub-central/public/books.php">Books</a></li>
-        <li><a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a></li>
-        <li><a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a></li>
-        <li><a href="/BOOKHUB/book-hub-central/public/contact.php">Contact</a></li>
+        <li><a href="<?php echo $is_logged_in ? '/book-hub/src/views/user.php' : '/book-hub/public/index.php'; ?>">Home</a></li>
+        <li><a href="/book-hub/public/books.php">Books</a></li>
+        <li><a href="/book-hub/public/about.php">About Us</a></li>
+        <li><a href="/book-hub/public/gallery.php">Gallery</a></li>
+        <li><a href="/book-hub/public/contact.php">Contact</a></li>
       </ul>
 
       <?php if ($is_logged_in): ?>
@@ -62,7 +62,7 @@ if ($is_logged_in && $user_data) {
             <p class="dropdown-header-subtitle"><?php echo $user_email; ?></p>
           </div>
           <div class="dropdown-menu">
-            <a href="/BOOKHUB/book-hub-central/src/views/profile.php" class="dropdown-item">
+            <a href="/book-hub/src/views/profile.php" class="dropdown-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
@@ -89,7 +89,7 @@ if ($is_logged_in && $user_data) {
               Settings
             </a>
             <div class="dropdown-divider"></div>
-            <a href="/BOOKHUB/book-hub-central/src/handlers/logout-handler.php" class="dropdown-item logout">
+            <a href="/book-hub/src/handlers/logout-handler.php" class="dropdown-item logout">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
@@ -103,8 +103,8 @@ if ($is_logged_in && $user_data) {
       <?php else: ?>
       <!-- Not Logged In - Show Login/Register -->
       <div class="nav-cta">
-        <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-outline">Sign In</a>
-        <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-secondary">Get Started</a>
+        <a href="/book-hub/public/login.html" class="btn btn-outline">Sign In</a>
+        <a href="/book-hub/public/register.html" class="btn btn-secondary">Get Started</a>
       </div>
       <?php endif; ?>
 
@@ -119,22 +119,22 @@ if ($is_logged_in && $user_data) {
 
     <!-- Mobile Menu -->
     <div class="mobile-menu">
-      <a href="<?php echo $is_logged_in ? '/BOOKHUB/book-hub-central/src/views/user.php' : '/BOOKHUB/book-hub-central/public/index.php'; ?>">Home</a>
-      <a href="/BOOKHUB/book-hub-central/public/books.php">Books</a>
-      <a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a>
-      <a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a>
-      <a href="/BOOKHUB/book-hub-central/public/contact.php">Contact</a>
+      <a href="<?php echo $is_logged_in ? '/book-hub/src/views/user.php' : '/book-hub/public/index.php'; ?>">Home</a>
+      <a href="/book-hub/public/books.php">Books</a>
+      <a href="/book-hub/public/about.php">About Us</a>
+      <a href="/book-hub/public/gallery.php">Gallery</a>
+      <a href="/book-hub/public/contact.php">Contact</a>
       
       <?php if ($is_logged_in): ?>
       <div class="dropdown-divider" style="margin: 1rem 0;"></div>
-      <a href="/BOOKHUB/book-hub-central/src/views/profile.php">My Profile</a>
+      <a href="/book-hub/src/views/profile.php">My Profile</a>
       <a href="#">My Books</a>
       <a href="#">Favorites</a>
       <a href="#">Settings</a>
-      <a href="/BOOKHUB/book-hub-central/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>
+      <a href="/book-hub/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>
       <?php else: ?>
       <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-        <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-outline" style="width: 100%;">Sign In</a>
+        <a href="/book-hub/public/login.html" class="btn btn-outline" style="width: 100%;">Sign In</a>
         <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
       </div>
       <?php endif; ?>

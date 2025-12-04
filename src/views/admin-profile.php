@@ -11,11 +11,11 @@ $admin_email = $_SESSION['admin_email'] ?? '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Profile - BOOK HUB</title>
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+    <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/admin.css">
   </head>
   <body>
     <div class="admin-page">
@@ -46,12 +46,13 @@ $admin_email = $_SESSION['admin_email'] ?? '';
               </div>
             </div>
             <div style="margin-top:1.5rem;">
-              <a class="btn btn-primary" href="/BOOKHUB/book-hub-central/admin-settings"><i class="fas fa-user-cog"></i> Edit Settings</a>
+              <a class="btn btn-primary" href="/book-hub/admin-settings"><i class="fas fa-user-cog"></i> Edit Settings</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
+    <script src="/book-hub/public/static/js/admin.js"></script>
   </body>
   </html>
+

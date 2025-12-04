@@ -88,12 +88,12 @@ if (!empty($rental_params) && !empty($rental_types)) {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+  <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
 
   <!-- CSS Files -->
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/admin.css">
 </head>
 <body>
 
@@ -218,7 +218,7 @@ if (!empty($rental_params) && !empty($rental_types)) {
           <div class="dashboard-card">
             <div class="card-header">
               <h3>Recent Users</h3>
-              <a href="/BOOKHUB/book-hub-central/admin-users" class="btn-link">View All</a>
+              <a href="/book-hub/admin-users" class="btn-link">View All</a>
             </div>
             <div class="card-content">
               <table class="data-table">
@@ -432,7 +432,7 @@ if (!empty($rental_params) && !empty($rental_types)) {
 
         <!-- Filters -->
         <div class="content-card">
-          <form method="GET" action="/BOOKHUB/book-hub-central/admin#rentals" class="card-filters">
+          <form method="GET" action="/book-hub/admin#rentals" class="card-filters">
             <input type="text" name="rental_search" class="filter-input" placeholder="Search by user name, email, or book title..." value="<?php echo htmlspecialchars($rental_search); ?>">
             <select name="rental_status" class="filter-select">
               <option value="all" <?php echo $rental_status_filter === 'all' ? 'selected' : ''; ?>>All Status</option>
@@ -446,7 +446,7 @@ if (!empty($rental_params) && !empty($rental_types)) {
               <i class="fas fa-search"></i> Filter
             </button>
             <?php if ($rental_search || $rental_status_filter !== 'all'): ?>
-              <a href="/BOOKHUB/book-hub-central/admin#rentals" class="btn btn-outline">
+              <a href="/book-hub/admin#rentals" class="btn btn-outline">
                 <i class="fas fa-times"></i> Clear
               </a>
             <?php endif; ?>
@@ -648,7 +648,7 @@ if (!empty($rental_params) && !empty($rental_types)) {
   </div>
 </div>
 
-<script src="/BOOKHUB/book-hub-central/public/static/js/admin.js"></script>
+<script src="/book-hub/public/static/js/admin.js"></script>
 
 <!-- Force-load Font Awesome -->
 <script>
@@ -679,7 +679,7 @@ function updateRentalStatus(rentalId, newStatus) {
   if (confirm(`Are you sure you want to ${actionName} this rental request?`)) {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '/BOOKHUB/book-hub-central/src/handlers/update-rental-status-handler.php';
+    form.action = '/book-hub/src/handlers/update-rental-status-handler.php';
     
     const rentalIdInput = document.createElement('input');
     rentalIdInput.type = 'hidden';
@@ -706,7 +706,7 @@ function viewRentalDetails(rentalId) {
 function exportRentals() {
   const params = new URLSearchParams(window.location.search);
   params.set('export', 'rentals');
-  window.location.href = `/BOOKHUB/book-hub-central/admin?${params.toString()}`;
+  window.location.href = `/book-hub/admin?${params.toString()}`;
 }
 
 // Display success/error messages
@@ -728,3 +728,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+

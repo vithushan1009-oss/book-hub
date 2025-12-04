@@ -56,11 +56,11 @@ if ($total_books_result) {
       <p>Rent physical books or buy digital editions instantly</p>
 
       <div class="hero-cta">
-        <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
+        <a href="/book-hub/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
         <?php if (!$is_logged_in): ?>
-        <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Get Started</a>
+        <a href="/book-hub/public/register.html" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Get Started</a>
         <?php else: ?>
-        <a href="/BOOKHUB/book-hub-central/src/views/user.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Dashboard</a>
+        <a href="/book-hub/src/views/user.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Dashboard</a>
         <?php endif; ?>
       </div>
 
@@ -134,7 +134,7 @@ if ($total_books_result) {
           <?php while($book = $featured_books_result->fetch_assoc()): ?>
             <div class="book-card">
               <div class="book-card-image">
-                <img src="/BOOKHUB/book-hub-central/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
+                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
                      alt="<?php echo htmlspecialchars($book['title']); ?>"
                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
                 <?php if($book['book_type'] === 'physical'): ?>
@@ -198,7 +198,7 @@ if ($total_books_result) {
                       </button>
                     <?php endif; ?>
                   <?php else: ?>
-                    <a href="/BOOKHUB/book-hub-central/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
+                    <a href="/book-hub/public/login.html" class="btn btn-secondary btn-sm">Login to Rent/Buy</a>
                   <?php endif; ?>
                 </div>
               </div>
@@ -207,13 +207,13 @@ if ($total_books_result) {
         <?php else: ?>
           <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
             <p class="muted">No featured books available at the moment.</p>
-            <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-primary">Browse All Books</a>
+            <a href="/book-hub/public/books.php" class="btn btn-primary">Browse All Books</a>
           </div>
         <?php endif; ?>
       </div>
 
       <div style="text-align: center; margin-top: 2rem;">
-        <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-primary btn-lg">View All Books</a>
+        <a href="/book-hub/public/books.php" class="btn btn-primary btn-lg">View All Books</a>
       </div>
     </div>
   </section>
@@ -280,9 +280,9 @@ if ($total_books_result) {
       <h2>Ready to Start Your Reading Journey?</h2>
       <p>Join thousands of readers and get access to our vast collection of books today</p>
       <?php if (!$is_logged_in): ?>
-      <a href="/BOOKHUB/book-hub-central/public/register.html" class="btn btn-secondary btn-lg">Sign Up Now</a>
+      <a href="/book-hub/public/register.html" class="btn btn-secondary btn-lg">Sign Up Now</a>
       <?php else: ?>
-      <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
+      <a href="/book-hub/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
       <?php endif; ?>
     </div>
   </section>
@@ -294,7 +294,7 @@ if ($total_books_result) {
   <div id="rentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
     <div class="modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
       <h2 style="margin-top: 0;">Rent Book</h2>
-      <form id="rentForm" method="POST" action="/BOOKHUB/book-hub-central/src/handlers/rent-book-handler.php">
+      <form id="rentForm" method="POST" action="/book-hub/src/handlers/rent-book-handler.php">
         <input type="hidden" name="book_id" id="rent_book_id">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
@@ -347,7 +347,7 @@ if ($total_books_result) {
       if (confirm('Purchase "' + bookTitle + '" for LKR ' + price + '?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/BOOKHUB/book-hub-central/src/handlers/purchase-book-handler.php';
+        form.action = '/book-hub/src/handlers/purchase-book-handler.php';
         
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -407,3 +407,4 @@ if ($total_books_result) {
   </script>
 </body>
 </html>
+

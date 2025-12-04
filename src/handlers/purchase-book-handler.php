@@ -4,14 +4,14 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../session-check.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: /BOOKHUB/book-hub-central/public/books.php');
+    header('Location: /book-hub/public/books.php');
     exit();
 }
 
 // Check if user is logged in
 if (!$is_logged_in) {
     $_SESSION['error'] = 'Please login to purchase books';
-    header('Location: /BOOKHUB/book-hub-central/public/login.html?error=' . urlencode('Please login to purchase books'));
+    header('Location: /book-hub/public/login.html?error=' . urlencode('Please login to purchase books'));
     exit();
 }
 
@@ -56,7 +56,7 @@ if (empty($errors)) {
 
 if (!empty($errors)) {
     $_SESSION['error'] = implode(', ', $errors);
-    header('Location: /BOOKHUB/book-hub-central/public/books.php?error=' . urlencode(implode(', ', $errors)));
+    header('Location: /book-hub/public/books.php?error=' . urlencode(implode(', ', $errors)));
     exit();
 }
 
@@ -68,13 +68,14 @@ $insert_stmt->bind_param("iid", $_SESSION['user_id'], $book_id, $book['purchase_
 
 if ($insert_stmt->execute()) {
     $_SESSION['success'] = 'Book purchased successfully! You can now download it from your account.';
-    header('Location: /BOOKHUB/book-hub-central/public/books.php?success=' . urlencode($_SESSION['success']));
+    header('Location: /book-hub/public/books.php?success=' . urlencode($_SESSION['success']));
 } else {
     $_SESSION['error'] = 'Failed to complete purchase. Please try again.';
-    header('Location: /BOOKHUB/book-hub-central/public/books.php?error=' . urlencode('Failed to complete purchase'));
+    header('Location: /book-hub/public/books.php?error=' . urlencode('Failed to complete purchase'));
 }
 
 $conn->close();
 exit();
 ?>
+
 

@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../config.php';
 
 if(!isset($_SESSION["user_id"])) {
-    header("Location: /BOOKHUB/book-hub-central/public/login.html");
+    header("Location: /book-hub/public/login.html");
     exit();
 }
 
@@ -35,13 +35,13 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — BOOK HUB</title>
   
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/components.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/navigation.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/footer.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/books.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/home.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/components.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/navigation.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/footer.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/books.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/home.css">
   <style>
     /* Page Layout Fixes */
     body.home-page {
@@ -428,7 +428,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-bg">
-      <img src="/BOOKHUB/book-hub-central/public/assets/images/hero-library.jpg" alt="Library">
+      <img src="/book-hub/public/assets/images/hero-library.jpg" alt="Library">
       <div class="hero-overlay"></div>
     </div>
 
@@ -437,8 +437,8 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
       <p>Continue your reading journey and discover amazing books</p>
 
       <div class="hero-cta">
-        <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
-        <a href="/BOOKHUB/book-hub-central/src/views/profile.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Profile</a>
+        <a href="/book-hub/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
+        <a href="/book-hub/src/views/profile.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Profile</a>
       </div>
     </div>
   </section>
@@ -454,7 +454,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
       <div class="books-grid">
         <div class="book-card">
           <div class="book-card-image">
-            <img src="/BOOKHUB/book-hub-central/public/assets/images/book-1.jpg" alt="Fiction Fomen">
+            <img src="/book-hub/public/assets/images/book-1.jpg" alt="Fiction Fomen">
             <span class="book-badge badge-buy">Buy Now</span>
           </div>
           <div class="book-card-content">
@@ -477,7 +477,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
 
         <div class="book-card">
           <div class="book-card-image">
-            <img src="/BOOKHUB/book-hub-central/public/assets/images/book-2.jpg" alt="Nook">
+            <img src="/book-hub/public/assets/images/book-2.jpg" alt="Nook">
             <span class="book-badge badge-rent">For Rent</span>
           </div>
           <div class="book-card-content">
@@ -500,7 +500,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
 
         <div class="book-card">
           <div class="book-card-image">
-            <img src="/BOOKHUB/book-hub-central/public/assets/images/book-3.jpg" alt="Mystic Tales">
+            <img src="/book-hub/public/assets/images/book-3.jpg" alt="Mystic Tales">
             <span class="book-badge badge-buy">Buy Now</span>
           </div>
           <div class="book-card-content">
@@ -523,7 +523,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
 
         <div class="book-card">
           <div class="book-card-image">
-            <img src="/BOOKHUB/book-hub-central/public/assets/images/book-4.jpg" alt="Science Wonders">
+            <img src="/book-hub/public/assets/images/book-4.jpg" alt="Science Wonders">
             <span class="book-badge badge-rent">For Rent</span>
           </div>
           <div class="book-card-content">
@@ -546,14 +546,14 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
       </div>
 
       <div style="text-align: center; margin-top: 2rem;">
-        <a href="/BOOKHUB/book-hub-central/public/books.php" class="btn btn-primary btn-lg">View All Books</a>
+        <a href="/book-hub/public/books.php" class="btn btn-primary btn-lg">View All Books</a>
       </div>
     </div>
   </section>
 
   <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
-  <script src="/BOOKHUB/book-hub-central/public/static/js/common.js"></script>
+  <script src="/book-hub/public/static/js/common.js"></script>
   <script>
     function toggleProfileDropdown() {
       const dropdown = document.getElementById('profileDropdown');
@@ -592,3 +592,4 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
   </script>
 </body>
 </html>
+

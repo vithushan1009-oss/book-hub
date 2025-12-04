@@ -62,11 +62,11 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile — BOOK HUB</title>
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/components.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/navigation.css">
-    <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/footer.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/components.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/navigation.css">
+    <link rel="stylesheet" href="/book-hub/public/static/css/footer.css">
     <style>
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
@@ -544,7 +544,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
     <nav>
         <div class="container">
             <div class="nav-content">
-                <a href="/BOOKHUB/book-hub-central/src/views/user.php" class="nav-logo">
+                <a href="/book-hub/src/views/user.php" class="nav-logo">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
                     </svg>
@@ -552,11 +552,11 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
                 </a>
 
                 <ul class="nav-links">
-                    <li><a href="/BOOKHUB/book-hub-central/src/views/user.php">Home</a></li>
-                    <li><a href="/BOOKHUB/book-hub-central/public/books.php">Books</a></li>
-                    <li><a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a></li>
-                    <li><a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a></li>
-                    <li><a href="/BOOKHUB/book-hub-central/public/contact.php">Contact</a></li>
+                    <li><a href="/book-hub/src/views/user.php">Home</a></li>
+                    <li><a href="/book-hub/public/books.php">Books</a></li>
+                    <li><a href="/book-hub/public/about.php">About Us</a></li>
+                    <li><a href="/book-hub/public/gallery.php">Gallery</a></li>
+                    <li><a href="/book-hub/public/contact.php">Contact</a></li>
                 </ul>
 
                 <div class="user-nav-actions">
@@ -578,7 +578,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
                             <p class="dropdown-header-subtitle"><?php echo htmlspecialchars($user['email']); ?></p>
                         </div>
                         <div class="dropdown-menu">
-                            <a href="/BOOKHUB/book-hub-central/src/views/profile.php" class="dropdown-item">
+                            <a href="/book-hub/src/views/profile.php" class="dropdown-item">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                                     <circle cx="12" cy="7" r="4"/>
@@ -605,7 +605,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
                                 Settings
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="/BOOKHUB/book-hub-central/src/handlers/logout-handler.php" class="dropdown-item logout">
+                            <a href="/book-hub/src/handlers/logout-handler.php" class="dropdown-item logout">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                                     <polyline points="16 17 21 12 16 7"/>
@@ -627,14 +627,14 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
             </div>
 
             <div class="mobile-menu">
-                <a href="/BOOKHUB/book-hub-central/src/views/user.php">Home</a>
-                <a href="/BOOKHUB/book-hub-central/public/books.php">Books</a>
-                <a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a>
-                <a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a>
-                <a href="/BOOKHUB/book-hub-central/public/contact.php">Contact</a>
+                <a href="/book-hub/src/views/user.php">Home</a>
+                <a href="/book-hub/public/books.php">Books</a>
+                <a href="/book-hub/public/about.php">About Us</a>
+                <a href="/book-hub/public/gallery.php">Gallery</a>
+                <a href="/book-hub/public/contact.php">Contact</a>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <a href="/BOOKHUB/book-hub-central/src/views/profile.php">My Profile</a>
-                    <a href="/BOOKHUB/book-hub-central/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>
+                    <a href="/book-hub/src/views/profile.php">My Profile</a>
+                    <a href="/book-hub/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>
                 </div>
             </div>
         </div>
@@ -748,7 +748,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
         </div>
     </div>
 
-    <script src="/BOOKHUB/book-hub-central/public/static/js/common.js"></script>
+    <script src="/book-hub/public/static/js/common.js"></script>
     <script>
         function toggleProfileDropdown() {
             const dropdown = document.getElementById('profileDropdown');
@@ -771,3 +771,4 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
     </script>
 </body>
 </html>
+

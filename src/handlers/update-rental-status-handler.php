@@ -4,7 +4,7 @@ require_once __DIR__ . '/../admin-session-check.php';
 require_once __DIR__ . '/../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: /BOOKHUB/book-hub-central/admin#rentals');
+    header('Location: /book-hub/admin#rentals');
     exit;
 }
 
@@ -27,7 +27,7 @@ if (!in_array($new_status, $allowed_statuses)) {
 
 if (!empty($errors)) {
     $_SESSION['error'] = implode(', ', $errors);
-    header('Location: /BOOKHUB/book-hub-central/admin#rentals?error=' . urlencode(implode(', ', $errors)));
+    header('Location: /book-hub/admin#rentals?error=' . urlencode(implode(', ', $errors)));
     exit;
 }
 
@@ -40,7 +40,7 @@ $check_result = $check_stmt->get_result();
 
 if ($check_result->num_rows === 0) {
     $_SESSION['error'] = 'Rental not found';
-    header('Location: /BOOKHUB/book-hub-central/admin#rentals?error=' . urlencode('Rental not found'));
+    header('Location: /book-hub/admin#rentals?error=' . urlencode('Rental not found'));
     exit;
 }
 
@@ -57,13 +57,14 @@ if ($update_stmt->execute()) {
     $admin_id = $_SESSION['admin_id'] ?? null;
     
     $_SESSION['success'] = "Rental status updated from " . ucfirst($old_status) . " to " . ucfirst($new_status);
-    header('Location: /BOOKHUB/book-hub-central/admin#rentals?success=' . urlencode($_SESSION['success']));
+    header('Location: /book-hub/admin#rentals?success=' . urlencode($_SESSION['success']));
 } else {
     $_SESSION['error'] = 'Failed to update rental status';
-    header('Location: /BOOKHUB/book-hub-central/admin#rentals?error=' . urlencode('Failed to update rental status'));
+    header('Location: /book-hub/admin#rentals?error=' . urlencode('Failed to update rental status'));
 }
 
 $conn->close();
 exit;
 ?>
+
 

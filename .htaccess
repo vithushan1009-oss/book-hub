@@ -75,7 +75,7 @@ ErrorDocument 500 /500.html
 # URL Rewriting for clean URLs and routing
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /BOOKHUB/book-hub-central/
+    RewriteBase /book-hub/
     
     # Force HTTPS (uncomment when you have SSL certificate)
     # RewriteCond %{HTTPS} off
@@ -83,11 +83,11 @@ ErrorDocument 500 /500.html
     
     # Allow direct access to HTML files in public directory
     RewriteCond %{REQUEST_URI} \.html$
-    RewriteCond %{DOCUMENT_ROOT}/BOOKHUB/book-hub-central/public%{REQUEST_URI} -f
+    RewriteCond %{DOCUMENT_ROOT}/book-hub/public%{REQUEST_URI} -f
     RewriteRule ^(.*)$ public/$1 [L]
     
     # Allow direct access to src/handlers and src/views
-    RewriteCond %{REQUEST_URI} ^/BOOKHUB/book-hub-central/src/(handlers|views)/
+    RewriteCond %{REQUEST_URI} ^/book-hub/src/(handlers|views)/
     RewriteRule ^(.*)$ - [L]
     
     # Allow direct access to public files (CSS, JS, images)

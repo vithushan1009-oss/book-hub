@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id'])) {
-    header('Location: /BOOKHUB/book-hub-central/public/admin-login.html');
+    header('Location: /book-hub/admin-login');
     exit();
 }
 ?>
