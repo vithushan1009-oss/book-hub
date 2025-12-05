@@ -43,10 +43,10 @@
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
-          <li><a href="/BOOKHUB/book-hub-central/public/books.php">Browse Books</a></li>
-          <li><a href="/BOOKHUB/book-hub-central/public/about.php">About Us</a></li>
-          <li><a href="/BOOKHUB/book-hub-central/public/gallery.php">Gallery</a></li>
-          <li><a href="/BOOKHUB/book-hub-central/public/contact.php">Contact Us</a></li>
+          <li><a href="/book-hub/public/books.php">Browse Books</a></li>
+          <li><a href="/book-hub/public/about.php">About Us</a></li>
+          <li><a href="/book-hub/public/gallery.php">Gallery</a></li>
+          <li><a href="/book-hub/public/contact.php">Contact Us</a></li>
         </ul>
       </div>
 

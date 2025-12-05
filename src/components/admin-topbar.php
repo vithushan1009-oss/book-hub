@@ -148,11 +148,11 @@ if ($currentHour < 12) {
           </div>
           
           <div class="dropdown-menu">
-            <a href="/BOOKHUB/book-hub-central/admin-profile" class="dropdown-item">
+            <a href="/book-hub/admin-profile" class="dropdown-item">
               <i class="fas fa-user"></i>
               <span>My Profile</span>
             </a>
-            <a href="/BOOKHUB/book-hub-central/admin-settings" class="dropdown-item">
+            <a href="/book-hub/admin-settings" class="dropdown-item">
               <i class="fas fa-cog"></i>
               <span>Settings</span>
             </a>
@@ -169,7 +169,7 @@ if ($currentHour < 12) {
               <i class="fas fa-question-circle"></i>
               <span>Help & Support</span>
             </a>
-            <a href="/BOOKHUB/book-hub-central/src/handlers/admin-logout-handler.php" class="dropdown-item logout">
+            <a href="/book-hub/src/handlers/admin-logout-handler.php" class="dropdown-item logout">
               <i class="fas fa-sign-out-alt"></i>
               <span>Sign Out</span>
             </a>

@@ -61,7 +61,7 @@ function sendEmail($to, $subject, $body, $isHtml = true) {
 // Send verification email
 function sendVerificationEmail($email, $firstName, $token) {
     $app_url = env('APP_URL');
-    $verify_link = "$app_url/backend/verify-handler.php?token=$token";
+    $verify_link = "$app_url/src/handlers/verify-handler.php?token=$token";
     
     $subject = "Verify Your Email - " . env('APP_NAME');
     

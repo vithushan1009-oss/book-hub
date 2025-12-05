@@ -251,31 +251,6 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
       stroke: var(--destructive);
     }
 
-    /* Welcome Banner */
-    .welcome-banner {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      padding: 2rem;
-      border-radius: var(--radius);
-      margin: 2rem auto;
-      max-width: 1200px;
-      width: calc(100% - 2rem);
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .welcome-banner h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .welcome-banner p {
-      margin: 0;
-      opacity: 0.95;
-      font-size: 1.125rem;
-    }
-
     /* Dashboard Stats */
     .dashboard-stats {
       display: grid;
@@ -375,15 +350,6 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
         padding: 0.5rem;
       }
 
-      .welcome-banner {
-        margin: 1rem;
-        padding: 1.5rem 1rem;
-      }
-
-      .welcome-banner h2 {
-        font-size: 1.5rem;
-      }
-
       .dashboard-stats {
         grid-template-columns: 1fr;
       }
@@ -416,14 +382,6 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
 <?php // Add home-page class so logged-in home uses same styles as public index ?>
 <body class="home-page">
   <?php require_once __DIR__ . '/../components/navbar.php'; ?>
-
-  <?php if (isset($_GET['welcome'])): ?>
-  <!-- Welcome Banner for New Users -->
-  <div class="welcome-banner">
-    <h2>🎉 Welcome to BOOK HUB!</h2>
-    <p>Your account has been created successfully. Start exploring thousands of amazing books!</p>
-  </div>
-  <?php endif; ?>
 
   <!-- Hero Section -->
   <section class="hero">

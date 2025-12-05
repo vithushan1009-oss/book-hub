@@ -8,7 +8,7 @@ $current = basename($_SERVER['PHP_SELF']);
 $current_route = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $current_route = rtrim($current_route, '/');
 // Remove base path if present
-$current_route = str_replace('/BOOKHUB/book-hub-central', '', $current_route);
+$current_route = str_replace('/book-hub', '', $current_route);
 // Handle empty route (root)
 if (empty($current_route) || $current_route === '/') {
     $current_route = '/admin';
@@ -80,7 +80,7 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <i class="fas fa-tachometer-alt"></i> Overview
       </h4>
 
-      <a href="/BOOKHUB/book-hub-central/admin"
+      <a href="/book-hub/admin"
          class="nav-item <?= ($current_route === '/admin' || $current_route === '/admin/') ? 'active' : '' ?>"
          data-section="dashboard">
         <i class="fas fa-chart-pie"></i>
@@ -88,7 +88,7 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <div class="nav-badge">Live</div>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin-analytics"
+      <a href="/book-hub/admin-analytics"
          class="nav-item <?= ($current_route === '/admin-analytics') ? 'active' : '' ?>">
         <i class="fas fa-chart-line"></i>
         <span>Analytics</span>
@@ -101,20 +101,20 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <i class="fas fa-database"></i> Content
       </h4>
 
-      <a href="/BOOKHUB/book-hub-central/admin-users"
+      <a href="/book-hub/admin-users"
          class="nav-item <?= ($current_route === '/admin-users') ? 'active' : '' ?>">
         <i class="fas fa-users"></i>
         <span>User Management</span>
         <div class="nav-count">4</div>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin-books"
+      <a href="/book-hub/admin-books"
          class="nav-item <?= ($current_route === '/admin-books') ? 'active' : '' ?>">
         <i class="fas fa-book"></i>
         <span>Book Management</span>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin-rentals"
+      <a href="/book-hub/admin-rentals"
          class="nav-item <?= ($current_route === '/admin-rentals') ? 'active' : '' ?>">
         <i class="fas fa-handshake"></i>
         <span>Rental Management</span>
@@ -130,18 +130,18 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <i class="fas fa-cogs"></i> Administration
       </h4>
 
-      <a href="/BOOKHUB/book-hub-central/admin-profile"
+      <a href="/book-hub/admin-profile"
          class="nav-item <?= ($current_route === '/admin-profile') ? 'active' : '' ?>">
         <i class="fas fa-user-shield"></i>
         <span>Admin Profile</span>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin#permissions" class="nav-item" data-section="permissions">
+      <a href="/book-hub/admin#permissions" class="nav-item" data-section="permissions">
         <i class="fas fa-key"></i>
         <span>Permissions</span>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin-settings"
+      <a href="/book-hub/admin-settings"
          class="nav-item <?= ($current_route === '/admin-settings') ? 'active' : '' ?>">
         <i class="fas fa-sliders-h"></i>
         <span>System Settings</span>
@@ -154,17 +154,17 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <i class="fas fa-tools"></i> Tools
       </h4>
 
-      <a href="/BOOKHUB/book-hub-central/admin#reports" class="nav-item" data-section="reports">
+      <a href="/book-hub/admin#reports" class="nav-item" data-section="reports">
         <i class="fas fa-chart-bar"></i>
         <span>Reports</span>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin#backup" class="nav-item" data-section="backup">
+      <a href="/book-hub/admin#backup" class="nav-item" data-section="backup">
         <i class="fas fa-server"></i>
         <span>Backup</span>
       </a>
 
-      <a href="/BOOKHUB/book-hub-central/admin#logs" class="nav-item" data-section="logs">
+      <a href="/book-hub/admin#logs" class="nav-item" data-section="logs">
         <i class="fas fa-clipboard-list"></i>
         <span>Activity Logs</span>
       </a>
@@ -198,7 +198,7 @@ if (file_exists(__DIR__ . '/../config.php')) {
       </div>
 
       <div class="user-actions">
-        <a href="/BOOKHUB/book-hub-central/admin-profile" class="action-btn" title="Profile Settings">
+        <a href="/book-hub/admin-profile" class="action-btn" title="Profile Settings">
           <i class="fas fa-user-cog"></i>
         </a>
 

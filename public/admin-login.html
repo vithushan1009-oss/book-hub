@@ -6,11 +6,11 @@
   <title>Admin Login — BOOK HUB</title>
   
   <!-- CSS Files -->
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/variables.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/base.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/components.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/auth.css">
-  <link rel="stylesheet" href="/BOOKHUB/book-hub-central/public/static/css/admin-login.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/base.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/components.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/auth.css">
+  <link rel="stylesheet" href="/book-hub/public/static/css/admin-login.css">
 </head>
 <body class="admin-login-page">
   <!-- Auth Container -->
@@ -75,7 +75,7 @@
       <div class="auth-form-container">
         <div class="auth-form-wrapper">
           <!-- Back to Site Link -->
-          <a href="/BOOKHUB/book-hub-central/public/index.php" class="back-to-site">
+          <a href="/book-hub/public/index.php" class="back-to-site">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="19" y1="12" x2="5" y2="12"/>
               <polyline points="12 19 5 12 12 5"/>
@@ -97,7 +97,7 @@
           <!-- Message Container -->
           <div id="message-container"></div>
 
-          <form class="auth-form" id="admin-login-form" action="/BOOKHUB/book-hub-central/src/handlers/admin-login-handler.php" method="POST">
+          <form class="auth-form" id="admin-login-form" action="/book-hub/src/handlers/admin-login-handler.php" method="POST">
             <div class="form-group">
               <label for="admin-email">Administrator Email</label>
               <div class="input-with-icon">
@@ -165,7 +165,7 @@
           </div>
 
           <div class="auth-footer admin-footer">
-            <p>Need help? <a href="/BOOKHUB/book-hub-central/public/contact.php">Contact Support</a></p>
+            <p>Need help? <a href="/book-hub/public/contact.php">Contact Support</a></p>
             <p class="copyright">&copy; 2025 BOOK HUB. All rights reserved.</p>
           </div>
         </div>
@@ -174,8 +174,8 @@
   </div>
 
   <!-- JavaScript Files -->
-  <script src="/BOOKHUB/book-hub-central/public/static/js/common.js"></script>
-  <script src="/BOOKHUB/book-hub-central/public/static/js/admin-login.js"></script>
+  <script src="/book-hub/public/static/js/common.js"></script>
+  <script src="/book-hub/public/static/js/admin-login.js"></script>
   
   <!-- Message Display Script -->
   <script>

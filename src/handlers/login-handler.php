@@ -17,7 +17,7 @@ $remember = isset($_POST['remember']);
 $max_attempts = env('MAX_LOGIN_ATTEMPTS', 5);
 $lockout_time = env('LOCKOUT_TIME', 900); // 15 minutes in seconds
 
-$stmt = $conn->prepare("SELECT COUNT(*) as attempts FROM login_attempts WHERE email = ? AND user_type = 'user' AND success = 0 AND attempt_time > DATE_SUB(NOW(), INTERVAL ? SECOND)");
+$stmt = $conn->prepare("SELECT COUNT(*) as attempts FROM login_attempts WHERE email = ? AND user_type = 'user' AND success = 0 AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)");
 $stmt->bind_param("si", $email, $lockout_time);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -97,7 +97,7 @@ if ($remember) {
     
     // Store token in database
     $expires_at = date('Y-m-d H:i:s', strtotime('+30 days'));
-    $token_sql = "INSERT INTO sessions (user_id, token, user_type, expires_at) VALUES (?, ?, 'user', ?)";
+    $token_sql = "INSERT INTO user_sessions (user_id, session_token, user_type, expires_at) VALUES (?, ?, 'user', ?)";
     $token_stmt = $conn->prepare($token_sql);
     $token_stmt->bind_param("iss", $user['id'], $token, $expires_at);
     $token_stmt->execute();
