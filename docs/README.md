@@ -148,11 +148,20 @@ Visit: http://localhost/BOOKHUB/book-hub-central
 ### Admin Account
 - **Email:** admin@bookhub.com
 - **Password:** admin123
+- **Login URL:** http://localhost/book-hub/admin-login
+- **Dashboard URL:** http://localhost/book-hub/admin
 
 ### Test User Account
 - **Email:** test@example.com
 - **Password:** test1234
 - **Note:** Email verified by default
+
+### 🔧 Password Reset (If Login Fails)
+If you encounter login issues, run the password reset script:
+```bash
+C:\xampp\php\php.exe C:\xampp\htdocs\book-hub\fix-admin-password.php
+```
+This will reset the admin password to `admin123` with proper hashing.
 
 ## 📧 Email Verification Flow
 

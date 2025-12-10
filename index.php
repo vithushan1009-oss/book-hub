@@ -61,7 +61,7 @@ if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $ro
 
 // Route to public pages (prefer PHP over HTML for dynamic content)
 $public_pages = [
-    '/index', '/login', '/register', '/admin-login', 
+    '/index', '/login', '/register', '/admin-login', '/admin-register',
     '/books', '/about', '/contact', '/gallery'
 ];
 
