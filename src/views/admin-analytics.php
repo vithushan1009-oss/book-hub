@@ -175,7 +175,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.min.css">
+  <link rel="stylesheet" href="/book-hub/public/static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.css">
 
   <!-- CSS Files -->
   <link rel="stylesheet" href="/book-hub/public/static/css/variables.css">
@@ -361,20 +361,34 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
   </div>
 </div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Chart.js - Local with CDN fallback -->
+<script src="/book-hub/public/static/vendor/chartjs/chart.umd.min.js"></script>
+<script>
+// Fallback to CDN if local Chart.js fails to load
+if (typeof Chart === 'undefined') {
+  console.warn('Local Chart.js failed, loading from CDN...');
+  document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>');
+}
+</script>
 <script src="/book-hub/public/static/js/admin.js"></script>
 <script>
-// Wait for DOM and Chart.js to be ready
-window.addEventListener('load', function() {
+// Initialize charts with retry mechanism
+function initializeCharts() {
   // Check if Chart.js is loaded
   if (typeof Chart === 'undefined') {
     console.error('Chart.js library not loaded!');
-    alert('Chart.js library failed to load. Please check your internet connection.');
+    
+    // Show error message to user
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 15px 20px; border-radius: 8px; z-index: 10000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+    errorDiv.innerHTML = '<strong>Chart Loading Error</strong><br>Charts failed to load. Please refresh the page.';
+    document.body.appendChild(errorDiv);
+    
+    setTimeout(() => errorDiv.remove(), 5000);
     return;
   }
   
-  console.log('Chart.js loaded successfully');
+  console.log('Chart.js loaded successfully (version: ' + Chart.version + ')');
 
   // Chart.js configuration
   const chartOptions = {
@@ -717,15 +731,23 @@ window.addEventListener('load', function() {
   }
   
   console.log('All charts initialized');
-});
+}
 
-  function exportAnalytics() {
-    // Simple export functionality
-    window.print();
-  }
+// Wait for DOM to be ready, then initialize charts
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeCharts);
+} else {
+  // DOM is already ready
+  initializeCharts();
+}
 
-  // Make exportAnalytics available globally
-  window.exportAnalytics = exportAnalytics;
+function exportAnalytics() {
+  // Simple export functionality
+  window.print();
+}
+
+// Make exportAnalytics available globally
+window.exportAnalytics = exportAnalytics;
 </script>
 </body>
 </html>

@@ -258,7 +258,7 @@ function initializeDashboard() {
         function() {
           showNotification('Logging out...', 'info');
           setTimeout(() => {
-            window.location.href = '/BOOKHUB/book-hub-central/src/handlers/admin-logout-handler.php';
+            window.location.href = '/book-hub/src/handlers/admin-logout-handler.php';
           }, 1000);
         }
       );
@@ -543,7 +543,7 @@ function confirmLogout() {
       
       // Redirect after a short delay for better UX
       setTimeout(() => {
-        window.location.href = '/BOOKHUB/book-hub-central/src/handlers/admin-logout-handler.php';
+        window.location.href = '/book-hub/src/handlers/admin-logout-handler.php';
       }, 1500);
     }
   );
