@@ -244,6 +244,7 @@ while($row = $genres_result->fetch_assoc()) {
       <h2 style="margin-top: 0;">Rent Book</h2>
       <form id="rentForm" method="POST" action="/book-hub/src/handlers/rent-book-handler.php">
         <input type="hidden" name="book_id" id="rent_book_id">
+        <input type="hidden" id="rent_price_per_day" value="0">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
           <p id="rent_book_title" style="margin: 0; color: var(--muted-foreground);"></p>
@@ -258,7 +259,21 @@ while($row = $genres_result->fetch_assoc()) {
         </div>
         <div style="margin-bottom: 1rem;">
           <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number:</label>
-          <input type="tel" name="phone_number" required placeholder="Enter your phone number" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+          <input type="tel" name="phone_number" id="rent_phone_number" required placeholder="Enter your phone number" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+        <div id="rental_cost_section" style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px; display: none;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Rental Days:</span>
+            <span id="rental_days_display">0 days</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Daily Rate:</span>
+            <span id="daily_rate_display">LKR 0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #ddd; padding-top: 0.5rem;">
+            <span>Estimated Total:</span>
+            <span id="total_cost_display">LKR 0.00</span>
+          </div>
         </div>
         <div style="display: flex; gap: 1rem; justify-content: flex-end;">
           <button type="button" onclick="closeRentModal()" class="btn btn-outline">Cancel</button>
@@ -307,13 +322,66 @@ while($row = $genres_result->fetch_assoc()) {
 
     function openRentModal(bookId, bookTitle, pricePerDay) {
       document.getElementById('rent_book_id').value = bookId;
-      document.getElementById('rent_book_title').textContent = bookTitle + ' (LKR ' + pricePerDay + '/day)';
+      document.getElementById('rent_book_title').textContent = bookTitle + ' (LKR ' + pricePerDay.toFixed(2) + '/day)';
+      document.getElementById('rent_price_per_day').value = pricePerDay;
       document.getElementById('rentModal').style.display = 'flex';
+      
+      // Reset dates and cost display
+      document.getElementById('rent_start_date').value = '';
+      document.getElementById('rent_end_date').value = '';
+      document.getElementById('rental_cost_section').style.display = 'none';
+      
+      // Set minimum date for end date when start date changes
+      document.getElementById('rent_start_date').addEventListener('change', updateEndDateMin);
+      document.getElementById('rent_start_date').addEventListener('change', calculateRentalCost);
+      document.getElementById('rent_end_date').addEventListener('change', calculateRentalCost);
+    }
+    
+    function updateEndDateMin() {
+      const startDate = document.getElementById('rent_start_date').value;
+      if (startDate) {
+        document.getElementById('rent_end_date').setAttribute('min', startDate);
+        // If end date is before start date, reset it
+        const endDate = document.getElementById('rent_end_date').value;
+        if (endDate && endDate < startDate) {
+          document.getElementById('rent_end_date').value = '';
+        }
+      }
+    }
+    
+    function calculateRentalCost() {
+      const startDate = document.getElementById('rent_start_date').value;
+      const endDate = document.getElementById('rent_end_date').value;
+      const pricePerDay = parseFloat(document.getElementById('rent_price_per_day').value) || 0;
+      
+      if (startDate && endDate && pricePerDay > 0) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const timeDiff = end.getTime() - start.getTime();
+        const rentalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Include both start and end day
+        
+        if (rentalDays > 0 && rentalDays <= 30) {
+          const totalCost = rentalDays * pricePerDay;
+          
+          document.getElementById('rental_days_display').textContent = rentalDays + ' day' + (rentalDays > 1 ? 's' : '');
+          document.getElementById('daily_rate_display').textContent = 'LKR ' + pricePerDay.toFixed(2);
+          document.getElementById('total_cost_display').textContent = 'LKR ' + totalCost.toFixed(2);
+          document.getElementById('rental_cost_section').style.display = 'block';
+        } else if (rentalDays > 30) {
+          document.getElementById('rental_cost_section').style.display = 'none';
+          alert('Rental period cannot exceed 30 days.');
+        } else {
+          document.getElementById('rental_cost_section').style.display = 'none';
+        }
+      } else {
+        document.getElementById('rental_cost_section').style.display = 'none';
+      }
     }
 
     function closeRentModal() {
       document.getElementById('rentModal').style.display = 'none';
       document.getElementById('rentForm').reset();
+      document.getElementById('rental_cost_section').style.display = 'none';
     }
 
     function purchaseBook(bookId, bookTitle, price) {

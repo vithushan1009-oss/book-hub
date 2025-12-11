@@ -80,6 +80,11 @@ if (empty($phone_number)) {
 }
 
 // Check if book exists and is available for rent
+$book = null;
+$rental_days = 0;
+$daily_rate = 0;
+$total_cost = 0;
+
 if (empty($errors)) {
     $book_query = "SELECT id, title, book_type, total_quantity, rental_price_per_day FROM books WHERE id = ? AND book_type = 'physical' AND is_active = 1";
     $book_stmt = $conn->prepare($book_query);
@@ -92,9 +97,16 @@ if (empty($errors)) {
     } else {
         $book = $book_result->fetch_assoc();
         
+        // Calculate rental days, daily rate and total cost
+        if ($start_date_obj && $end_date_obj) {
+            $rental_days = $start_date_obj->diff($end_date_obj)->days + 1; // Include both start and end day
+            $daily_rate = (float)$book['rental_price_per_day'];
+            $total_cost = $rental_days * $daily_rate;
+        }
+        
         // Check if book is available (check active rentals)
         $rental_check = "SELECT COUNT(*) as active_rentals FROM rentals 
-                        WHERE book_id = ? AND status IN ('pending', 'approved') 
+                        WHERE book_id = ? AND status IN ('pending', 'approved', 'active') 
                         AND (start_date <= ? AND end_date >= ?)";
         $rental_stmt = $conn->prepare($rental_check);
         $rental_stmt->bind_param("iss", $book_id, $end_date, $start_date);
@@ -109,7 +121,7 @@ if (empty($errors)) {
         // Check if user already has an active rental for this book
         $user_rental_check = "SELECT id FROM rentals 
                              WHERE user_id = ? AND book_id = ? 
-                             AND status IN ('pending', 'approved') 
+                             AND status IN ('pending', 'approved', 'active') 
                              AND (start_date <= ? AND end_date >= ?)";
         $user_rental_stmt = $conn->prepare($user_rental_check);
         $user_rental_stmt->bind_param("iiss", $_SESSION['user_id'], $book_id, $end_date, $start_date);
@@ -128,11 +140,11 @@ if (!empty($errors)) {
     exit();
 }
 
-// Create rental request
-$insert_sql = "INSERT INTO rentals (user_id, book_id, start_date, end_date, phone_number, status) 
-               VALUES (?, ?, ?, ?, ?, 'pending')";
+// Create rental request with all required fields
+$insert_sql = "INSERT INTO rentals (user_id, book_id, start_date, end_date, phone_number, rental_days, daily_rate, total_cost, status) 
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')";
 $insert_stmt = $conn->prepare($insert_sql);
-$insert_stmt->bind_param("iisss", $_SESSION['user_id'], $book_id, $start_date, $end_date, $phone_number);
+$insert_stmt->bind_param("iisssidd", $_SESSION['user_id'], $book_id, $start_date, $end_date, $phone_number, $rental_days, $daily_rate, $total_cost);
 
 if ($insert_stmt->execute()) {
     $_SESSION['success'] = 'Rental request submitted successfully! We will review your request and notify you soon.';
