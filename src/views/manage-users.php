@@ -379,24 +379,6 @@ if(!empty($params)) {
 <!-- JavaScript Files -->
 <script src="/book-hub/public/static/js/admin.js"></script>
 <script src="/book-hub/public/static/js/user-management.js"></script>
-<script>
-// Debug: Test if modal exists
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('userSettingsModal');
-    console.log('Modal element found:', !!modal);
-    if (modal) {
-        console.log('Modal display:', window.getComputedStyle(modal).display);
-        console.log('Modal z-index:', window.getComputedStyle(modal).zIndex);
-    }
-    
-    // Test button click
-    const testButton = document.querySelector('.btn-settings');
-    if (testButton) {
-        console.log('Settings button found:', !!testButton);
-        console.log('Button data:', testButton.getAttribute('data-user-data') ? 'Has data' : 'No data');
-    }
-});
-</script>
 </body>
 </html>
 

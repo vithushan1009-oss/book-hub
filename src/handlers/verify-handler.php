@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config.php';
 
 if (!isset($_GET['token'])) {
     $_SESSION['error'] = 'Invalid verification link';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Invalid verification link'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Invalid verification link'));
     exit();
 }
 
@@ -20,7 +20,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
     $_SESSION['error'] = 'Invalid or expired verification link';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Invalid or expired verification link'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Invalid or expired verification link'));
     exit();
 }
 
@@ -33,10 +33,10 @@ $update_stmt->bind_param("i", $user['id']);
 
 if ($update_stmt->execute()) {
     $_SESSION['success'] = 'Email verified successfully! You can now log in.';
-    header('Location: /book-hub/public/login.html?success=' . urlencode('Email verified successfully! You can now log in.'));
+    header('Location: /book-hub/public/login.php?success=' . urlencode('Email verified successfully! You can now log in.'));
 } else {
     $_SESSION['error'] = 'Verification failed. Please try again.';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Verification failed. Please try again.'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Verification failed. Please try again.'));
 }
 
 $conn->close();

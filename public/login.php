@@ -1,3 +1,11 @@
+<?php
+// Check if user is already logged in
+session_start();
+if(isset($_SESSION["user_id"])) {
+    header("Location: /book-hub/src/views/user.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +26,7 @@
   <nav>
     <div class="container">
       <div class="nav-content">
-        <a href="index.html" class="nav-logo">
+        <a href="index.php" class="nav-logo">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
           </svg>
@@ -26,16 +34,16 @@
         </a>
 
         <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="books.html">Books</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="books.php">Books</a></li>
+          <li><a href="about.php">About Us</a></li>
+          <li><a href="gallery.php">Gallery</a></li>
+          <li><a href="contact.php">Contact</a></li>
         </ul>
 
         <div class="nav-cta">
-          <a href="login.html" class="btn btn-outline">Sign In</a>
-          <a href="register.html" class="btn btn-secondary">Get Started</a>
+          <a href="login.php" class="btn btn-outline">Sign In</a>
+          <a href="register.php" class="btn btn-secondary">Get Started</a>
         </div>
 
         <button class="mobile-menu-btn">
@@ -48,14 +56,14 @@
       </div>
 
       <div class="mobile-menu">
-        <a href="index.html">Home</a>
-        <a href="books.html">Books</a>
-        <a href="about.html">About Us</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="contact.html">Contact</a>
+        <a href="index.php">Home</a>
+        <a href="books.php">Books</a>
+        <a href="about.php">About Us</a>
+        <a href="gallery.php">Gallery</a>
+        <a href="contact.php">Contact</a>
         <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-          <a href="login.html" class="btn btn-outline" style="width: 100%;">Sign In</a>
-          <a href="register.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+          <a href="login.php" class="btn btn-outline" style="width: 100%;">Sign In</a>
+          <a href="register.php" class="btn btn-secondary" style="width: 100%;">Get Started</a>
         </div>
       </div>
     </div>
@@ -75,7 +83,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
               </svg>
-              <span>10,000+ Books Available</span>
+              <span>Thousands of Books Available</span>
             </div>
             <div class="auth-feature">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,35 +108,35 @@
         <div class="auth-form-wrapper">
           <div class="auth-header">
             <h1>Sign In</h1>
-            <p>Enter your credentials to access your account</p>
+            <p>Welcome back! Please enter your credentials</p>
           </div>
 
-          <!-- Message Container -->
-          <div id="message-container"></div>
+          <div id="message-container">
+            <?php if(isset($_GET['success'])): ?>
+              <div class="alert alert-success" style="padding: 12px 16px; background: #10b981; color: white; border-radius: 8px; margin-bottom: 1rem;">
+                <?php echo htmlspecialchars($_GET['success']); ?>
+              </div>
+            <?php endif; ?>
+            <?php if(isset($_GET['error'])): ?>
+              <div class="alert alert-error" style="padding: 12px 16px; background: #ef4444; color: white; border-radius: 8px; margin-bottom: 1rem;">
+                <?php echo htmlspecialchars($_GET['error']); ?>
+              </div>
+            <?php endif; ?>
+          </div>
 
-          <form class="auth-form" id="login-form" action="/book-hub/src/handlers/login-handler.php" method="POST">
+          <form class="auth-form" action="/book-hub/src/handlers/login-handler.php" method="POST">
             <div class="form-group">
               <label for="email">Email Address</label>
-              <div class="input-with-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="20" height="16" x="2" y="4" rx="2"/>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                </svg>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
-              </div>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
             </div>
 
             <div class="form-group">
               <label for="password">Password</label>
-              <div class="input-with-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+              <div class="password-wrapper">
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
                 <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                  <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
                   </svg>
                 </button>
@@ -137,68 +145,35 @@
 
             <div class="form-options">
               <label class="checkbox-label">
-                <input type="checkbox" name="remember" value="1">
+                <input type="checkbox" name="remember">
                 <span>Remember me</span>
               </label>
-              <a href="#" class="forgot-password">Forgot password?</a>
+              <a href="#" class="forgot-link">Forgot password?</a>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg auth-submit">
-              Sign In
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-                <polyline points="12 5 19 12 12 19"/>
-              </svg>
-            </button>
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </form>
 
           <div class="auth-footer">
-            <p>Don't have an account? <a href="register.html">Sign up</a></p>
+            <p>Don't have an account? <a href="register.php">Create Account</a></p>
           </div>
+
+          <div class="auth-divider">
+            <span>Admin Access</span>
+          </div>
+
+          <a href="admin-login.php" class="btn btn-outline btn-block" style="margin-top: 0.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Admin Login
+          </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- JavaScript Files -->
   <script src="static/js/common.js"></script>
   <script src="static/js/auth.js"></script>
-  
-  <!-- Message Display Script -->
-  <script>
-  // Display URL parameter messages
-  function displayMessages() {
-    const params = new URLSearchParams(window.location.search);
-    const messageContainer = document.getElementById('message-container');
-    
-    const error = params.get('error');
-    const success = params.get('success');
-    
-    if (error) {
-      messageContainer.innerHTML = `<div class="alert alert-error">${decodeURIComponent(error)}</div>`;
-      params.delete('error');
-      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
-    }
-    
-    if (success) {
-      messageContainer.innerHTML = `<div class="alert alert-success">${decodeURIComponent(success)}</div>`;
-      params.delete('success');
-      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
-    }
-    
-    if (error || success) {
-      setTimeout(() => {
-        const alert = messageContainer.querySelector('.alert');
-        if (alert) {
-          alert.style.opacity = '0';
-          alert.style.transition = 'opacity 0.3s';
-          setTimeout(() => messageContainer.innerHTML = '', 300);
-        }
-      }, 5000);
-    }
-  }
-  
-  document.addEventListener('DOMContentLoaded', displayMessages);
-  </script>
 </body>
 </html>

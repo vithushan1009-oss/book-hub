@@ -168,7 +168,7 @@
           <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem;">Visit Our Location</h2>
           <div style="border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); height: 500px; background: var(--muted); margin-bottom: 1.5rem;">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2sNew%20York%20Public%20Library!5e0!3m2!1sen!2sus!4v1234567890123"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3933.123456789!2d80.0255063!3d9.6614696!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3afe53fd7bed9e5f%3A0x1234567890abcdef!2sJaffna%20Public%20Library!5e0!3m2!1sen!2slk!4v1234567890123"
               width="100%"
               height="100%"
               style="border: 0;"

@@ -17,6 +17,6 @@ if (isset($_COOKIE['admin_remember_token'])) {
 }
 
 // Redirect to admin login page
-header('Location: /book-hub/public/admin-login.html');
+header('Location: /book-hub/public/admin-login.php');
 exit();
 

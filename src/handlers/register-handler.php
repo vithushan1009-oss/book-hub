@@ -1,34 +1,17 @@
 <?php
 session_start();
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../../error.log');
-
-// Create a custom log file for debugging
-$debug_log = __DIR__ . '/../../registration_debug.log';
-file_put_contents($debug_log, "\n\n=== NEW REGISTRATION ATTEMPT ===" . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-
 require_once __DIR__ . '/../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    file_put_contents($debug_log, "Not a POST request, redirecting\n", FILE_APPEND);
-    header('Location: /book-hub/public/register.html');
+    header('Location: /book-hub/public/register.php');
     exit();
 }
 
-file_put_contents($debug_log, "POST request received\n", FILE_APPEND);
-file_put_contents($debug_log, "POST Data: " . print_r($_POST, true) . "\n", FILE_APPEND);
-
 try {
     $conn = getDbConnection();
-    file_put_contents($debug_log, "Database connected successfully\n", FILE_APPEND);
 } catch (Exception $e) {
-    file_put_contents($debug_log, "Database connection failed: " . $e->getMessage() . "\n", FILE_APPEND);
     $_SESSION['error'] = 'Database connection failed. Please try again.';
-    header('Location: /book-hub/public/register.html?error=' . urlencode('Database connection failed'));
+    header('Location: /book-hub/public/register.php?error=' . urlencode('Database connection failed'));
     exit();
 }
 
@@ -39,8 +22,6 @@ $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
 $terms = isset($_POST['terms']);
-
-file_put_contents($debug_log, "Form data parsed - Name: $first_name $last_name, Email: $email, Terms: " . ($terms ? 'yes' : 'no') . "\n", FILE_APPEND);
 
 $errors = [];
 
@@ -87,27 +68,20 @@ if (empty($errors)) {
         if ($check_result->num_rows > 0) {
             $errors[] = 'Email already registered';
         }
-        
-        file_put_contents($debug_log, "Email check completed\n", FILE_APPEND);
     } catch (Exception $e) {
-        file_put_contents($debug_log, "Email check failed: " . $e->getMessage() . "\n", FILE_APPEND);
         $errors[] = 'Database error occurred during validation';
     }
 }
 
 // If there are errors, redirect back with message
 if (!empty($errors)) {
-    file_put_contents($debug_log, "Validation errors: " . implode(', ', $errors) . "\n", FILE_APPEND);
     $_SESSION['error'] = implode(', ', $errors);
-    header('Location: /book-hub/public/register.html?error=' . urlencode(implode(', ', $errors)));
+    header('Location: /book-hub/public/register.php?error=' . urlencode(implode(', ', $errors)));
     exit();
 }
 
-file_put_contents($debug_log, "Validation passed, proceeding with insert\n", FILE_APPEND);
-
 // Hash password
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-file_put_contents($debug_log, "Password hashed\n", FILE_APPEND);
 
 // Generate verification token
 $token = bin2hex(random_bytes(32));
@@ -124,15 +98,12 @@ try {
     }
 
     $insert_stmt->bind_param("ssssss", $first_name, $last_name, $email, $hashed_password, $token, $expires_at);
-    file_put_contents($debug_log, "Executing SQL INSERT for email: $email\n", FILE_APPEND);
 
     if ($insert_stmt->execute()) {
         $user_id = $insert_stmt->insert_id;
-        file_put_contents($debug_log, "SUCCESS! User inserted with ID: $user_id\n", FILE_APPEND);
         
         // Check if email is enabled
         $email_enabled = env('ENABLE_EMAIL', 'false') === 'true';
-        file_put_contents($debug_log, "Email enabled: " . ($email_enabled ? 'yes' : 'no') . "\n", FILE_APPEND);
         
         if ($email_enabled) {
             // Try to send verification email
@@ -150,9 +121,8 @@ try {
                 $log_stmt->execute();
                 
                 $_SESSION['success'] = 'Registration successful! Please check your email to verify your account.';
-                header('Location: /book-hub/public/login.html?success=' . urlencode($_SESSION['success']));
+                header('Location: /book-hub/public/login.php?success=' . urlencode($_SESSION['success']));
             } catch (Exception $e) {
-                file_put_contents($debug_log, "Email sending failed: " . $e->getMessage() . "\n", FILE_APPEND);
                 // Fall back to auto-verification if email fails
                 $verify_sql = "UPDATE users SET email_verified = 1 WHERE id = ?";
                 $verify_stmt = $conn->prepare($verify_sql);
@@ -160,7 +130,7 @@ try {
                 $verify_stmt->execute();
                 
                 $_SESSION['success'] = 'Registration successful! Your account is ready to use.';
-                header('Location: /book-hub/public/login.html?success=' . urlencode($_SESSION['success']));
+                header('Location: /book-hub/public/login.php?success=' . urlencode($_SESSION['success']));
             }
         } else {
             // Auto-verify for development and auto-login
@@ -188,23 +158,15 @@ try {
             $update_stmt->bind_param("i", $user_id);
             $update_stmt->execute();
             
-            file_put_contents($debug_log, "Auto-login completed\n", FILE_APPEND);
-        $_SESSION['success'] = 'Welcome to BOOK HUB! Your account has been created successfully.';
-        header('Location: /book-hub/src/views/user.php');
+            $_SESSION['success'] = 'Welcome to BOOK HUB! Your account has been created successfully.';
+            header('Location: /book-hub/src/views/user.php');
         }
     } else {
         throw new Exception("Insert failed: " . $insert_stmt->error);
     }
 } catch (Exception $e) {
-    $error_message = 'Registration failed: ' . $e->getMessage();
-    file_put_contents($debug_log, "INSERT FAILED: " . $e->getMessage() . "\n", FILE_APPEND);
     $_SESSION['error'] = 'Registration failed. Please try again.';
-    header('Location: /book-hub/public/register.html?error=' . urlencode('Registration failed. Please try again.'));
+    header('Location: /book-hub/public/register.php?error=' . urlencode('Registration failed. Please try again.'));
 }
-
-file_put_contents($debug_log, "=== END ATTEMPT ===\n", FILE_APPEND);
-
-$conn->close();
-exit();
 ?>
 

@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: /book-hub/public/login.html');
+    header('Location: /book-hub/public/login.php');
     exit();
 }
 
@@ -25,7 +25,7 @@ $attempts = $result->fetch_assoc()['attempts'];
 
 if ($attempts >= $max_attempts) {
     $_SESSION['error'] = "Too many failed attempts. Please try again in 15 minutes.";
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Too many failed attempts. Please try again in 15 minutes.'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Too many failed attempts. Please try again in 15 minutes.'));
     exit();
 }
 
@@ -45,7 +45,7 @@ if ($result->num_rows == 0) {
     $log_stmt->execute();
     
     $_SESSION['error'] = 'Invalid email or password';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Invalid email or password'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
@@ -60,14 +60,14 @@ if (!password_verify($password, $user['password'])) {
     $log_stmt->execute();
     
     $_SESSION['error'] = 'Invalid email or password';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Invalid email or password'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Invalid email or password'));
     exit();
 }
 
 // Check if email is verified
 if (!$user['email_verified']) {
     $_SESSION['error'] = 'Please verify your email before logging in. Check your inbox for the verification link.';
-    header('Location: /book-hub/public/login.html?error=' . urlencode('Please verify your email before logging in.'));
+    header('Location: /book-hub/public/login.php?error=' . urlencode('Please verify your email before logging in.'));
     exit();
 }
 

@@ -388,8 +388,6 @@ function initializeCharts() {
     return;
   }
   
-  console.log('Chart.js loaded successfully (version: ' + Chart.version + ')');
-
   // Chart.js configuration
   const chartOptions = {
     responsive: true,
@@ -439,7 +437,6 @@ function initializeCharts() {
   try {
     const userGrowthCtx = document.getElementById('userGrowthChart');
     if (userGrowthCtx) {
-      console.log('Creating user growth chart...');
       new Chart(userGrowthCtx.getContext('2d'), {
         type: 'line',
         data: {
@@ -458,7 +455,6 @@ function initializeCharts() {
         },
         options: chartOptions
       });
-      console.log('User growth chart created successfully');
     } else {
       console.error('User growth chart canvas not found');
     }
@@ -470,7 +466,6 @@ function initializeCharts() {
   try {
     const rentalTrendsCtx = document.getElementById('rentalTrendsChart');
     if (rentalTrendsCtx) {
-      console.log('Creating rental trends chart...');
       new Chart(rentalTrendsCtx.getContext('2d'), {
         type: 'line',
         data: {
@@ -495,7 +490,6 @@ function initializeCharts() {
         },
         options: chartOptions
       });
-      console.log('Rental trends chart created successfully');
     } else {
       console.error('Rental trends chart canvas not found');
     }
@@ -507,7 +501,6 @@ function initializeCharts() {
   try {
     const revenueCtx = document.getElementById('revenueChart');
     if (revenueCtx) {
-      console.log('Creating revenue chart...');
       new Chart(revenueCtx.getContext('2d'), {
         type: 'bar',
         data: {
@@ -541,7 +534,6 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Revenue chart created successfully');
     } else {
       console.error('Revenue chart canvas not found');
     }
@@ -553,7 +545,6 @@ function initializeCharts() {
   try {
     const rentalStatusCtx = document.getElementById('rentalStatusChart');
     if (rentalStatusCtx) {
-      console.log('Creating rental status chart...');
       new Chart(rentalStatusCtx.getContext('2d'), {
         type: 'doughnut',
         data: {
@@ -587,7 +578,6 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Rental status chart created successfully');
     } else {
       console.error('Rental status chart canvas not found');
     }
@@ -599,7 +589,6 @@ function initializeCharts() {
   try {
     const bookTypeCtx = document.getElementById('bookTypeChart');
     if (bookTypeCtx) {
-      console.log('Creating book type chart...');
       new Chart(bookTypeCtx.getContext('2d'), {
         type: 'pie',
         data: {
@@ -627,7 +616,6 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Book type chart created successfully');
     } else {
       console.error('Book type chart canvas not found');
     }
@@ -639,7 +627,6 @@ function initializeCharts() {
   try {
     const activityCtx = document.getElementById('activityChart');
     if (activityCtx) {
-      console.log('Creating activity chart...');
       new Chart(activityCtx.getContext('2d'), {
         type: 'bar',
         data: {
@@ -676,7 +663,6 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Activity chart created successfully');
     } else {
       console.error('Activity chart canvas not found');
     }
@@ -688,7 +674,6 @@ function initializeCharts() {
   try {
     const topBooksCtx = document.getElementById('topBooksChart');
     if (topBooksCtx) {
-      console.log('Creating top books chart...');
       new Chart(topBooksCtx.getContext('2d'), {
         type: 'bar',
         data: {
@@ -722,15 +707,12 @@ function initializeCharts() {
           }
         }
       });
-      console.log('Top books chart created successfully');
     } else {
       console.error('Top books chart canvas not found');
     }
   } catch (error) {
     console.error('Error creating top books chart:', error);
   }
-  
-  console.log('All charts initialized');
 }
 
 // Wait for DOM to be ready, then initialize charts

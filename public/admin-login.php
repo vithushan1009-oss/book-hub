@@ -1,3 +1,11 @@
+<?php
+// Check if admin is already logged in
+session_start();
+if(isset($_SESSION["admin_id"])) {
+    header("Location: /book-hub/src/views/admin.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

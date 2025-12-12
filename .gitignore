@@ -10,9 +10,8 @@
 .env
 
 # Database credentials and backups
-*.sql
 database/backups/
-database/*.sql
+database/backups/*.sql
 
 # Email configuration
 smtp-config.php
