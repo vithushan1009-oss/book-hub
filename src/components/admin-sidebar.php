@@ -28,6 +28,8 @@ if ($current === 'admin.php') {
     $current_route = '/admin-profile';
 } elseif ($current === 'admin-settings.php') {
     $current_route = '/admin-settings';
+} elseif ($current === 'manage-contacts.php') {
+    $current_route = '/admin-contacts';
 }
 
 $adminName = $_SESSION['admin_name'] ?? 'Admin';
@@ -36,6 +38,7 @@ $adminInitial = strtoupper(substr($adminName, 0, 1));
 
 // Get pending rentals count for badge (only if config is available)
 $pending_rentals = 0;
+$unread_contacts = 0;
 if (file_exists(__DIR__ . '/../config.php')) {
     try {
         require_once __DIR__ . '/../config.php';
@@ -46,11 +49,17 @@ if (file_exists(__DIR__ . '/../config.php')) {
                 if ($pending_result) {
                     $pending_rentals = (int)$pending_result->fetch_assoc()['count'];
                 }
+                // Get unread contact messages count
+                $contact_result = $temp_conn->query("SELECT COUNT(*) as count FROM contact_messages WHERE status = 'unread'");
+                if ($contact_result) {
+                    $unread_contacts = (int)$contact_result->fetch_assoc()['count'];
+                }
             }
         }
     } catch (Exception $e) {
         // Silently fail if database not available
         $pending_rentals = 0;
+        $unread_contacts = 0;
     }
 }
 ?>
@@ -120,6 +129,15 @@ if (file_exists(__DIR__ . '/../config.php')) {
         <span>Rental Management</span>
         <?php if($pending_rentals > 0): ?>
           <div class="nav-badge warning"><?php echo $pending_rentals; ?> Pending</div>
+        <?php endif; ?>
+      </a>
+
+      <a href="/book-hub/admin-contacts"
+         class="nav-item <?= ($current_route === '/admin-contacts') ? 'active' : '' ?>">
+        <i class="fas fa-envelope"></i>
+        <span>Contact Messages</span>
+        <?php if($unread_contacts > 0): ?>
+          <div class="nav-badge warning"><?php echo $unread_contacts; ?> New</div>
         <?php endif; ?>
       </a>
     </div>

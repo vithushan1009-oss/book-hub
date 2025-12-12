@@ -75,7 +75,7 @@ if ($currentHour < 12) {
               </div>
               <div class="notification-content">
                 <div class="notification-title">New User Registration</div>
-                <div class="notification-text">John Doe has registered and is awaiting verification</div>
+                <div class="notification-text">Kamal Kumar has registered and is awaiting verification</div>
                 <div class="notification-time">2 minutes ago</div>
               </div>
             </div>

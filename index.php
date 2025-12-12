@@ -88,6 +88,7 @@ $protected_views = [
     '/admin-users' => 'manage-users.php',
     '/admin-books' => 'manage-books.php',
     '/admin-rentals' => 'manage-rentals.php',
+    '/admin-contacts' => 'manage-contacts.php',
     '/admin-analytics' => 'admin-analytics.php',
     '/admin-profile' => 'admin-profile.php',
     '/admin-settings' => 'admin-settings.php',

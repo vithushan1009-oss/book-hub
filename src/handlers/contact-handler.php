@@ -85,6 +85,38 @@ try {
     // Get database connection
     $conn = getDbConnection();
     
+    // Check if contact_messages table exists, create if not
+    $tableCheck = $conn->query("SHOW TABLES LIKE 'contact_messages'");
+    if ($tableCheck->num_rows == 0) {
+        // Create the contact_messages table
+        $createTable = "
+            CREATE TABLE IF NOT EXISTS `contact_messages` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `first_name` varchar(50) NOT NULL,
+                `last_name` varchar(50) NOT NULL,
+                `email` varchar(100) NOT NULL,
+                `subject` varchar(255) NOT NULL,
+                `message` text NOT NULL,
+                `status` enum('unread','read','replied','archived') NOT NULL DEFAULT 'unread',
+                `admin_notes` text DEFAULT NULL,
+                `replied_at` datetime DEFAULT NULL,
+                `replied_by` int(11) DEFAULT NULL,
+                `ip_address` varchar(45) DEFAULT NULL,
+                `user_agent` text DEFAULT NULL,
+                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                PRIMARY KEY (`id`),
+                KEY `idx_status` (`status`),
+                KEY `idx_email` (`email`),
+                KEY `idx_created_at` (`created_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ";
+        
+        if (!$conn->query($createTable)) {
+            throw new Exception('Failed to create contact_messages table: ' . $conn->error);
+        }
+    }
+    
     // Get user's IP address
     $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '';
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -126,8 +158,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred while sending your message. Please try again later.',
-        'debug' => $e->getMessage() // Remove this line in production
+        'message' => 'An error occurred while sending your message. Please try again later.'
     ]);
 }
 ?>

@@ -105,6 +105,18 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
 }
 
+/* Form Error States */
+.form-group.error input,
+.form-group.error textarea,
+.form-group.error select {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-group.error label {
+  color: var(--secondary);
+}
+
 /* Animations */
 @keyframes fadeInUp {
   from {

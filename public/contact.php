@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="static/css/components.css">
   <link rel="stylesheet" href="static/css/navigation.css">
   <link rel="stylesheet" href="static/css/footer.css">
+  <link rel="stylesheet" href="static/css/home.css">
+  <link rel="stylesheet" href="static/vendor/fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.css">
   <style>
     .contact-card {
       background: var(--card);
@@ -113,39 +115,51 @@
   <!-- Contact Form & Map -->
   <section style="padding: 3rem 0 5rem;">
     <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
+      <style>
+        @media (min-width: 768px) {
+          .contact-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .name-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+      </style>
+      <div class="contact-grid" style="display: grid; grid-template-columns: 1fr; gap: 3rem;">
         
         <!-- Contact Form -->
         <div>
           <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem;">Send Us a Message</h2>
-          <form id="contact-form">
-            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <form id="contact-form" novalidate style="background: var(--card); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow-lg);">
+            <div class="name-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
               <div class="form-group">
-                <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName" placeholder="John" required>
+                <label for="firstName">First Name <span style="color: var(--secondary);">*</span></label>
+                <input type="text" id="firstName" name="firstName" placeholder="John">
               </div>
               <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName" placeholder="Doe" required>
+                <label for="lastName">Last Name <span style="color: var(--secondary);">*</span></label>
+                <input type="text" id="lastName" name="lastName" placeholder="Doe">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="email">Email Address</label>
-              <input type="email" id="email" name="email" placeholder="john@example.com" required>
+              <label for="email">Email Address <span style="color: var(--secondary);">*</span></label>
+              <input type="email" id="email" name="email" placeholder="john@example.com">
             </div>
 
             <div class="form-group">
-              <label for="subject">Subject</label>
-              <input type="text" id="subject" name="subject" placeholder="How can we help you?" required>
+              <label for="subject">Subject <span style="color: var(--secondary);">*</span></label>
+              <input type="text" id="subject" name="subject" placeholder="How can we help you?">
             </div>
 
             <div class="form-group">
-              <label for="message">Message</label>
-              <textarea id="message" name="message" rows="6" placeholder="Tell us more about your inquiry..." required></textarea>
+              <label for="message">Message <span style="color: var(--secondary);">*</span></label>
+              <textarea id="message" name="message" rows="6" placeholder="Tell us more about your inquiry..."></textarea>
             </div>
 
-            <button type="submit" class="btn btn-secondary btn-lg" style="width: 100%;">Send Message</button>
+            <button type="submit" class="btn btn-secondary btn-lg" style="width: 100%;">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
           </form>
         </div>
 
