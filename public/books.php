@@ -241,43 +241,59 @@ while($row = $genres_result->fetch_assoc()) {
   <?php if($is_logged_in): ?>
   <div id="rentModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
     <div class="modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%;">
-      <h2 style="margin-top: 0;">Rent Book</h2>
-      <form id="rentForm" method="POST" action="/book-hub/src/handlers/rent-book-handler.php">
+      <h2 style="margin-top: 0; color: var(--primary);">Rent Book</h2>
+      <form id="rentForm" method="POST" action="/book-hub/src/handlers/rent-book-handler.php" onsubmit="return validateRentForm()">
         <input type="hidden" name="book_id" id="rent_book_id">
         <input type="hidden" id="rent_price_per_day" value="0">
+        
         <div style="margin-bottom: 1rem;">
           <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Book:</label>
-          <p id="rent_book_title" style="margin: 0; color: var(--muted-foreground);"></p>
+          <p id="rent_book_title" style="margin: 0; color: var(--muted-foreground); font-weight: 500;"></p>
         </div>
+        
         <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date:</label>
-          <input type="date" name="start_date" id="rent_start_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date: <span style="color: var(--secondary);">*</span></label>
+          <input type="date" name="start_date" id="rent_start_date" required 
+                 style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem;">
+          <small id="start_date_error" style="color: #ef4444; display: none; margin-top: 0.25rem;"></small>
         </div>
+        
         <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date:</label>
-          <input type="date" name="end_date" id="rent_end_date" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date: <span style="color: var(--secondary);">*</span></label>
+          <input type="date" name="end_date" id="rent_end_date" required 
+                 style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem;">
+          <small id="end_date_error" style="color: #ef4444; display: none; margin-top: 0.25rem;"></small>
         </div>
+        
         <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number:</label>
-          <input type="tel" name="phone_number" id="rent_phone_number" required placeholder="Enter your phone number" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number: <span style="color: var(--secondary);">*</span></label>
+          <input type="tel" name="phone_number" id="rent_phone_number" required 
+                 placeholder="e.g., +94 77 123 4567" 
+                 pattern="[0-9+\-\s()]{7,20}"
+                 style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem;">
+          <small id="phone_error" style="color: #ef4444; display: none; margin-top: 0.25rem;"></small>
         </div>
-        <div id="rental_cost_section" style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px; display: none;">
+        
+        <div id="rental_cost_section" style="margin-bottom: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; border: 1px solid #bae6fd; display: none;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-            <span>Rental Days:</span>
-            <span id="rental_days_display">0 days</span>
+            <span style="color: var(--muted-foreground);">Rental Period:</span>
+            <span id="rental_days_display" style="font-weight: 500;">0 days</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-            <span>Daily Rate:</span>
-            <span id="daily_rate_display">LKR 0.00</span>
+            <span style="color: var(--muted-foreground);">Daily Rate:</span>
+            <span id="daily_rate_display" style="font-weight: 500;">LKR 0.00</span>
           </div>
-          <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #ddd; padding-top: 0.5rem;">
-            <span>Estimated Total:</span>
-            <span id="total_cost_display">LKR 0.00</span>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #7dd3fc; padding-top: 0.75rem; margin-top: 0.5rem;">
+            <span style="color: var(--primary);">Estimated Total:</span>
+            <span id="total_cost_display" style="color: var(--secondary); font-size: 1.1rem;">LKR 0.00</span>
           </div>
         </div>
+        
+        <div id="form_error" style="display: none; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+        
         <div style="display: flex; gap: 1rem; justify-content: flex-end;">
           <button type="button" onclick="closeRentModal()" class="btn btn-outline">Cancel</button>
-          <button type="submit" class="btn btn-accent">Submit Rental Request</button>
+          <button type="submit" id="submitRentBtn" class="btn btn-accent" disabled>Submit Rental Request</button>
         </div>
       </form>
     </div>
@@ -313,12 +329,45 @@ while($row = $genres_result->fetch_assoc()) {
           }
         });
       }
+      
+      // Initialize date inputs
+      initializeDateInputs();
     });
     
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('rent_start_date')?.setAttribute('min', today);
-    document.getElementById('rent_end_date')?.setAttribute('min', today);
+    // Get today's date in YYYY-MM-DD format
+    function getTodayDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    // Get max date (60 days from today)
+    function getMaxDate() {
+      const maxDate = new Date();
+      maxDate.setDate(maxDate.getDate() + 60);
+      const year = maxDate.getFullYear();
+      const month = String(maxDate.getMonth() + 1).padStart(2, '0');
+      const day = String(maxDate.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    function initializeDateInputs() {
+      const today = getTodayDate();
+      const maxDate = getMaxDate();
+      const startDateInput = document.getElementById('rent_start_date');
+      const endDateInput = document.getElementById('rent_end_date');
+      
+      if (startDateInput) {
+        startDateInput.setAttribute('min', today);
+        startDateInput.setAttribute('max', maxDate);
+      }
+      if (endDateInput) {
+        endDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('max', maxDate);
+      }
+    }
 
     function openRentModal(bookId, bookTitle, pricePerDay) {
       document.getElementById('rent_book_id').value = bookId;
@@ -326,27 +375,108 @@ while($row = $genres_result->fetch_assoc()) {
       document.getElementById('rent_price_per_day').value = pricePerDay;
       document.getElementById('rentModal').style.display = 'flex';
       
-      // Reset dates and cost display
-      document.getElementById('rent_start_date').value = '';
-      document.getElementById('rent_end_date').value = '';
+      // Reset form
+      document.getElementById('rentForm').reset();
       document.getElementById('rental_cost_section').style.display = 'none';
+      document.getElementById('submitRentBtn').disabled = true;
+      clearAllErrors();
       
-      // Set minimum date for end date when start date changes
-      document.getElementById('rent_start_date').addEventListener('change', updateEndDateMin);
-      document.getElementById('rent_start_date').addEventListener('change', calculateRentalCost);
-      document.getElementById('rent_end_date').addEventListener('change', calculateRentalCost);
+      // Set minimum dates
+      const today = getTodayDate();
+      const maxDate = getMaxDate();
+      document.getElementById('rent_start_date').setAttribute('min', today);
+      document.getElementById('rent_start_date').setAttribute('max', maxDate);
+      document.getElementById('rent_end_date').setAttribute('min', today);
+      document.getElementById('rent_end_date').setAttribute('max', maxDate);
+      
+      // Add event listeners
+      document.getElementById('rent_start_date').addEventListener('change', handleStartDateChange);
+      document.getElementById('rent_end_date').addEventListener('change', handleEndDateChange);
+      document.getElementById('rent_phone_number').addEventListener('input', validatePhone);
     }
     
-    function updateEndDateMin() {
+    function handleStartDateChange() {
       const startDate = document.getElementById('rent_start_date').value;
+      const endDateInput = document.getElementById('rent_end_date');
+      const today = getTodayDate();
+      
+      clearError('start_date_error');
+      
       if (startDate) {
-        document.getElementById('rent_end_date').setAttribute('min', startDate);
+        if (startDate < today) {
+          showError('start_date_error', 'Start date cannot be in the past');
+          document.getElementById('rent_start_date').value = '';
+          return;
+        }
+        
+        // Set end date minimum to start date
+        endDateInput.setAttribute('min', startDate);
+        
+        // Calculate max end date (30 days from start)
+        const startDateObj = new Date(startDate);
+        startDateObj.setDate(startDateObj.getDate() + 30);
+        const maxEndDate = startDateObj.toISOString().split('T')[0];
+        endDateInput.setAttribute('max', maxEndDate);
+        
         // If end date is before start date, reset it
-        const endDate = document.getElementById('rent_end_date').value;
+        const endDate = endDateInput.value;
         if (endDate && endDate < startDate) {
-          document.getElementById('rent_end_date').value = '';
+          endDateInput.value = '';
+          clearError('end_date_error');
         }
       }
+      
+      calculateRentalCost();
+    }
+    
+    function handleEndDateChange() {
+      const startDate = document.getElementById('rent_start_date').value;
+      const endDate = document.getElementById('rent_end_date').value;
+      const today = getTodayDate();
+      
+      clearError('end_date_error');
+      
+      if (endDate) {
+        if (endDate < today) {
+          showError('end_date_error', 'End date cannot be in the past');
+          document.getElementById('rent_end_date').value = '';
+          return;
+        }
+        
+        if (startDate && endDate < startDate) {
+          showError('end_date_error', 'End date must be after start date');
+          document.getElementById('rent_end_date').value = '';
+          return;
+        }
+        
+        if (startDate) {
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          const diffTime = Math.abs(end - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          
+          if (diffDays > 30) {
+            showError('end_date_error', 'Rental period cannot exceed 30 days');
+            document.getElementById('rent_end_date').value = '';
+            return;
+          }
+        }
+      }
+      
+      calculateRentalCost();
+    }
+    
+    function validatePhone() {
+      const phone = document.getElementById('rent_phone_number').value.trim();
+      clearError('phone_error');
+      
+      if (phone && !/^[0-9+\-\s()]{7,20}$/.test(phone)) {
+        showError('phone_error', 'Please enter a valid phone number');
+        return false;
+      }
+      
+      updateSubmitButton();
+      return true;
     }
     
     function calculateRentalCost() {
@@ -358,7 +488,7 @@ while($row = $genres_result->fetch_assoc()) {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const timeDiff = end.getTime() - start.getTime();
-        const rentalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Include both start and end day
+        const rentalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
         
         if (rentalDays > 0 && rentalDays <= 30) {
           const totalCost = rentalDays * pricePerDay;
@@ -367,21 +497,100 @@ while($row = $genres_result->fetch_assoc()) {
           document.getElementById('daily_rate_display').textContent = 'LKR ' + pricePerDay.toFixed(2);
           document.getElementById('total_cost_display').textContent = 'LKR ' + totalCost.toFixed(2);
           document.getElementById('rental_cost_section').style.display = 'block';
-        } else if (rentalDays > 30) {
-          document.getElementById('rental_cost_section').style.display = 'none';
-          alert('Rental period cannot exceed 30 days.');
         } else {
           document.getElementById('rental_cost_section').style.display = 'none';
         }
       } else {
         document.getElementById('rental_cost_section').style.display = 'none';
       }
+      
+      updateSubmitButton();
+    }
+    
+    function showError(elementId, message) {
+      const errorEl = document.getElementById(elementId);
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+      }
+    }
+    
+    function clearError(elementId) {
+      const errorEl = document.getElementById(elementId);
+      if (errorEl) {
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+      }
+    }
+    
+    function clearAllErrors() {
+      clearError('start_date_error');
+      clearError('end_date_error');
+      clearError('phone_error');
+      const formError = document.getElementById('form_error');
+      if (formError) formError.style.display = 'none';
+    }
+    
+    function updateSubmitButton() {
+      const startDate = document.getElementById('rent_start_date').value;
+      const endDate = document.getElementById('rent_end_date').value;
+      const phone = document.getElementById('rent_phone_number').value.trim();
+      const hasErrors = document.querySelector('[id$="_error"]:not([style*="display: none"])');
+      
+      const isValid = startDate && endDate && phone && phone.length >= 7 && !hasErrors;
+      document.getElementById('submitRentBtn').disabled = !isValid;
+    }
+    
+    function validateRentForm() {
+      const startDate = document.getElementById('rent_start_date').value;
+      const endDate = document.getElementById('rent_end_date').value;
+      const phone = document.getElementById('rent_phone_number').value.trim();
+      const today = getTodayDate();
+      let errors = [];
+      
+      if (!startDate) {
+        errors.push('Start date is required');
+      } else if (startDate < today) {
+        errors.push('Start date cannot be in the past');
+      }
+      
+      if (!endDate) {
+        errors.push('End date is required');
+      } else if (endDate < today) {
+        errors.push('End date cannot be in the past');
+      } else if (startDate && endDate < startDate) {
+        errors.push('End date must be after start date');
+      }
+      
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        if (diffDays > 30) {
+          errors.push('Rental period cannot exceed 30 days');
+        }
+      }
+      
+      if (!phone) {
+        errors.push('Phone number is required');
+      } else if (!/^[0-9+\-\s()]{7,20}$/.test(phone)) {
+        errors.push('Please enter a valid phone number');
+      }
+      
+      if (errors.length > 0) {
+        document.getElementById('form_error').innerHTML = errors.join('<br>');
+        document.getElementById('form_error').style.display = 'block';
+        return false;
+      }
+      
+      return true;
     }
 
     function closeRentModal() {
       document.getElementById('rentModal').style.display = 'none';
       document.getElementById('rentForm').reset();
       document.getElementById('rental_cost_section').style.display = 'none';
+      clearAllErrors();
     }
 
     function purchaseBook(bookId, bookTitle, price) {

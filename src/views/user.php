@@ -26,6 +26,10 @@ if (!$user) {
 $user_name = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
 $user_email = htmlspecialchars($user['email']);
 $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
+
+// Fetch recommended books (latest 4 active books)
+$recommended_books_query = "SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 4";
+$recommended_books_result = $conn->query($recommended_books_query);
 ?>
 
 <!DOCTYPE html>
@@ -410,97 +414,70 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
       </div>
 
       <div class="books-grid">
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="/book-hub/public/assets/images/book-1.jpg" alt="Fiction Fomen">
-            <span class="book-badge badge-buy">Buy Now</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Fiction Fomen</h3>
-            <p class="author">Shen Gerdings</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(5.0)</span>
+        <?php if($recommended_books_result && $recommended_books_result->num_rows > 0): ?>
+          <?php while($book = $recommended_books_result->fetch_assoc()): ?>
+            <div class="book-card">
+              <div class="book-card-image">
+                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
+                     alt="<?php echo htmlspecialchars($book['title']); ?>"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                <?php if($book['book_type'] === 'physical'): ?>
+                  <span class="book-badge badge-rent">For Rent</span>
+                <?php else: ?>
+                  <span class="book-badge badge-buy">Buy Now</span>
+                <?php endif; ?>
+              </div>
+              <div class="book-card-content">
+                <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                <p class="author"><?php echo htmlspecialchars($book['author']); ?></p>
+                <?php if($book['genre']): ?>
+                  <p class="genre" style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.25rem;">
+                    <?php echo htmlspecialchars($book['genre']); ?>
+                  </p>
+                <?php endif; ?>
+                <div class="book-rating">
+                  <?php 
+                  $rating = 4.5;
+                  $full_stars = floor($rating);
+                  $has_half = ($rating - $full_stars) >= 0.5;
+                  for($i = 0; $i < $full_stars; $i++): ?>
+                    <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endfor; ?>
+                  <?php if($has_half): ?>
+                    <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endif; ?>
+                  <?php 
+                  $empty_stars = 5 - $full_stars - ($has_half ? 1 : 0);
+                  for($i = 0; $i < $empty_stars; $i++): ?>
+                    <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <?php endfor; ?>
+                  <span>(<?php echo number_format($rating, 1); ?>)</span>
+                </div>
+                <div class="book-footer">
+                  <div class="book-price">
+                    <?php if($book['book_type'] === 'physical' && $book['rental_price_per_day']): ?>
+                      LKR <?php echo number_format($book['rental_price_per_day'], 2); ?><span>/day</span>
+                    <?php elseif($book['book_type'] === 'online' && $book['purchase_price']): ?>
+                      LKR <?php echo number_format($book['purchase_price'], 2); ?>
+                    <?php else: ?>
+                      N/A
+                    <?php endif; ?>
+                  </div>
+                  <?php if($book['book_type'] === 'physical'): ?>
+                    <button class="btn btn-accent btn-sm" onclick="window.location.href='/book-hub/public/books.php'">Rent</button>
+                  <?php else: ?>
+                    <button class="btn btn-secondary btn-sm" onclick="window.location.href='/book-hub/public/books.php'">Buy</button>
+                  <?php endif; ?>
+                </div>
+              </div>
             </div>
-            <div class="book-footer">
-              <div class="book-price">$12.99</div>
-              <button class="btn btn-secondary btn-sm">Buy</button>
-            </div>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p class="muted">No recommended books available at the moment.</p>
+            <a href="/book-hub/public/books.php" class="btn btn-primary">Browse All Books</a>
           </div>
-        </div>
-
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="/book-hub/public/assets/images/book-2.jpg" alt="Nook">
-            <span class="book-badge badge-rent">For Rent</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Nook</h3>
-            <p class="author">Bab Giuing</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(4.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$3.99<span>/week</span></div>
-              <button class="btn btn-accent btn-sm">Rent</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="/book-hub/public/assets/images/book-3.jpg" alt="Mystic Tales">
-            <span class="book-badge badge-buy">Buy Now</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Mystic Tales</h3>
-            <p class="author">Fantasy Author</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(5.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$15.99</div>
-              <button class="btn btn-secondary btn-sm">Buy</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="book-card">
-          <div class="book-card-image">
-            <img src="/book-hub/public/assets/images/book-4.jpg" alt="Science Wonders">
-            <span class="book-badge badge-rent">For Rent</span>
-          </div>
-          <div class="book-card-content">
-            <h3>Science Wonders</h3>
-            <p class="author">Knowledge Seeker</p>
-            <div class="book-rating">
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star empty" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>(4.0)</span>
-            </div>
-            <div class="book-footer">
-              <div class="book-price">$4.99<span>/week</span></div>
-              <button class="btn btn-accent btn-sm">Rent</button>
-            </div>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
 
       <div style="text-align: center; margin-top: 2rem;">
