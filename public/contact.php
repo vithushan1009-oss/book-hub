@@ -72,7 +72,7 @@
             </svg>
           </div>
           <h3 style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--foreground);">Phone</h3>
-          <p style="color: var(--muted-foreground);">+1 (555) 123-4567</p>
+          <p style="color: var(--muted-foreground);">+94 21 222 3456</p>
         </div>
 
         <div class="contact-card">
@@ -94,7 +94,7 @@
             </svg>
           </div>
           <h3 style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--foreground);">Address</h3>
-          <p style="color: var(--muted-foreground);">123 Library Street, BookCity</p>
+          <p style="color: var(--muted-foreground);">45 Stanley Road, Jaffna</p>
         </div>
 
         <div class="contact-card">
@@ -134,17 +134,17 @@
             <div class="name-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem;">
               <div class="form-group">
                 <label for="firstName">First Name <span style="color: var(--secondary);">*</span></label>
-                <input type="text" id="firstName" name="firstName" placeholder="John">
+                <input type="text" id="firstName" name="firstName" placeholder="Kamal">
               </div>
               <div class="form-group">
                 <label for="lastName">Last Name <span style="color: var(--secondary);">*</span></label>
-                <input type="text" id="lastName" name="lastName" placeholder="Doe">
+                <input type="text" id="lastName" name="lastName" placeholder="Kumar">
               </div>
             </div>
 
             <div class="form-group">
               <label for="email">Email Address <span style="color: var(--secondary);">*</span></label>
-              <input type="email" id="email" name="email" placeholder="john@example.com">
+              <input type="email" id="email" name="email" placeholder="kamal@example.com">
             </div>
 
             <div class="form-group">

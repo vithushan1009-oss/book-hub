@@ -20,6 +20,33 @@ if ($total_books_result) {
     $row = $total_books_result->fetch_assoc();
     $total_books = $row['total'];
 }
+
+// Get total users count
+$total_users_query = "SELECT COUNT(*) as total FROM users WHERE email_verified = 1";
+$total_users_result = $conn->query($total_users_query);
+$total_users = 0;
+if ($total_users_result) {
+    $row = $total_users_result->fetch_assoc();
+    $total_users = $row['total'];
+}
+
+// Get digital books count
+$digital_books_query = "SELECT COUNT(*) as total FROM books WHERE is_active = 1 AND book_type = 'online'";
+$digital_books_result = $conn->query($digital_books_query);
+$digital_books = 0;
+if ($digital_books_result) {
+    $row = $digital_books_result->fetch_assoc();
+    $digital_books = $row['total'];
+}
+
+// Get completed rentals count (as a measure of satisfaction)
+$completed_rentals_query = "SELECT COUNT(*) as total FROM rentals WHERE status = 'returned'";
+$completed_rentals_result = $conn->query($completed_rentals_query);
+$completed_rentals = 0;
+if ($completed_rentals_result) {
+    $row = $completed_rentals_result->fetch_assoc();
+    $completed_rentals = $row['total'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +125,7 @@ if ($total_books_result) {
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
-          <h3>5,000+</h3>
+          <h3><?php echo number_format($total_users); ?>+</h3>
           <p>Happy Readers</p>
         </div>
         <div class="stat-item">
@@ -107,15 +134,15 @@ if ($total_books_result) {
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          <h3>3,000+</h3>
+          <h3><?php echo number_format($digital_books); ?>+</h3>
           <p>Digital Titles</p>
         </div>
         <div class="stat-item">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
-          <h3>4.9/5</h3>
-          <p>Average Rating</p>
+          <h3><?php echo number_format($completed_rentals); ?>+</h3>
+          <p>Books Rented</p>
         </div>
       </div>
     </div>

@@ -13,8 +13,13 @@
 3. Choose file: database/bookhub_database.sql
 4. Click "Go"
 
+# Also import the contact messages table:
+5. Choose file: database/contact_messages_table.sql
+6. Click "Go"
+
 # Option 2: Using MySQL Command Line
 mysql -u root -p < database/bookhub_database.sql
+mysql -u root -p bookhub_db < database/contact_messages_table.sql
 ```
 
 ### 3. Configure Environment
