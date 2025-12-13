@@ -54,7 +54,7 @@ while ($row = $rental_trends_result->fetch_assoc()) {
 // Revenue Data (from completed rentals)
 $revenue_query = "SELECT 
     DATE(r.start_date) as date,
-    SUM(DATEDIFF(r.end_date, r.start_date) + 1) * b.rental_price_per_day as revenue
+    SUM(DATEDIFF(r.end_date, r.start_date) + 1) * r.daily_rate as revenue
 FROM rentals r
 INNER JOIN books b ON r.book_id = b.id
 WHERE r.status = 'completed' 
@@ -156,7 +156,7 @@ $total_users = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc(
 $total_books = $conn->query("SELECT COUNT(*) as count FROM books")->fetch_assoc()['count'];
 $total_rentals = $conn->query("SELECT COUNT(*) as count FROM rentals")->fetch_assoc()['count'];
 $total_revenue = $conn->query("SELECT 
-    SUM(DATEDIFF(r.end_date, r.start_date) + 1) * b.rental_price_per_day as total
+    SUM(DATEDIFF(r.end_date, r.start_date) + 1) * r.daily_rate as total
 FROM rentals r
 INNER JOIN books b ON r.book_id = b.id
 WHERE r.status = 'completed'")->fetch_assoc()['total'] ?? 0;
@@ -187,14 +187,18 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
     .card-content canvas {
       max-width: 100% !important;
       height: auto !important;
+      display: block;
     }
     
     .card-content {
-      min-height: 300px;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     #topBooksChart {
-      min-height: 400px;
+      min-height: 350px;
     }
   </style>
 </head>
@@ -281,6 +285,37 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
         </div>
       </div>
 
+      <!-- Debug Information (Remove in production) -->
+      <div style="margin: 2rem 0; padding: 1rem; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+        <h3 style="margin: 0 0 1rem 0; color: #495057;">Debug Information</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; font-size: 0.875rem;">
+          <div>
+            <strong>User Growth Data:</strong><br>
+            Labels: <?php echo count($user_growth_labels); ?> items<br>
+            Data: <?php echo count($user_growth_data); ?> items<br>
+            Sample: <?php echo !empty($user_growth_labels) ? htmlspecialchars($user_growth_labels[0] . ': ' . $user_growth_data[0]) : 'No data'; ?>
+          </div>
+          <div>
+            <strong>Rental Trends Data:</strong><br>
+            Labels: <?php echo count($rental_trends_labels); ?> items<br>
+            Data: <?php echo count($rental_trends_data); ?> items<br>
+            Completed: <?php echo count($rental_completed_data); ?> items
+          </div>
+          <div>
+            <strong>Revenue Data:</strong><br>
+            Labels: <?php echo count($revenue_labels); ?> items<br>
+            Data: <?php echo count($revenue_data); ?> items<br>
+            Total: LKR <?php echo number_format($total_revenue, 0); ?>
+          </div>
+          <div>
+            <strong>Other Data:</strong><br>
+            Status Labels: <?php echo count($rental_status_labels); ?> items<br>
+            Book Types: <?php echo count($book_type_labels); ?> items<br>
+            Activity: <?php echo count($activity_labels); ?> items
+          </div>
+        </div>
+      </div>
+
       <!-- Charts Grid -->
       <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
         <!-- User Growth Chart -->
@@ -289,7 +324,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-chart-line"></i> User Growth</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="userGrowthChart"></canvas>
+            <canvas id="userGrowthChart" width="400" height="200"></canvas>
           </div>
         </div>
 
@@ -299,7 +334,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-chart-area"></i> Rental Trends</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="rentalTrendsChart"></canvas>
+            <canvas id="rentalTrendsChart" width="400" height="200"></canvas>
           </div>
         </div>
       </div>
@@ -311,7 +346,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-chart-bar"></i> Revenue Trend</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="revenueChart"></canvas>
+            <canvas id="revenueChart" width="400" height="200"></canvas>
           </div>
         </div>
 
@@ -321,7 +356,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-chart-pie"></i> Rental Status</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="rentalStatusChart"></canvas>
+            <canvas id="rentalStatusChart" width="400" height="200"></canvas>
           </div>
         </div>
       </div>
@@ -333,7 +368,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-chart-doughnut"></i> Book Types</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="bookTypeChart"></canvas>
+            <canvas id="bookTypeChart" width="400" height="200"></canvas>
           </div>
         </div>
 
@@ -343,7 +378,7 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
             <h3><i class="fas fa-clock"></i> User Activity (24h)</h3>
           </div>
           <div class="card-content" style="padding: 1.5rem; position: relative; height: 300px;">
-            <canvas id="activityChart"></canvas>
+            <canvas id="activityChart" width="400" height="200"></canvas>
           </div>
         </div>
       </div>
@@ -354,26 +389,22 @@ $new_rentals_today = $conn->query("SELECT COUNT(*) as count FROM rentals WHERE D
           <h3><i class="fas fa-trophy"></i> Most Rented Books</h3>
         </div>
         <div class="card-content" style="padding: 1.5rem; position: relative; height: 400px;">
-          <canvas id="topBooksChart"></canvas>
+          <canvas id="topBooksChart" width="400" height="300"></canvas>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Chart.js - Local with CDN fallback -->
+<!-- Chart.js Library -->
 <script src="/book-hub/public/static/vendor/chartjs/chart.umd.min.js"></script>
-<script>
-// Fallback to CDN if local Chart.js fails to load
-if (typeof Chart === 'undefined') {
-  console.warn('Local Chart.js failed, loading from CDN...');
-  document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>');
-}
-</script>
 <script src="/book-hub/public/static/js/admin.js"></script>
 <script>
 // Initialize charts with retry mechanism
 function initializeCharts() {
+  console.log('Initializing charts...');
+  console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+  
   // Check if Chart.js is loaded
   if (typeof Chart === 'undefined') {
     console.error('Chart.js library not loaded!');

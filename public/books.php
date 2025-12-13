@@ -706,44 +706,36 @@ while($row = $genres_result->fetch_assoc()) {
     });
 
     // Book Details Modal Functions
-    function showBookDetails(title, author, description, genre, isbn, publisher, publicationDate, price, rentalPrice, availability, bookType, imagePath, bookId) {
+    function showBookDetails(bookId, title, author, description, genre, isbn, publisher, publicationDate, bookType, availability, rentalPrice, price) {
       // Populate modal with book details
-      document.getElementById('modalBookTitle').textContent = title;
-      document.getElementById('modalBookAuthor').textContent = author;
-      document.getElementById('modalBookDescription').textContent = description;
-      document.getElementById('modalBookGenre').textContent = genre;
-      document.getElementById('modalBookISBN').textContent = isbn;
-      document.getElementById('modalBookPublisher').textContent = publisher;
-      document.getElementById('modalBookPublicationDate').textContent = publicationDate;
+      document.getElementById('bookDetailsTitle').textContent = title;
+      document.getElementById('bookDetailsAuthor').textContent = author;
+      document.getElementById('bookDetailsDescription').textContent = description;
+      document.getElementById('bookDetailsGenre').textContent = genre;
+      document.getElementById('bookDetailsISBN').textContent = isbn;
+      document.getElementById('bookDetailsPublisher').textContent = publisher;
+      document.getElementById('bookDetailsPublicationDate').textContent = publicationDate;
       
       // Set book image
-      const bookImage = document.getElementById('modalBookImage');
-      if (imagePath && imagePath !== 'null') {
-        bookImage.src = imagePath;
-        bookImage.style.display = 'block';
-      } else {
-        bookImage.style.display = 'none';
-      }
+      const bookImage = document.getElementById('bookDetailsImage');
+      bookImage.src = '/book-hub/src/handlers/book-image.php?id=' + bookId;
+      bookImage.style.display = 'block';
       
       // Handle pricing based on book type
-      const priceSection = document.getElementById('modalPriceSection');
-      const rentalPriceSection = document.getElementById('modalRentalPriceSection');
-      const availabilitySection = document.getElementById('modalAvailabilitySection');
-      
       if (bookType === 'physical') {
         // Show both purchase and rental prices for physical books
-        document.getElementById('modalBookPrice').textContent = price ? '$' + price : 'N/A';
-        document.getElementById('modalBookRentalPrice').textContent = rentalPrice ? '$' + rentalPrice + ' per day' : 'N/A';
-        priceSection.style.display = 'block';
-        rentalPriceSection.style.display = 'block';
-        availabilitySection.style.display = 'block';
-        document.getElementById('modalBookAvailability').textContent = availability;
+        document.getElementById('bookDetailsPurchasePrice').style.display = 'block';
+        document.getElementById('bookDetailsPurchasePriceValue').textContent = price > 0 ? price : 'N/A';
+        document.getElementById('bookDetailsRentalPrice').style.display = 'block';
+        document.getElementById('bookDetailsRentalPriceValue').textContent = rentalPrice > 0 ? rentalPrice + '/day' : 'N/A';
+        document.getElementById('bookDetailsQuantity').style.display = 'block';
+        document.getElementById('bookDetailsQuantityValue').textContent = availability;
       } else if (bookType === 'digital') {
         // Show only purchase price for digital books
-        document.getElementById('modalBookPrice').textContent = price ? '$' + price : 'N/A';
-        priceSection.style.display = 'block';
-        rentalPriceSection.style.display = 'none';
-        availabilitySection.style.display = 'none';
+        document.getElementById('bookDetailsPurchasePrice').style.display = 'block';
+        document.getElementById('bookDetailsPurchasePriceValue').textContent = price > 0 ? price : 'N/A';
+        document.getElementById('bookDetailsRentalPrice').style.display = 'none';
+        document.getElementById('bookDetailsQuantity').style.display = 'none';
       }
       
       // Show modal

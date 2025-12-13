@@ -74,6 +74,16 @@
   color: var(--primary-foreground);
 }
 
+.badge-rented {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.badge-overdue {
+  background-color: var(--destructive);
+  color: white;
+}
+
 .book-unavailable {
   position: absolute;
   inset: 0;

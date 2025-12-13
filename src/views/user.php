@@ -57,6 +57,18 @@ $purchased_books_stmt = $conn->prepare($purchased_books_query);
 $purchased_books_stmt->bind_param("i", $user_id);
 $purchased_books_stmt->execute();
 $purchased_books_result = $purchased_books_stmt->get_result();
+
+// Fetch user's current rentals
+$rented_books_query = "SELECT b.id, b.title, b.author, b.isbn, b.genre, b.description, b.book_type, r.daily_rate, r.start_date, r.end_date, r.status, r.created_at as rental_date,
+                             DATEDIFF(r.end_date, CURDATE()) as days_remaining
+                         FROM rentals r 
+                         JOIN books b ON r.book_id = b.id 
+                         WHERE r.user_id = ? AND r.status IN ('active', 'overdue') 
+                         ORDER BY r.created_at DESC";
+$rented_books_stmt = $conn->prepare($rented_books_query);
+$rented_books_stmt->bind_param("i", $user_id);
+$rented_books_stmt->execute();
+$rented_books_result = $rented_books_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -534,42 +546,106 @@ $purchased_books_result = $purchased_books_stmt->get_result();
     <div class="container">
       <div class="section-header">
         <h2>My Books</h2>
-        <p>Your purchased digital books</p>
+        <p>Your purchased and rented books</p>
       </div>
 
-      <div class="books-grid">
-        <?php if($purchased_books_result && $purchased_books_result->num_rows > 0): ?>
-          <?php while($book = $purchased_books_result->fetch_assoc()): ?>
-            <div class="book-card">
-              <div class="book-card-image">
-                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>" 
-                     alt="<?php echo htmlspecialchars($book['title']); ?>"
-                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
-                <span class="book-badge badge-purchased">Purchased</span>
-              </div>
-              <div class="book-card-content">
-                <h3><?php echo htmlspecialchars($book['title']); ?></h3>
-                <p class="book-author">by <?php echo htmlspecialchars($book['author']); ?></p>
-                <p class="book-genre"><?php echo htmlspecialchars($book['genre']); ?></p>
-                <div class="book-price">
-                  <span class="price">Purchased: $<?php echo number_format($book['purchase_price'], 2); ?></span>
-                  <br>
-                  <small class="muted">Downloads: <?php echo $book['download_count']; ?>/<?php echo $book['max_downloads']; ?></small>
+      <!-- Book Tabs -->
+      <div class="book-tabs" style="margin-bottom: 2rem;">
+        <div class="tab-buttons" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border);">
+          <button class="tab-btn active" onclick="showTab('purchased')" style="background: none; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius); cursor: pointer; font-weight: 500; color: var(--foreground); border-bottom: 2px solid var(--primary);">Purchased Books</button>
+          <button class="tab-btn" onclick="showTab('rented')" style="background: none; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius); cursor: pointer; font-weight: 500; color: var(--muted-foreground);">Rented Books</button>
+        </div>
+
+        <!-- Purchased Books Tab -->
+        <div id="purchased-tab" class="tab-content active">
+          <div class="books-grid">
+            <?php if($purchased_books_result && $purchased_books_result->num_rows > 0): ?>
+              <?php while($book = $purchased_books_result->fetch_assoc()): ?>
+                <div class="book-card">
+                  <div class="book-card-image">
+                    <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>"
+                         alt="<?php echo htmlspecialchars($book['title']); ?>"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    <span class="book-badge badge-purchased">Purchased</span>
+                  </div>
+                  <div class="book-card-content">
+                    <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                    <p class="book-author">by <?php echo htmlspecialchars($book['author']); ?></p>
+                    <p class="book-genre"><?php echo htmlspecialchars($book['genre']); ?></p>
+                    <div class="book-price">
+                      <span class="price">Purchased: $<?php echo number_format($book['purchase_price'], 2); ?></span>
+                      <br>
+                      <small class="muted">Downloads: <?php echo $book['download_count']; ?>/<?php echo $book['max_downloads']; ?></small>
+                    </div>
+                    <div class="book-actions">
+                      <button class="btn btn-primary btn-sm" onclick="downloadBook(<?php echo $book['id']; ?>)">
+                        <i class="fas fa-download"></i> Download
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div class="book-actions">
-                  <button class="btn btn-primary btn-sm" onclick="downloadBook(<?php echo $book['id']; ?>)">
-                    <i class="fas fa-download"></i> Download
-                  </button>
-                </div>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <p class="muted">You haven't purchased any books yet.</p>
+                <a href="/book-hub/public/books.php" class="btn btn-primary">Browse Books</a>
               </div>
-            </div>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-            <p class="muted">You haven't purchased any books yet.</p>
-            <a href="/book-hub/public/books.php" class="btn btn-primary">Browse Books</a>
+            <?php endif; ?>
           </div>
-        <?php endif; ?>
+        </div>
+
+        <!-- Rented Books Tab -->
+        <div id="rented-tab" class="tab-content" style="display: none;">
+          <div class="books-grid">
+            <?php if($rented_books_result && $rented_books_result->num_rows > 0): ?>
+              <?php while($book = $rented_books_result->fetch_assoc()): ?>
+                <div class="book-card">
+                  <div class="book-card-image">
+                    <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>"
+                         alt="<?php echo htmlspecialchars($book['title']); ?>"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    <span class="book-badge <?php echo $book['status'] === 'overdue' ? 'badge-overdue' : 'badge-rented'; ?>">
+                      <?php echo $book['status'] === 'overdue' ? 'Overdue' : 'Rented'; ?>
+                    </span>
+                  </div>
+                  <div class="book-card-content">
+                    <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                    <p class="book-author">by <?php echo htmlspecialchars($book['author']); ?></p>
+                    <p class="book-genre"><?php echo htmlspecialchars($book['genre']); ?></p>
+                    <div class="book-price">
+                      <span class="price">Rental: $<?php echo number_format($book['daily_rate'], 2); ?>/day</span>
+                      <br>
+                      <small class="muted">
+                        Due: <?php echo date('M j, Y', strtotime($book['end_date'])); ?>
+                        <?php if($book['days_remaining'] >= 0): ?>
+                          (<?php echo $book['days_remaining']; ?> days left)
+                        <?php else: ?>
+                          (<?php echo abs($book['days_remaining']); ?> days overdue)
+                        <?php endif; ?>
+                      </small>
+                    </div>
+                    <div class="book-actions">
+                      <?php if($book['status'] === 'active'): ?>
+                        <button class="btn btn-secondary btn-sm" onclick="returnBook(<?php echo $book['id']; ?>)">
+                          <i class="fas fa-undo"></i> Return Book
+                        </button>
+                      <?php elseif($book['status'] === 'overdue'): ?>
+                        <button class="btn btn-danger btn-sm" onclick="returnBook(<?php echo $book['id']; ?>)">
+                          <i class="fas fa-exclamation-triangle"></i> Return Overdue
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                </div>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <p class="muted">You haven't rented any books yet.</p>
+                <a href="/book-hub/public/books.php" class="btn btn-primary">Browse Books</a>
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -595,6 +671,36 @@ $purchased_books_result = $purchased_books_stmt->get_result();
       // For now, redirect to a download handler
       // In production, this would check download limits and serve the file
       window.location.href = '/book-hub/src/handlers/download-book.php?id=' + bookId;
+    }
+
+    function returnBook(bookId) {
+      if (confirm('Are you sure you want to return this book?')) {
+        // Redirect to return book handler
+        window.location.href = '/book-hub/src/handlers/rent-book-handler.php?action=return&book_id=' + bookId;
+      }
+    }
+
+    function showTab(tabName) {
+      // Hide all tabs
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.style.display = 'none');
+      
+      // Remove active class from all buttons
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.borderBottom = 'none';
+        btn.style.color = 'var(--muted-foreground)';
+      });
+      
+      // Show selected tab
+      document.getElementById(tabName + '-tab').style.display = 'block';
+      
+      // Add active class to clicked button
+      const activeButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+      activeButton.classList.add('active');
+      activeButton.style.borderBottom = '2px solid var(--primary)';
+      activeButton.style.color = 'var(--foreground)';
     }
 
     // Close dropdown when clicking outside

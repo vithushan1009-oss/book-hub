@@ -47,6 +47,36 @@ if ($completed_rentals_result) {
     $row = $completed_rentals_result->fetch_assoc();
     $completed_rentals = $row['total'];
 }
+
+// Fetch user's recent books for homepage (if logged in)
+$user_recent_books = null;
+$user_rented_books = null;
+if ($is_logged_in && isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    
+    // Get recent purchased books (last 3)
+    $user_purchased_query = "SELECT b.id, b.title, b.author, b.book_type, p.created_at as purchase_date 
+                            FROM purchases p 
+                            JOIN books b ON p.book_id = b.id 
+                            WHERE p.user_id = ? AND p.status = 'completed' 
+                            ORDER BY p.created_at DESC LIMIT 3";
+    $user_purchased_stmt = $conn->prepare($user_purchased_query);
+    $user_purchased_stmt->bind_param("i", $user_id);
+    $user_purchased_stmt->execute();
+    $user_recent_books = $user_purchased_stmt->get_result();
+    
+    // Get current rented books
+    $user_rented_query = "SELECT b.id, b.title, b.author, b.book_type, r.end_date, r.status,
+                                DATEDIFF(r.end_date, CURDATE()) as days_remaining
+                         FROM rentals r 
+                         JOIN books b ON r.book_id = b.id 
+                         WHERE r.user_id = ? AND r.status IN ('active', 'overdue') 
+                         ORDER BY r.end_date ASC LIMIT 3";
+    $user_rented_stmt = $conn->prepare($user_rented_query);
+    $user_rented_stmt->bind_param("i", $user_id);
+    $user_rented_stmt->execute();
+    $user_rented_books = $user_rented_stmt->get_result();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -147,6 +177,82 @@ if ($completed_rentals_result) {
       </div>
     </div>
   </section>
+
+  <?php if ($is_logged_in && ($user_recent_books && $user_recent_books->num_rows > 0) || ($user_rented_books && $user_rented_books->num_rows > 0)): ?>
+  <!-- My Books Section (Homepage) -->
+  <section style="padding: 4rem 0; background-color: var(--card);">
+    <div class="container">
+      <div class="section-header">
+        <h2>Welcome back, <?php echo htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]); ?>!</h2>
+        <p>Your recent books and current rentals</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem;">
+        <?php if ($user_recent_books && $user_recent_books->num_rows > 0): ?>
+        <div>
+          <h3 style="margin-bottom: 1.5rem; color: var(--foreground);">Recently Purchased</h3>
+          <div class="books-grid" style="grid-template-columns: 1fr;">
+            <?php while($book = $user_recent_books->fetch_assoc()): ?>
+              <div class="book-card" style="display: flex; gap: 1rem; padding: 1rem;">
+                <div class="book-card-image" style="flex-shrink: 0; width: 60px; height: 80px;">
+                  <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>"
+                       alt="<?php echo htmlspecialchars($book['title']); ?>"
+                       style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;"
+                       onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'80\'%3E%3Crect fill=\'%23ddd\' width=\'60\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'8\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                </div>
+                <div class="book-card-content" style="flex: 1;">
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem;"><?php echo htmlspecialchars($book['title']); ?></h4>
+                  <p class="book-author" style="margin: 0; font-size: 0.85rem; color: var(--muted-foreground);">by <?php echo htmlspecialchars($book['author']); ?></p>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--primary);">
+                    Purchased <?php echo date('M j', strtotime($book['purchase_date'])); ?>
+                  </p>
+                </div>
+              </div>
+            <?php endwhile; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($user_rented_books && $user_rented_books->num_rows > 0): ?>
+        <div>
+          <h3 style="margin-bottom: 1.5rem; color: var(--foreground);">Current Rentals</h3>
+          <div class="books-grid" style="grid-template-columns: 1fr;">
+            <?php while($book = $user_rented_books->fetch_assoc()): ?>
+              <div class="book-card" style="display: flex; gap: 1rem; padding: 1rem;">
+                <div class="book-card-image" style="flex-shrink: 0; width: 60px; height: 80px;">
+                  <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>"
+                       alt="<?php echo htmlspecialchars($book['title']); ?>"
+                       style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;"
+                       onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'80\'%3E%3Crect fill=\'%23ddd\' width=\'60\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'8\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                  <span class="book-badge <?php echo $book['status'] === 'overdue' ? 'badge-overdue' : 'badge-rented'; ?>" style="position: absolute; top: 0.25rem; right: 0.25rem; font-size: 0.6rem; padding: 0.15rem 0.4rem;">
+                    <?php echo $book['status'] === 'overdue' ? 'Overdue' : 'Rented'; ?>
+                  </span>
+                </div>
+                <div class="book-card-content" style="flex: 1;">
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem;"><?php echo htmlspecialchars($book['title']); ?></h4>
+                  <p class="book-author" style="margin: 0; font-size: 0.85rem; color: var(--muted-foreground);">by <?php echo htmlspecialchars($book['author']); ?></p>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: <?php echo $book['status'] === 'overdue' ? 'var(--destructive)' : 'var(--accent)'; ?>;">
+                    Due: <?php echo date('M j', strtotime($book['end_date'])); ?>
+                    <?php if($book['days_remaining'] >= 0): ?>
+                      (<?php echo $book['days_remaining']; ?> days left)
+                    <?php else: ?>
+                      (<?php echo abs($book['days_remaining']); ?> days overdue)
+                    <?php endif; ?>
+                  </p>
+                </div>
+              </div>
+            <?php endwhile; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/book-hub/src/views/user.php" class="btn btn-primary">View All My Books</a>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <!-- Featured Books -->
   <section>
