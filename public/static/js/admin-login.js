@@ -176,34 +176,4 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ===== Demo Credentials Helper =====
-document.addEventListener('DOMContentLoaded', function() {
-  // Add demo credentials hint (remove in production)
-  const authHeader = document.querySelector('.admin-header');
-  
-  const demoHint = document.createElement('div');
-  demoHint.style.cssText = `
-    background: hsla(142, 71%, 45%, 0.1);
-    border: 1px solid hsl(142, 71%, 45%);
-    color: hsl(142, 71%, 35%);
-    padding: 0.75rem;
-    border-radius: var(--radius);
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    text-align: center;
-  `;
-  demoHint.innerHTML = `
-    <strong>Demo Credentials:</strong><br>
-    Email: admin@bookhub.com<br>
-    Password: admin123
-  `;
-  
-  authHeader.appendChild(demoHint);
-  
-  // Auto-remove after 10 seconds
-  setTimeout(() => {
-    demoHint.style.opacity = '0';
-    demoHint.style.transition = 'opacity 0.5s ease';
-    setTimeout(() => demoHint.remove(), 500);
-  }, 10000);
-});
+// Demo credentials helper removed for production - no demo credentials shown
