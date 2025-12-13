@@ -69,6 +69,11 @@
   color: var(--secondary-foreground);
 }
 
+.badge-purchased {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
 .book-unavailable {
   position: absolute;
   inset: 0;

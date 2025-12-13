@@ -69,7 +69,7 @@ if ($is_logged_in && $user_data) {
               </svg>
               My Profile
             </a>
-            <a href="#" class="dropdown-item">
+            <a href="/book-hub/src/views/user.php" class="dropdown-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
               </svg>
@@ -128,7 +128,7 @@ if ($is_logged_in && $user_data) {
       <?php if ($is_logged_in): ?>
       <div class="dropdown-divider" style="margin: 1rem 0;"></div>
       <a href="/book-hub/src/views/profile.php">My Profile</a>
-      <a href="#">My Books</a>
+      <a href="/book-hub/src/views/user.php">My Books</a>
       <a href="#">Favorites</a>
       <a href="#">Settings</a>
       <a href="/book-hub/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>

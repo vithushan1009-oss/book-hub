@@ -54,6 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $user_name = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
 $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
+
+// Fetch user's purchased books
+$purchased_books_query = "SELECT b.id, b.title, b.author, b.isbn, b.genre, b.description, b.book_type, p.purchase_price, p.created_at as purchase_date, p.download_count, p.max_downloads 
+                         FROM purchases p 
+                         JOIN books b ON p.book_id = b.id 
+                         WHERE p.user_id = ? AND p.status = 'completed' 
+                         ORDER BY p.created_at DESC";
+$purchased_books_stmt = $conn->prepare($purchased_books_query);
+$purchased_books_stmt->bind_param("i", $user_id);
+$purchased_books_stmt->execute();
+$purchased_books_result = $purchased_books_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -585,7 +596,7 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
                                 </svg>
                                 My Profile
                             </a>
-                            <a href="#" class="dropdown-item">
+                            <a href="/book-hub/src/views/user.php" class="dropdown-item">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
                                 </svg>

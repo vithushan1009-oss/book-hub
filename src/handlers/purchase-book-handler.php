@@ -42,7 +42,7 @@ if (empty($errors)) {
         // Check if user already purchased this book
         $purchase_check = "SELECT id FROM purchases 
                           WHERE user_id = ? AND book_id = ? 
-                          AND payment_status = 'completed'";
+                          AND status = 'completed'";
         $purchase_stmt = $conn->prepare($purchase_check);
         $purchase_stmt->bind_param("ii", $_SESSION['user_id'], $book_id);
         $purchase_stmt->execute();
@@ -61,14 +61,14 @@ if (!empty($errors)) {
 }
 
 // Create purchase record (for now, auto-complete payment - in production, integrate with payment gateway)
-$insert_sql = "INSERT INTO purchases (user_id, book_id, amount_paid, payment_status, payment_method) 
+$insert_sql = "INSERT INTO purchases (user_id, book_id, purchase_price, status, payment_method) 
                VALUES (?, ?, ?, 'completed', 'manual')";
 $insert_stmt = $conn->prepare($insert_sql);
 $insert_stmt->bind_param("iid", $_SESSION['user_id'], $book_id, $book['purchase_price']);
 
 if ($insert_stmt->execute()) {
     $_SESSION['success'] = 'Book purchased successfully! You can now download it from your account.';
-    header('Location: /book-hub/public/books.php?success=' . urlencode($_SESSION['success']));
+    header('Location: /book-hub/src/views/user.php?success=' . urlencode($_SESSION['success']));
 } else {
     $_SESSION['error'] = 'Failed to complete purchase. Please try again.';
     header('Location: /book-hub/public/books.php?error=' . urlencode('Failed to complete purchase'));

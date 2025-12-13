@@ -182,7 +182,7 @@ while($row = $genres_result->fetch_assoc()) {
           <div class="books-grid">
         <?php if($result && $result->num_rows > 0): ?>
           <?php while($book = $result->fetch_assoc()): ?>
-            <div class="book-card">
+            <div class="book-card" onclick="showBookDetails(<?php echo (int)$book['id']; ?>, '<?php echo htmlspecialchars($book['title'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($book['author'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($book['description'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($book['genre'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($book['isbn'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($book['publisher'], ENT_QUOTES); ?>', '<?php echo $book['publication_date']; ?>', '<?php echo $book['book_type']; ?>', <?php echo $book['total_quantity'] ?? 0; ?>, <?php echo number_format($book['rental_price_per_day'] ?? 0, 2); ?>, <?php echo number_format($book['purchase_price'] ?? 0, 2); ?>)">
               <div class="book-card-image">
                 <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>" 
                      alt="<?php echo htmlspecialchars($book['title']); ?>"
@@ -299,6 +299,56 @@ while($row = $genres_result->fetch_assoc()) {
     </div>
   </div>
   <?php endif; ?>
+
+  <!-- Book Details Modal -->
+  <div id="bookDetailsModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+      <button onclick="closeBookDetailsModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted-foreground);">&times;</button>
+      
+      <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+        <div style="flex-shrink: 0;">
+          <img id="bookDetailsImage" src="" alt="Book Cover" style="width: 150px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-md);">
+        </div>
+        <div style="flex: 1;">
+          <h2 id="bookDetailsTitle" style="margin: 0 0 0.5rem 0; color: var(--foreground);"></h2>
+          <p id="bookDetailsAuthor" style="margin: 0 0 1rem 0; color: var(--muted-foreground); font-style: italic;"></p>
+          <div id="bookDetailsActions" style="display: flex; gap: 1rem;"></div>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <h3 style="margin: 0 0 1rem 0; color: var(--foreground);">Book Details</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <strong>Genre:</strong> <span id="bookDetailsGenre"></span>
+          </div>
+          <div>
+            <strong>ISBN:</strong> <span id="bookDetailsISBN"></span>
+          </div>
+          <div>
+            <strong>Publisher:</strong> <span id="bookDetailsPublisher"></span>
+          </div>
+          <div>
+            <strong>Publication Date:</strong> <span id="bookDetailsPublicationDate"></span>
+          </div>
+          <div id="bookDetailsQuantity" style="display: none;">
+            <strong>Available Quantity:</strong> <span id="bookDetailsQuantityValue"></span>
+          </div>
+          <div id="bookDetailsRentalPrice" style="display: none;">
+            <strong>Rental Price:</strong> LKR <span id="bookDetailsRentalPriceValue"></span>/day
+          </div>
+          <div id="bookDetailsPurchasePrice" style="display: none;">
+            <strong>Purchase Price:</strong> LKR <span id="bookDetailsPurchasePriceValue"></span>
+          </div>
+        </div>
+        
+        <div>
+          <strong>Description:</strong>
+          <p id="bookDetailsDescription" style="margin: 0.5rem 0 0 0; line-height: 1.6; color: var(--muted-foreground);"></p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Message Container -->
   <div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;"></div>
@@ -652,6 +702,71 @@ while($row = $genres_result->fetch_assoc()) {
     document.getElementById('rentModal')?.addEventListener('click', function(e) {
       if (e.target === this) {
         closeRentModal();
+      }
+    });
+
+    // Book Details Modal Functions
+    function showBookDetails(title, author, description, genre, isbn, publisher, publicationDate, price, rentalPrice, availability, bookType, imagePath, bookId) {
+      // Populate modal with book details
+      document.getElementById('modalBookTitle').textContent = title;
+      document.getElementById('modalBookAuthor').textContent = author;
+      document.getElementById('modalBookDescription').textContent = description;
+      document.getElementById('modalBookGenre').textContent = genre;
+      document.getElementById('modalBookISBN').textContent = isbn;
+      document.getElementById('modalBookPublisher').textContent = publisher;
+      document.getElementById('modalBookPublicationDate').textContent = publicationDate;
+      
+      // Set book image
+      const bookImage = document.getElementById('modalBookImage');
+      if (imagePath && imagePath !== 'null') {
+        bookImage.src = imagePath;
+        bookImage.style.display = 'block';
+      } else {
+        bookImage.style.display = 'none';
+      }
+      
+      // Handle pricing based on book type
+      const priceSection = document.getElementById('modalPriceSection');
+      const rentalPriceSection = document.getElementById('modalRentalPriceSection');
+      const availabilitySection = document.getElementById('modalAvailabilitySection');
+      
+      if (bookType === 'physical') {
+        // Show both purchase and rental prices for physical books
+        document.getElementById('modalBookPrice').textContent = price ? '$' + price : 'N/A';
+        document.getElementById('modalBookRentalPrice').textContent = rentalPrice ? '$' + rentalPrice + ' per day' : 'N/A';
+        priceSection.style.display = 'block';
+        rentalPriceSection.style.display = 'block';
+        availabilitySection.style.display = 'block';
+        document.getElementById('modalBookAvailability').textContent = availability;
+      } else if (bookType === 'digital') {
+        // Show only purchase price for digital books
+        document.getElementById('modalBookPrice').textContent = price ? '$' + price : 'N/A';
+        priceSection.style.display = 'block';
+        rentalPriceSection.style.display = 'none';
+        availabilitySection.style.display = 'none';
+      }
+      
+      // Show modal
+      document.getElementById('bookDetailsModal').style.display = 'block';
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeBookDetailsModal() {
+      document.getElementById('bookDetailsModal').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('bookDetailsModal')?.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeBookDetailsModal();
+      }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('bookDetailsModal').style.display === 'block') {
+        closeBookDetailsModal();
       }
     });
   </script>

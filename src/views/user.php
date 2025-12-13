@@ -10,6 +10,22 @@ if(!isset($_SESSION["user_id"])) {
 $user_id = $_SESSION["user_id"];
 $conn = getDbConnection();
 
+// Get success/error messages from session or URL
+$success_message = "";
+$error_message = "";
+if(isset($_SESSION['success'])) {
+    $success_message = $_SESSION['success'];
+    unset($_SESSION['success']);
+} elseif(isset($_GET['success'])) {
+    $success_message = $_GET['success'];
+}
+if(isset($_SESSION['error'])) {
+    $error_message = $_SESSION['error'];
+    unset($_SESSION['error']);
+} elseif(isset($_GET['error'])) {
+    $error_message = $_GET['error'];
+}
+
 // Fetch user details
 $sql = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
@@ -30,6 +46,17 @@ $user_initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['la
 // Fetch recommended books (latest 4 active books)
 $recommended_books_query = "SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 4";
 $recommended_books_result = $conn->query($recommended_books_query);
+
+// Fetch user's purchased books
+$purchased_books_query = "SELECT b.id, b.title, b.author, b.isbn, b.genre, b.description, b.book_type, p.purchase_price, p.created_at as purchase_date, p.download_count, p.max_downloads 
+                         FROM purchases p 
+                         JOIN books b ON p.book_id = b.id 
+                         WHERE p.user_id = ? AND p.status = 'completed' 
+                         ORDER BY p.created_at DESC";
+$purchased_books_stmt = $conn->prepare($purchased_books_query);
+$purchased_books_stmt->bind_param("i", $user_id);
+$purchased_books_stmt->execute();
+$purchased_books_result = $purchased_books_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -387,6 +414,22 @@ $recommended_books_result = $conn->query($recommended_books_query);
 <body class="home-page">
   <?php require_once __DIR__ . '/../components/navbar.php'; ?>
 
+  <!-- Success/Error Messages -->
+  <?php if($success_message): ?>
+    <div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;">
+      <div class="alert alert-success" style="margin: 0;">
+        <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success_message); ?>
+      </div>
+    </div>
+  <?php endif; ?>
+  <?php if($error_message): ?>
+    <div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;">
+      <div class="alert alert-error" style="margin: 0;">
+        <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_message); ?>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-bg">
@@ -486,6 +529,51 @@ $recommended_books_result = $conn->query($recommended_books_query);
     </div>
   </section>
 
+  <!-- My Books Section -->
+  <section style="padding: 4rem 0; background-color: var(--card);">
+    <div class="container">
+      <div class="section-header">
+        <h2>My Books</h2>
+        <p>Your purchased digital books</p>
+      </div>
+
+      <div class="books-grid">
+        <?php if($purchased_books_result && $purchased_books_result->num_rows > 0): ?>
+          <?php while($book = $purchased_books_result->fetch_assoc()): ?>
+            <div class="book-card">
+              <div class="book-card-image">
+                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$book['id']; ?>&t=<?php echo time(); ?>" 
+                     alt="<?php echo htmlspecialchars($book['title']); ?>"
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'400\'%3E%3Crect fill=\'%23ddd\' width=\'300\' height=\'400\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                <span class="book-badge badge-purchased">Purchased</span>
+              </div>
+              <div class="book-card-content">
+                <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                <p class="book-author">by <?php echo htmlspecialchars($book['author']); ?></p>
+                <p class="book-genre"><?php echo htmlspecialchars($book['genre']); ?></p>
+                <div class="book-price">
+                  <span class="price">Purchased: $<?php echo number_format($book['purchase_price'], 2); ?></span>
+                  <br>
+                  <small class="muted">Downloads: <?php echo $book['download_count']; ?>/<?php echo $book['max_downloads']; ?></small>
+                </div>
+                <div class="book-actions">
+                  <button class="btn btn-primary btn-sm" onclick="downloadBook(<?php echo $book['id']; ?>)">
+                    <i class="fas fa-download"></i> Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p class="muted">You haven't purchased any books yet.</p>
+            <a href="/book-hub/public/books.php" class="btn btn-primary">Browse Books</a>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+
   <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
   <script src="/book-hub/public/static/js/common.js"></script>
@@ -501,6 +589,12 @@ $recommended_books_result = $conn->query($recommended_books_query);
     function toggleNotifications() {
       // Placeholder for notifications functionality
       alert('No new notifications at this time.');
+    }
+
+    function downloadBook(bookId) {
+      // For now, redirect to a download handler
+      // In production, this would check download limits and serve the file
+      window.location.href = '/book-hub/src/handlers/download-book.php?id=' + bookId;
     }
 
     // Close dropdown when clicking outside
