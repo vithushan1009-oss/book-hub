@@ -24,8 +24,14 @@ function performSearch() {
     const query = searchInput.value.trim();
     if (query) {
       console.log('Searching for:', query);
-      // Redirect to books page with search query
-      window.location.href = `books.html?search=${encodeURIComponent(query)}`;
+      // Submit the form with search query
+      const form = searchInput.closest('form');
+      if (form) {
+        form.submit();
+      } else {
+        // Fallback redirect
+        window.location.href = `books.php?search=${encodeURIComponent(query)}`;
+      }
     }
   }
 }
@@ -70,7 +76,7 @@ function initCTAButtons() {
       const text = this.textContent.trim();
       
       if (text.includes('Browse') || text.includes('View All')) {
-        window.location.href = 'books.html';
+        window.location.href = 'books.php';
       } else if (text.includes('Sign In')) {
         alert('Sign In functionality\nIn a full application, this would open a login form.');
       } else if (text.includes('Sign Up') || text.includes('Get Started')) {

@@ -103,8 +103,8 @@ if ($is_logged_in && $user_data) {
       <?php else: ?>
       <!-- Not Logged In - Show Login/Register -->
       <div class="nav-cta">
-        <a href="/book-hub/public/login.html" class="btn btn-outline">Sign In</a>
-        <a href="/book-hub/public/register.html" class="btn btn-secondary">Get Started</a>
+        <a href="/book-hub/public/login.php" class="btn btn-outline">Sign In</a>
+        <a href="/book-hub/public/register.php" class="btn btn-secondary">Get Started</a>
       </div>
       <?php endif; ?>
 
@@ -134,8 +134,8 @@ if ($is_logged_in && $user_data) {
       <a href="/book-hub/src/handlers/logout-handler.php" style="color: var(--destructive);">Logout</a>
       <?php else: ?>
       <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-        <a href="/book-hub/public/login.html" class="btn btn-outline" style="width: 100%;">Sign In</a>
-        <a href="/book-hub/public/register.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+        <a href="/book-hub/public/login.php" class="btn btn-outline" style="width: 100%;">Sign In</a>
+        <a href="/book-hub/public/register.php" class="btn btn-secondary" style="width: 100%;">Get Started</a>
       </div>
       <?php endif; ?>
     </div>

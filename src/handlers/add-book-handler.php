@@ -115,19 +115,19 @@ $admin_id = $_SESSION['admin_id'] ?? null;
 if($cover_image && $pdf_file) {
     $sql = "INSERT INTO books (title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, cover_image, cover_image_type, pdf_file, pdf_file_name, pdf_file_size, pdf_file_type, publisher, publication_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssiddssssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $admin_id);
+    $stmt->bind_param("ssssssiddbsssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $admin_id);
 } elseif($cover_image) {
     $sql = "INSERT INTO books (title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, cover_image, cover_image_type, publisher, publication_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssiddssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $admin_id);
+    $stmt->bind_param("ssssssiddbsssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $admin_id);
 } elseif($pdf_file) {
     $sql = "INSERT INTO books (title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, pdf_file, pdf_file_name, pdf_file_size, pdf_file_type, publisher, publication_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssiddssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $admin_id);
+    $stmt->bind_param("ssssssiddbssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $admin_id);
 } else {
     $sql = "INSERT INTO books (title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, publisher, publication_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssiddssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $admin_id);
+    $stmt->bind_param("ssssssiddsssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $admin_id);
 }
 
 if($stmt->execute()) {

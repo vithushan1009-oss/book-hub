@@ -85,7 +85,7 @@ if ($completed_rentals_result) {
       <div class="hero-cta">
         <a href="/book-hub/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
         <?php if (!$is_logged_in): ?>
-        <a href="/book-hub/public/register.html" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Get Started</a>
+        <a href="/book-hub/public/register.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Get Started</a>
         <?php else: ?>
         <a href="/book-hub/src/views/user.php" class="btn btn-outline btn-lg" style="border-color: white; color: white;">My Dashboard</a>
         <?php endif; ?>
@@ -93,16 +93,16 @@ if ($completed_rentals_result) {
 
       <!-- Search Bar -->
       <div class="hero-search">
-        <div class="search-box">
-          <input type="text" placeholder="Search for books, authors, or genres...">
-          <button class="btn btn-secondary btn-lg">
+        <form action="books.php" method="GET" class="search-box">
+          <input type="text" name="search" placeholder="Search for books, authors, or genres...">
+          <button type="submit" class="btn btn-secondary btn-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.3-4.3"/>
             </svg>
             Search
           </button>
-        </div>
+        </form>
       </div>
     </div>
   </section>
@@ -307,7 +307,7 @@ if ($completed_rentals_result) {
       <h2>Ready to Start Your Reading Journey?</h2>
       <p>Join thousands of readers and get access to our vast collection of books today</p>
       <?php if (!$is_logged_in): ?>
-      <a href="/book-hub/public/register.html" class="btn btn-secondary btn-lg">Sign Up Now</a>
+      <a href="/book-hub/public/register.php" class="btn btn-secondary btn-lg">Sign Up Now</a>
       <?php else: ?>
       <a href="/book-hub/public/books.php" class="btn btn-secondary btn-lg">Browse Books</a>
       <?php endif; ?>

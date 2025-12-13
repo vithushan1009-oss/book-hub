@@ -54,16 +54,25 @@ if(isset($_POST['update'])) {
     // Handle image upload
     $cover_image = null;
     $cover_image_type = null;
-    if(isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['cover_image'];
+$image_upload_error = null;
+if(isset($_FILES['cover_image'])) {
+    $file = $_FILES['cover_image'];
+    if($file['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if(in_array($file['type'], $allowed_types)) {
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if(!in_array($file['type'], $allowed_types)) {
+            $image_upload_error = "Invalid image type. Allowed types: JPEG, PNG, GIF, WebP";
+        } elseif($file['size'] > $max_size) {
+            $image_upload_error = "Image file too large. Maximum size: 5MB";
+        } else {
             $cover_image = file_get_contents($file['tmp_name']);
             $cover_image_type = $file['type'];
         }
+    } elseif($file['error'] !== UPLOAD_ERR_NO_FILE) {
+        // Only set error if a file was attempted but failed
+        $image_upload_error = "Image upload failed: " . getUploadErrorMessage($file['error']);
     }
-    
-    // Handle PDF upload for online books
+}
     $pdf_file = null;
     $pdf_file_name = null;
     $pdf_file_size = null;
@@ -82,25 +91,51 @@ if(isset($_POST['update'])) {
     if($cover_image && $pdf_file) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, cover_image = ?, cover_image_type = ?, pdf_file = ?, pdf_file_name = ?, pdf_file_size = ?, pdf_file_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssiddssssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddbsssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
     } elseif($cover_image) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, cover_image = ?, cover_image_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssiddssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddbsssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $cover_image, $cover_image_type, $publisher, $publication_date, $id);
     } elseif($pdf_file) {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, pdf_file = ?, pdf_file_name = ?, pdf_file_size = ?, pdf_file_type = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssiddssssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddbsssssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $pdf_file, $pdf_file_name, $pdf_file_size, $pdf_file_type, $publisher, $publication_date, $id);
     } else {
         $sql = "UPDATE books SET title = ?, author = ?, isbn = ?, genre = ?, description = ?, book_type = ?, total_quantity = ?, rental_price_per_day = ?, purchase_price = ?, publisher = ?, publication_date = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssiddssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $id);
+        $stmt->bind_param("ssssssiddsssi", $title, $author, $isbn, $genre, $description, $book_type, $total_quantity, $rental_price_per_day, $purchase_price, $publisher, $publication_date, $id);
     }
     
     if($stmt->execute()) {
-        $success_message = "Book updated successfully!";
+        if($image_upload_error) {
+            $error_message = $image_upload_error;
+        } else {
+            $success_message = "Book updated successfully!";
+        }
     } else {
         $error_message = "Failed to update book: " . $conn->error;
+    }
+}
+
+// Helper function for upload error messages
+function getUploadErrorMessage($error_code) {
+    switch($error_code) {
+        case UPLOAD_ERR_INI_SIZE:
+            return "The uploaded file exceeds the upload_max_filesize directive in php.ini";
+        case UPLOAD_ERR_FORM_SIZE:
+            return "The uploaded file exceeds the MAX_FILE_SIZE directive in the HTML form";
+        case UPLOAD_ERR_PARTIAL:
+            return "The uploaded file was only partially uploaded";
+        case UPLOAD_ERR_NO_FILE:
+            return "No file was uploaded";
+        case UPLOAD_ERR_NO_TMP_DIR:
+            return "Missing a temporary folder";
+        case UPLOAD_ERR_CANT_WRITE:
+            return "Failed to write file to disk";
+        case UPLOAD_ERR_EXTENSION:
+            return "A PHP extension stopped the file upload";
+        default:
+            return "Unknown upload error";
     }
 }
 
@@ -287,7 +322,7 @@ if(!empty($params)) {
                                         <td><?php echo (int)$row['id']; ?></td>
                                         <td>
                                             <div class="book-cover-small">
-                                                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$row['id']; ?>" 
+                                                <img src="/book-hub/src/handlers/book-image.php?id=<?php echo (int)$row['id']; ?>&t=<?php echo time(); ?>" 
                                                      alt="<?php echo htmlspecialchars($row['title']); ?>"
                                                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'80\'%3E%3Crect fill=\'%23ddd\' width=\'60\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\' font-size=\'12\'%3ENo Image%3C/text%3E%3C/svg%3E'">
                                             </div>
