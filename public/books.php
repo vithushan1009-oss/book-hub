@@ -60,7 +60,7 @@ switch($sort) {
 }
 
 // Get books
-$query = "SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE $where_clause ORDER BY $order_by LIMIT 50";
+$query = "SELECT id, title, author, isbn, genre, description, publisher, publication_date, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE $where_clause ORDER BY $order_by LIMIT 50";
 $result = null;
 
 if(!empty($params) && !empty($types)) {
@@ -71,11 +71,11 @@ if(!empty($params) && !empty($types)) {
             $result = $stmt->get_result();
         } else {
             // Fallback query on error
-            $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
+            $result = $conn->query("SELECT id, title, author, isbn, genre, description, publisher, publication_date, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
         }
     } else {
         // Fallback query on prepare error
-        $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
+        $result = $conn->query("SELECT id, title, author, isbn, genre, description, publisher, publication_date, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
     }
 } else {
     // No parameters, execute directly
@@ -88,7 +88,7 @@ if(!empty($params) && !empty($types)) {
 
 // Ensure result is valid
 if(!$result) {
-    $result = $conn->query("SELECT id, title, author, isbn, genre, description, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
+    $result = $conn->query("SELECT id, title, author, isbn, genre, description, publisher, publication_date, book_type, total_quantity, rental_price_per_day, purchase_price, created_at FROM books WHERE is_active = 1 ORDER BY created_at DESC LIMIT 50");
 }
 
 // Get unique genres for filter
